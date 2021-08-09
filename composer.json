@@ -13,7 +13,7 @@
         "laravel/framework": "^8.40",
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",
-        "facebook/php-business-sdk": "^8.0.3"
+        "facebook/php-business-sdk": "^11.0.0"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

@@ -34,6 +34,7 @@ return [
         'appId' => env('FB_APP_ID'),
         'appSecret' => env('FB_APP_SECRET'),
         'accessToken' => env('FB_ACCESS_TOKEN'),
-        'accountId' => env('FB_ACCOUNT_ID'),
+        'adAccountId' => env('FB_AD_ACCOUNT_ID'),
+        'pageId' => env('FB_PAGE_ID'),
     ]
 ];
