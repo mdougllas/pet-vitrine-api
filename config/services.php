@@ -33,8 +33,8 @@ return [
     'facebook' => [
         'appId' => env('FB_APP_ID'),
         'appSecret' => env('FB_APP_SECRET'),
-        'accessToken' => env('FB_ACCESS_TOKEN'),
-        'adAccountId' => env('FB_AD_ACCOUNT_ID'),
+        'accessToken' => env('APP_ENV') == "production" ? env('FB_ACCESS_TOKEN') : env('SANDBOX_FB_ACCESS_TOKEN'),
+        'adAccountId' => env('APP_ENV') == "production" ? env('FB_AD_ACCOUNT_ID') : env('SANDBOX_FB_AD_ACCOUNT_ID'),
         'pageId' => env('FB_PAGE_ID'),
     ]
 ];
