@@ -38,7 +38,7 @@ Route::post('mobile/login', [MobileAuthController::class, 'requestToken']);
 
 Route::middleware('auth:sanctum')->post('mobile/logout', [MobileAuthController::class, 'destroyToken']);
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+Route::middleware('auth:sanctum')->get('/me', function (Request $request) {
     return $request->user();
 });
 
@@ -117,7 +117,7 @@ Route::get('/facebook-test', function () {
 
     $fields = [];
     $params = [
-        'filename' => 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/51820860/2/jasmine.jpg'
+        'filename' => 'https://dl5zpyw5k3jeb.cloudfront.net/photos/pets/52540612/1/scooter.jpg'
     ];
 
     $image = (new AdAccount($ad_account_id))->createAdImage(
@@ -125,7 +125,7 @@ Route::get('/facebook-test', function () {
         $params
     );
 
-    $imageHash = $image->images['jasmine.jpg']['hash'];
+    $imageHash = $image->images['scooter.jpg']['hash'];
 
     $link_data = new AdCreativeLinkData();
     $link_data->setData([
