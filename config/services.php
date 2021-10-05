@@ -36,5 +36,10 @@ return [
         'accessToken' => env('APP_ENV') == "production" ? env('FB_ACCESS_TOKEN') : env('SANDBOX_FB_ACCESS_TOKEN'),
         'adAccountId' => env('APP_ENV') == "production" ? env('FB_AD_ACCOUNT_ID') : env('SANDBOX_FB_AD_ACCOUNT_ID'),
         'pageId' => env('FB_PAGE_ID'),
-    ]
+    ],
+
+    'petfinder' => [
+        'apiKey' => env('PETFINDER_API_KEY'),
+        'apiSecret' => env('PETFINDER_API_SECRET')
+    ],
 ];
