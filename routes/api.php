@@ -1,25 +1,25 @@
 <?php
 
 use FacebookAds\Api;
-use Illuminate\Http\Request;
-use FacebookAds\Object\AdAccount;
-use FacebookAds\Logger\CurlLogger;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\MobileAuthController;
-use Laravel\Fortify\Http\Controllers\RegisteredUserController;
-
-
-use FacebookAds\Object\Campaign;
-use FacebookAds\Object\AdSet;
-use FacebookAds\Object\AdCreative;
 use FacebookAds\Object\Ad;
-use FacebookAds\Object\AdCreativeLinkData;
-use FacebookAds\Object\AdCreativeObjectStorySpec;
+use Illuminate\Http\Request;
+use FacebookAds\Object\AdSet;
 use FacebookAds\Object\AdImage;
+use FacebookAds\Object\Campaign;
+use FacebookAds\Object\AdAccount;
+
 use FacebookAds\Object\AdPreview;
-use FacebookAds\Object\Fields\AdCreativeFields;
+use FacebookAds\Logger\CurlLogger;
+use FacebookAds\Object\AdCreative;
+use Illuminate\Support\Facades\Route;
 use FacebookAds\Object\Fields\AdFields;
+use FacebookAds\Object\AdCreativeLinkData;
 use FacebookAds\Object\Fields\AdImageFields;
+use App\Http\Controllers\PetfinderController;
+use App\Http\Controllers\MobileAuthController;
+use FacebookAds\Object\Fields\AdCreativeFields;
+use FacebookAds\Object\AdCreativeObjectStorySpec;
+use Laravel\Fortify\Http\Controllers\RegisteredUserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,9 +38,11 @@ Route::post('mobile/login', [MobileAuthController::class, 'requestToken']);
 
 Route::middleware('auth:sanctum')->post('mobile/logout', [MobileAuthController::class, 'destroyToken']);
 
-Route::middleware('auth:sanctum')->get('/me', function (Request $request) {
+Route::middleware('auth:sanctum')->get('me', function (Request $request) {
     return $request->user();
 });
+
+Route::get('petfinderToken', [PetfinderController::class, 'requestToken']);
 
 // Route::get('/facebook-test', function () {
 //     $app_id = config('services.facebook.appId');
