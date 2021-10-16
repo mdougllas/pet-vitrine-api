@@ -14,6 +14,10 @@ return [
     |
     */
 
+    'frontend' => [
+        'url' => env('FRONTEND_ROOT', 'http://localhost:3000'),
+    ],
+
     'mailgun' => [
         'domain' => env('MAILGUN_DOMAIN'),
         'secret' => env('MAILGUN_SECRET'),

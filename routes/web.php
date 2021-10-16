@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+/***
+ * Redirect any route non /api to front end
+ */
+Route::fallback(function () {
+    return redirect()->away(config('services.frontend.url'));
 });
