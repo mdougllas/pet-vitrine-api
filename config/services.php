@@ -46,4 +46,8 @@ return [
         'apiKey' => env('PETFINDER_API_KEY'),
         'apiSecret' => env('PETFINDER_API_SECRET')
     ],
+
+    'petVitrineUrls' => [
+        'root' => env('PET_VITRINE_ROOT'),
+    ],
 ];
