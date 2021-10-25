@@ -15,7 +15,8 @@ return [
     */
 
     'frontend' => [
-        'url' => env('FRONTEND_ROOT', 'http://localhost:3000'),
+        'root' => env('PET_VITRINE_ROOT', 'https://petvitrine.org'),
+        'login' => env('PET_VITRINE_LOGIN', 'https://petvitrine.org/login'),
     ],
 
     'mailgun' => [
