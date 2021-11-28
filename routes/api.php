@@ -13,6 +13,7 @@ use FacebookAds\Logger\CurlLogger;
 use FacebookAds\Object\AdCreative;
 use Illuminate\Support\Facades\Route;
 use FacebookAds\Object\Fields\AdFields;
+use App\Http\Controllers\UserController;
 use FacebookAds\Object\AdCreativeLinkData;
 use FacebookAds\Object\Fields\AdImageFields;
 use App\Http\Controllers\PetfinderController;
@@ -36,13 +37,19 @@ Route::post('mobile/register', [RegisteredUserController::class, 'store']);
 
 Route::post('mobile/login', [MobileAuthController::class, 'requestToken']);
 
-Route::middleware('auth:sanctum')->post('mobile/logout', [MobileAuthController::class, 'destroyToken']);
+Route::get('petfinderToken', [PetfinderController::class, 'requestToken']);
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::post('mobile/logout', [MobileAuthController::class, 'destroyToken']);
+    Route::get('/user', [UserController::class, 'getUser']);
+
+    //Testing route - will be removed
+    Route::get('/tests', function (Request $request) {
+        response()->json($request->session()->all());
+    });
 });
 
-Route::get('petfinderToken', [PetfinderController::class, 'requestToken']);
+
 
 // Route::get('/facebook-test', function () {
 //     $app_id = config('services.facebook.appId');
