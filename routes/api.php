@@ -39,9 +39,16 @@ Route::post('mobile/login', [MobileAuthController::class, 'requestToken']);
 
 Route::get('petfinderToken', [PetfinderController::class, 'requestToken']);
 
-Route::middleware('auth:sanctum')->post('mobile/logout', [MobileAuthController::class, 'destroyToken']);
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::post('mobile/logout', [MobileAuthController::class, 'destroyToken']);
+    Route::get('/user', [UserController::class, 'getUser']);
 
-Route::middleware('auth:sanctum')->get('/user', [UserController::class, 'getUser']);
+    //Testing route - will be removed
+    Route::get('/tests', function (Request $request) {
+        response()->json($request->session()->all());
+    });
+});
+
 
 
 // Route::get('/facebook-test', function () {
