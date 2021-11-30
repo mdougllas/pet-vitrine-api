@@ -44,9 +44,15 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/user', [UserController::class, 'getUser']);
 
     //Testing route - will be removed
-    Route::get('/tests', function (Request $request) {
-        response()->json($request->session()->all());
+    Route::get('/auth-tests', function (Request $request) {
+        // response()->json($request->session()->all());
+        dd(config('cors.allowed_origins'));
     });
+});
+
+Route::get('/tests', function (Request $request) {
+    // response()->json($request->session()->all());
+    dd(config('sanctum.stateful'));
 });
 
 
