@@ -51,8 +51,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
 });
 
 Route::get('/tests', function (Request $request) {
-    // response()->json($request->session()->all());
-    dd(config('sanctum.stateful'));
+    // dd(config('app.url'));
+
+    return response()->json(['ok']);
 });
 
 

@@ -27,7 +27,7 @@ class PetfinderController extends Controller
         $response = Http::post(self::PETFINDER_ROOT, $data);
 
         if (!$response->ok()) {
-            return $response->object();
+            return response()->json($response->object(),);
         }
 
         $cookie = cookie(
