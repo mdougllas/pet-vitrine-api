@@ -20,6 +20,12 @@ Route::get('login', function () {
 /***
  * Redirect any route non /api to front end
  */
-// Route::fallback(function () {
-//     return redirect()->away(config('services.frontend.root'));
-// });
+Route::fallback(function () {
+    return redirect()->away(config('services.frontend.root'));
+});
+
+Route::get('test', function () {
+    return response()->json([
+        'Test ready' => true
+    ]);
+});
