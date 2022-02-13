@@ -20,8 +20,8 @@ class PetfinderController extends Controller
     {
         $data = [
             'grant_type' => 'client_credentials',
-            'client_id' => config('services.petfinder.apiKey'),
-            'client_secret' => config('services.petfinder.apiSecret')
+            'client_id' => config('services.petfinder.api_key'),
+            'client_secret' => config('services.petfinder.api_secret')
         ];
 
         $response = Http::post(self::PETFINDER_ROOT, $data);
