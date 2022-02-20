@@ -17,6 +17,7 @@ use App\Http\Controllers\UserController;
 use FacebookAds\Object\AdCreativeLinkData;
 use FacebookAds\Object\Fields\AdImageFields;
 use App\Http\Controllers\PetfinderController;
+use App\Http\Controllers\RecaptchaController;
 use App\Http\Controllers\MobileAuthController;
 use FacebookAds\Object\Fields\AdCreativeFields;
 use FacebookAds\Object\AdCreativeObjectStorySpec;
@@ -37,7 +38,9 @@ Route::post('mobile/register', [RegisteredUserController::class, 'store']);
 
 Route::post('mobile/login', [MobileAuthController::class, 'requestToken']);
 
-Route::get('petfinderToken', [PetfinderController::class, 'requestToken']);
+Route::get('petfinder-token', [PetfinderController::class, 'requestToken']);
+
+Route::post('recaptcha-token', [RecaptchaController::class, 'checkToken']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('mobile/logout', [MobileAuthController::class, 'destroyToken']);
@@ -45,14 +48,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     //Testing route - will be removed
     Route::get('/auth-tests', function (Request $request) {
-        // response()->json($request->session()->all());
         dd(config('cors.allowed_origins'));
     });
 });
 
 Route::get('/tests', function (Request $request) {
-    // dd(config('app.url'));
-
     return response()->json(['ok']);
 });
 

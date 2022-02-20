@@ -48,4 +48,9 @@ return [
         'api_key' => env('PETFINDER_API_KEY'),
         'api_secret' => env('PETFINDER_API_SECRET')
     ],
+
+    'recaptcha' => [
+        'url' => env('RECAPTCHA_URL'),
+        'secret_key' => env('RECAPTCHA_SECRET_KEY')
+    ]
 ];
