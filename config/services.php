@@ -42,8 +42,8 @@ return [
         'app_secret' => env('FB_APP_SECRET'),
         'business_id' => env('FB_BUSINESS_ID'),
         'page_id' => env('FB_PAGE_ID'),
-        'access_token' => env('APP_ENV') == "local" ? env('FB_ACCESS_TOKEN') : env('SANDBOX_FB_ACCESS_TOKEN'),
-        'ad_account_id' => env('APP_ENV') == "local" ? env('FB_AD_ACCOUNT_ID') : env('SANDBOX_FB_AD_ACCOUNT_ID'),
+        'access_token' => env('APP_ENV') == "production" ? env('FB_ACCESS_TOKEN') : env('SANDBOX_FB_ACCESS_TOKEN'),
+        'ad_account_id' => env('APP_ENV') == "production" ? env('FB_AD_ACCOUNT_ID') : env('SANDBOX_FB_AD_ACCOUNT_ID'),
     ],
 
     'petfinder' => [

@@ -34,7 +34,7 @@ class FacebookAdsAdSet extends FacebookAds
 
         $zip = collect([
             'key' => "US:$zipCode",
-            'radius' => 5,
+            'radius' => 15,
             'distance_unit' => 'mile'
         ])->toJson();
 
@@ -57,16 +57,6 @@ class FacebookAdsAdSet extends FacebookAds
             ],
             'status' => 'PAUSED',
         ];
-
-        // 'name' => 'My AdSet',
-        // 'optimization_goal' => 'LINK_CLICKS',
-        // 'billing_event' => 'IMPRESSIONS',
-        // 'bid_amount' => '20',
-        // 'daily_budget' => '1000',
-        // 'campaign_id' => $campaign_id,
-        // 'targeting' => array('geo_locations' => array('countries' => array('US'))),
-        // 'status' => 'PAUSED',
-
 
         return $this->account->createAdSet($fields, $params);
     }

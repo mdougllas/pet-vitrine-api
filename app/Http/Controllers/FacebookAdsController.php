@@ -14,7 +14,7 @@ class FacebookAdsController extends Controller
 
         $created = $adSet->createAdSet($request->petName, $lastCampaign->id, $request->zipCode, $request->budget);
 
-        return $created->id;
+        return config('services.facebook.ad_account_id');
 
         return response()->json([
             'data' => [
