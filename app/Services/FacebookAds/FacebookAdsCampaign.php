@@ -5,16 +5,16 @@ namespace App\Services\FacebookAds;
 use FacebookAds\Object\Campaign;
 use App\Services\FacebookAds\FacebookAds;
 
-class FacebookAdsCampaign extends FacebookAds
+class FacebookAdsCampaign
 {
-    /**
-     *
-     * @inheritDoc
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
+    // /**
+    //  *
+    //  * @inheritDoc
+    //  */
+    // public function __construct()
+    // {
+    //     parent::__construct();
+    // }
 
     /**
      * Creates a new Facebook Ads campaign.
@@ -25,7 +25,9 @@ class FacebookAdsCampaign extends FacebookAds
      */
     public function createCampaign($name)
     {
-        $fields = [];
+        $account = FacebookAdsAccount::AdAccountInstance();
+
+        $fields = ['name'];
         $params = [
             'name' => $name,
             'buying_type' => 'AUCTION',
@@ -34,7 +36,7 @@ class FacebookAdsCampaign extends FacebookAds
             'special_ad_categories' => ['NONE']
         ];
 
-        return $this->account->createCampaign($fields, $params);
+        return $account->createCampaign($fields, $params);
     }
 
     /**

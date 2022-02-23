@@ -26,9 +26,7 @@ class FacebookAdsAdSet extends FacebookAds
      */
     public function createAdSet($name, $campaignId, $zipCode, $budget)
     {
-        $fields = [
-            'name'
-        ];
+        $fields = ['name'];
 
         $adLifeTime = $this->setAdLifetime();
 
@@ -42,8 +40,7 @@ class FacebookAdsAdSet extends FacebookAds
             'name' => $name,
             'optimization_goal' => 'LINK_CLICKS',
             'billing_event' => 'IMPRESSIONS',
-            'bid_strategy' => 'LOWEST_COST_WITH_BID_CAP',
-            'bid_amount' => '1',
+            'bid_strategy' => 'LOWEST_COST_WITHOUT_CAP',
             'lifetime_budget' => $budget,
             'start_time' => $adLifeTime[0],
             'end_time' => $adLifeTime[1],
