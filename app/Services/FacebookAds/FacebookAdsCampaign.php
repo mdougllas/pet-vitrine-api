@@ -7,15 +7,6 @@ use App\Services\FacebookAds\FacebookAds;
 
 class FacebookAdsCampaign
 {
-    // /**
-    //  *
-    //  * @inheritDoc
-    //  */
-    // public function __construct()
-    // {
-    //     parent::__construct();
-    // }
-
     /**
      * Creates a new Facebook Ads campaign.
      *
@@ -25,7 +16,7 @@ class FacebookAdsCampaign
      */
     public function createCampaign($name)
     {
-        $account = FacebookAdsAccount::AdAccountInstance();
+        $account = FacebookAdsAccount::adAccountInstance();
 
         $fields = ['name'];
         $params = [
@@ -58,11 +49,13 @@ class FacebookAdsCampaign
      */
     public function getLastCampaign()
     {
+        $account = FacebookAdsAccount::adAccountInstance();
+
         $fields = [
             'name', 'id'
         ];
 
-        $cursor = $this->account->getCampaigns($fields);
+        $cursor = $account->getCampaigns($fields);
         $cursor->end();
 
         $data = $cursor[0];

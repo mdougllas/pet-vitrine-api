@@ -10,9 +10,9 @@ class FacebookAdsController extends Controller
 {
     public function createAd(Request $request, FacebookAdsCampaign $campaign, FacebookAdsAdSet $adSet)
     {
-        $test = $campaign->createCampaign('Another Campaign');
+        // $test = $campaign->createCampaign('Another Campaign');
 
-        return $test->name;
+        // return $test->name;
         $validData = $request->validate([
             'petName' => 'required|string',
             'zipCode' => 'required|digits:5',

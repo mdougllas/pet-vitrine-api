@@ -2,20 +2,11 @@
 
 namespace App\Services\FacebookAds;
 
-use App\Services\FacebookAds\FacebookAds;
 use Illuminate\Support\Carbon;
+use App\Services\FacebookAds\FacebookAds;
 
-class FacebookAdsAdSet extends FacebookAds
+class FacebookAdsAdSet
 {
-    /**
-     *
-     * @inheritDoc
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     /**
      * Creates Ad Set.
      *
@@ -26,6 +17,8 @@ class FacebookAdsAdSet extends FacebookAds
      */
     public function createAdSet($name, $campaignId, $zipCode, $budget)
     {
+        $account = FacebookAdsAccount::adAccountInstance();
+
         $fields = ['name'];
 
         $adLifeTime = $this->setAdLifetime();
@@ -55,7 +48,7 @@ class FacebookAdsAdSet extends FacebookAds
             'status' => 'PAUSED',
         ];
 
-        return $this->account->createAdSet($fields, $params);
+        return $account->createAdSet($fields, $params);
     }
 
     private function setAdLifetime()

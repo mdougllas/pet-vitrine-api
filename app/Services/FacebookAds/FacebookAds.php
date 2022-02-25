@@ -3,7 +3,6 @@
 namespace App\Services\FacebookAds;
 
 use FacebookAds\Api;
-use FacebookAds\Object\AdAccount;
 
 class FacebookAds
 {
