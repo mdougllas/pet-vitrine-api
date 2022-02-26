@@ -31,9 +31,7 @@ class FacebookAdsController extends Controller
 
         $preview = $ad->getPreview($url, $link, $name);
 
-        return response()->json([
-            'adPreview' => $preview
-        ]);
+        return $preview;
     }
 
     /**

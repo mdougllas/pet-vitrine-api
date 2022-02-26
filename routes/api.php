@@ -46,7 +46,7 @@ Route::post('/tests', function (Request $request) {
     return response()->json(['ok']);
 });
 
-Route::post('pet-ads', [FacebookAdsController::class, 'adPreview']);
+Route::post('ad-preview', [FacebookAdsController::class, 'adPreview']);
 
 // Route::get('pet-ads', function (FacebookAdsCampaign $campaign, FacebookAdsAdSet $adSet, Request $request) {
 

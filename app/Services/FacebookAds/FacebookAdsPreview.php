@@ -113,7 +113,7 @@ class FacebookAdsPreview
         $data = [
             'image_hash' => $imageHash,
             'link' => $link,
-            'message' => "Adopt $name, an adoptable pet."
+            'message' => "Hey there! Care for a pet? $name is near you. Adopt a pet instead of buying and experience true animal love."
         ];
 
         return $this->linkData->setData($data);
