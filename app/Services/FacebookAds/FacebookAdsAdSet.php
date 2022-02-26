@@ -18,10 +18,7 @@ class FacebookAdsAdSet
     public function createAdSet($name, $campaignId, $zipCode, $budget)
     {
         $account = FacebookAdsAccount::adAccountInstance();
-
         $fields = ['name'];
-
-        $adLifeTime = $this->setAdLifetime();
 
         $zip = collect([
             'key' => "US:$zipCode",
@@ -34,9 +31,9 @@ class FacebookAdsAdSet
             'optimization_goal' => 'LINK_CLICKS',
             'billing_event' => 'IMPRESSIONS',
             'bid_strategy' => 'LOWEST_COST_WITHOUT_CAP',
-            'lifetime_budget' => $budget,
-            'start_time' => $adLifeTime[0],
-            'end_time' => $adLifeTime[1],
+            'lifetime_budget' => $this->convertToCents($budget),
+            'start_time' => Carbon::today()->timestamp,
+            'end_time' => $this->setAdDuration($budget),
             'campaign_id' => $campaignId,
             'targeting' => [
                 'geo_locations' => [
@@ -51,11 +48,29 @@ class FacebookAdsAdSet
         return $account->createAdSet($fields, $params);
     }
 
-    private function setAdLifetime()
+    private function setAdDuration($budget)
     {
-        $today = Carbon::today()->timestamp;
-        $oneWeek = Carbon::today()->addDay()->timestamp;
+        $oneWeek = Carbon::today()->addWeek()->timestamp;
+        $twoWeeks = Carbon::today()->addWeeks(2)->timestamp;
+        $threeWeeks = Carbon::today()->addWeeks(3)->timestamp;
+        $oneMonth = Carbon::today()->addMonth()->timestamp;
 
-        return [$today, $oneWeek];
+        $donation = collect([
+            ['value' => $budget]
+        ]);
+
+        $duration = collect([
+            ['duration' => $oneWeek, 'budget' => $donation->whereBetween('value', [5, 10])->all()],
+            ['duration' => $twoWeeks, 'budget' => $donation->whereBetween('value', [11, 20])->all()],
+            ['duration' => $threeWeeks, 'budget' => $donation->whereBetween('value', [21, 30])->all()],
+            ['duration' => $oneMonth, 'budget' => $donation->whereBetween('value', [31, 40])->all()],
+        ]);
+
+        return $duration->filter(fn ($value) => $value['budget'])->flatten()->first();
+    }
+
+    private function convertToCents($amount)
+    {
+        return $amount * 100;
     }
 }

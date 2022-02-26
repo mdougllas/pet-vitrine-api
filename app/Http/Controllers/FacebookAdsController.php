@@ -10,20 +10,18 @@ class FacebookAdsController extends Controller
 {
     public function createAd(Request $request, FacebookAdsCampaign $campaign, FacebookAdsAdSet $adSet)
     {
-        // $test = $campaign->createCampaign('Another Campaign');
-
-        // return $test->name;
         $validData = $request->validate([
             'petName' => 'required|string',
             'zipCode' => 'required|digits:5',
             'budget' => 'required|numeric|min:5'
         ]);
 
-        $cents = $this->convertToCents($validData['budget']);
+        $budget = (int) $validData['budget'];
+        $petName = $validData['petName'];
+        $zipCode = $validData['zipCode'];
+        $lastCampaignId = $campaign->getLastCampaign()->id;
 
-        $lastCampaign = $campaign->getLastCampaign();
-
-        $created = $adSet->createAdSet($validData['petName'], $lastCampaign->id, $validData['zipCode'], $cents);
+        $created = $adSet->createAdSet($petName, $lastCampaignId, $zipCode, $budget);
 
         return response()->json([
             'data' => [
@@ -31,10 +29,5 @@ class FacebookAdsController extends Controller
                 'id' => $created->id,
             ]
         ]);
-    }
-
-    private function convertToCents($amount)
-    {
-        return $amount * 100;
     }
 }
