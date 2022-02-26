@@ -15,7 +15,7 @@ class FacebookAdsAccount extends FacebookAds
         parent::__construct();
     }
 
-    private function adAccount()
+    protected function adAccount()
     {
         return new AdAccount($this->adAccountId);
     }
@@ -23,5 +23,10 @@ class FacebookAdsAccount extends FacebookAds
     public static function adAccountInstance()
     {
         return app(FacebookAdsAccount::class)->adAccount();
+    }
+
+    public function getPageId()
+    {
+        return $this->pageId;
     }
 }

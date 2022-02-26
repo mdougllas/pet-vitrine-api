@@ -13,6 +13,7 @@ class FacebookAdsAdSet
      * @param  string $name
      * @param  integer $campaignId
      * @param  integer $zipCode
+     * @param  integer $budget
      * @return FacebookAds\Object\AdSet
      */
     public function createAdSet($name, $campaignId, $zipCode, $budget)
@@ -48,6 +49,12 @@ class FacebookAdsAdSet
         return $account->createAdSet($fields, $params);
     }
 
+    /**
+     * Set the duration for the ad.
+     *
+     * @param  integer $budget
+     * @return integer Epoch
+     */
     private function setAdDuration($budget)
     {
         $oneWeek = Carbon::today()->addWeek()->timestamp;
@@ -69,6 +76,12 @@ class FacebookAdsAdSet
         return $duration->filter(fn ($value) => $value['budget'])->flatten()->first();
     }
 
+    /**
+     * Convert dollars into cents.
+     *
+     * @param  integer $amount
+     * @return integer
+     */
     private function convertToCents($amount)
     {
         return $amount * 100;
