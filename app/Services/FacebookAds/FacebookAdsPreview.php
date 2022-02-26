@@ -2,6 +2,8 @@
 
 namespace App\Services\FacebookAds;
 
+use App\Exceptions\ImageNotFoundException;
+use Exception;
 use Illuminate\Support\Facades\Storage;
 use App\Services\FacebookAds\FacebookAds;
 use FacebookAds\Object\AdCreative;
@@ -142,10 +144,12 @@ class FacebookAdsPreview
      */
     private function storeImage($url, $name)
     {
-        $imageContents = file_get_contents($url, $name);
-        $storedFile = Storage::put("pets/$name.png", $imageContents);
-
-        if (!$storedFile) return "Error on saving file."; //todo - proper handle this error
+        try {
+            $imageContents = file_get_contents($url, $name);
+            Storage::put("pets/$name.png", $imageContents);
+        } catch (Exception $e) {
+            throw new ImageNotFoundException($e->getMessage());
+        }
 
         return Storage::path("pets/$name.png");
     }
