@@ -8,6 +8,34 @@ use App\Services\FacebookAds\FacebookAds;
 class FacebookAdsAdSet
 {
     /**
+     * Lists all Ad Sets.
+     *
+     * @return Illuminate\Database\Eloquent\Collection;
+     */
+    public function listAdSets()
+    {
+        $account = FacebookAdsAccount::adAccountInstance();
+        $adSets = [];
+
+        $fields = [
+            'name', 'id'
+        ];
+
+        $cursor = $account->getAdSets($fields);
+        $cursor->setUseImplicitFetch(true);
+
+        foreach ($cursor as $adSet) {
+            $adSets[] = [
+                'id' => $adSet->id,
+                'name' => $adSet->name
+            ];
+        }
+
+        return collect($adSets)->all();
+    }
+
+
+    /**
      * Creates Ad Set.
      *
      * @param  string $name
@@ -62,9 +90,7 @@ class FacebookAdsAdSet
         $threeWeeks = Carbon::today()->addWeeks(3)->timestamp;
         $oneMonth = Carbon::today()->addMonth()->timestamp;
 
-        $donation = collect([
-            ['value' => $budget]
-        ]);
+        $donation = collect([['value' => $budget]]);
 
         $duration = collect([
             ['duration' => $oneWeek, 'budget' => $donation->whereBetween('value', [5, 10])->all()],

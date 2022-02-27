@@ -47,6 +47,8 @@ Route::post('/tests', function (Request $request) {
 });
 
 Route::post('ad-preview', [FacebookAdsController::class, 'adPreview']);
+Route::post('list-ad-sets', [FacebookAdsController::class, 'listAdSets']);
+Route::post('list-ads', [FacebookAdsController::class, 'listAds']);
 
 // Route::get('pet-ads', function (FacebookAdsCampaign $campaign, FacebookAdsAdSet $adSet, Request $request) {
 

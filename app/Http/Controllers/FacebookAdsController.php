@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Services\FacebookAds\FacebookAdsAd;
 use App\Services\FacebookAds\FacebookAdsAdSet;
-use App\Services\FacebookAds\FacebookAdsCampaign;
 use App\Services\FacebookAds\FacebookAdsPreview;
+use App\Services\FacebookAds\FacebookAdsCampaign;
 
 class FacebookAdsController extends Controller
 {
@@ -57,14 +58,6 @@ class FacebookAdsController extends Controller
         $zipCode = $validData['zipCode'];
         $lastCampaignId = $campaign->getLastCampaign()->id;
 
-        $test = $ad->getPreview($validData['url'], $validData['link'], $petName);
-
-        return response()->json([
-            'Ad Preview' => $test
-        ]);
-
-        dd($test);
-
         $created = $adSet->createAdSet($petName, $lastCampaignId, $zipCode, $budget);
 
         return response()->json([
@@ -72,6 +65,40 @@ class FacebookAdsController extends Controller
                 'name' => $created->name,
                 'id' => $created->id,
             ]
+        ]);
+    }
+
+    /**
+     * Lists all Ad Sets.
+     *
+     * @param  object Illuminate\Http\Request
+     * @param  object App\Services\FacebookAds\FacebookAdsAdSet
+
+     * @return object Illuminate\Http\response
+     */
+    public function listAdSets(Request $request, FacebookAdsAdSet $adSet)
+    {
+        $adSets = $adSet->listAdSets();
+
+        return response()->json([
+            'adSets' => $adSets
+        ]);
+    }
+
+    /**
+     * Lists all Ad Sets.
+     *
+     * @param  object Illuminate\Http\Request
+     * @param  object App\Services\FacebookAds\FacebookAdsAdSet
+
+     * @return object Illuminate\Http\response
+     */
+    public function listAds(Request $request, FacebookAdsAd $ad)
+    {
+        $ads = $ad->listAds();
+
+        return response()->json([
+            'ads' => $ads
         ]);
     }
 }
