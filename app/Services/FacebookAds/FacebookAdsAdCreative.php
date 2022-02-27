@@ -110,6 +110,9 @@ class FacebookAdsAdCreative
         $data = [
             'image_hash' => $imageHash,
             'link' => $link,
+            'call_to_action' => [
+                'type' => 'LEARN_MORE'
+            ],
             'message' => "Hey there! Care for a pet? $name is near you. Adopt a pet instead of buying and experience true animal love."
         ];
 
