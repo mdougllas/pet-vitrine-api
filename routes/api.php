@@ -25,11 +25,8 @@ use Laravel\Fortify\Http\Controllers\RegisteredUserController;
 */
 
 Route::post('mobile/register', [RegisteredUserController::class, 'store']);
-
 Route::post('mobile/login', [MobileAuthController::class, 'requestToken']);
-
 Route::get('petfinder-token', [PetfinderController::class, 'requestToken']);
-
 Route::post('recaptcha-token', [RecaptchaController::class, 'checkToken']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -49,6 +46,7 @@ Route::post('/tests', function (Request $request) {
 Route::post('ad-preview', [FacebookAdsController::class, 'adPreview']);
 Route::post('list-ad-sets', [FacebookAdsController::class, 'listAdSets']);
 Route::post('list-ads', [FacebookAdsController::class, 'listAds']);
+Route::post('create-ad', [FacebookAdsController::class, 'createAd']);
 
 // Route::get('pet-ads', function (FacebookAdsCampaign $campaign, FacebookAdsAdSet $adSet, Request $request) {
 

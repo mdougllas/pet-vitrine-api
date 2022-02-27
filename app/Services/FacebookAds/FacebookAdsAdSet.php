@@ -74,6 +74,8 @@ class FacebookAdsAdSet
             'status' => 'PAUSED',
         ];
 
+        dd($params);
+
         return $account->createAdSet($fields, $params);
     }
 
@@ -93,10 +95,10 @@ class FacebookAdsAdSet
         $donation = collect([['value' => $budget]]);
 
         $duration = collect([
-            ['duration' => $oneWeek, 'budget' => $donation->whereBetween('value', [5, 10])->all()],
+            ['duration' => $oneWeek, 'budget' => $donation->where('value', '<=', 10)->all()],
             ['duration' => $twoWeeks, 'budget' => $donation->whereBetween('value', [11, 20])->all()],
             ['duration' => $threeWeeks, 'budget' => $donation->whereBetween('value', [21, 30])->all()],
-            ['duration' => $oneMonth, 'budget' => $donation->whereBetween('value', [31, 40])->all()],
+            ['duration' => $oneMonth, 'budget' => $donation->where('value', '>=', 31)->all()],
         ]);
 
         return $duration->filter(fn ($value) => $value['budget'])->flatten()->first();
