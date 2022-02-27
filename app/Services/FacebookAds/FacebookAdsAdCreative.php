@@ -2,15 +2,15 @@
 
 namespace App\Services\FacebookAds;
 
-use App\Exceptions\ImageNotFoundException;
 use Exception;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use App\Services\FacebookAds\FacebookAds;
-use FacebookAds\Object\AdCreative;
+use App\Exceptions\ImageNotFoundException;
 use FacebookAds\Object\AdCreativeLinkData;
 use FacebookAds\Object\AdCreativeObjectStorySpec;
 
-class FacebookAdsPreview
+class FacebookAdsAdCreative
 {
     /**
      * Instantiates / set up the class.
@@ -30,26 +30,25 @@ class FacebookAdsPreview
     }
 
     /**
-     * Get the ad previews.
+     * Lists all Ad Creatives.
      *
-     * @param  string $url
-     * @param  string $link
-     * @param  string $name
-     *
-     * @return array
+     * @return Illuminate\Database\Eloquent\Collection;
      */
-    public function getPreview($url, $link, $name)
+    public function listAdCreatives()
     {
-        $fields = [];
-        $params = ['ad_format' => 'DESKTOP_FEED_STANDARD'];
-        $creativeId = $this->createAdCreative($url, $link, $name);
-        $adCreative = new AdCreative($creativeId);
+        $ads = [];
+        $fields = ['name'];
+        $cursor = $this->account->getAdCreatives($fields);
+        $cursor->setUseImplicitFetch(true);
 
-        $previews = $adCreative->getPreviews($fields, $params)
-            ->getResponse()
-            ->getContent();
+        foreach ($cursor as $ad) {
+            $ads[] = [
+                'id' => $ad->id,
+                'name' => $ad->name
+            ];
+        }
 
-        return $previews;
+        return collect($ads)->all();
     }
 
     /**
@@ -59,20 +58,20 @@ class FacebookAdsPreview
      * @param  string $link
      * @param  string $name
      *
-     * @return integer
+     * @return FacebookAds\Object\AdCreative;
      */
-    private function createAdCreative($url, $link, $name)
+    public function createAdCreative($url, $link, $name)
     {
-        $fields = [];
+        $fields = ['name'];
         $params = [
-            'title' => "Ad Creative for $name",
-            'body' => 'Ad Creative body.',
+            'name' => "Ad Creative for $name",
+            'body' => "Pet Vitrine generated ad creative for $name",
             'object_story_spec' => $this->createObjectStorySpec($url, $link, $name)
         ];
 
         $creative = $this->account->createAdCreative($fields, $params);
 
-        return $creative->id;
+        return $creative;
     }
 
     /**
@@ -105,9 +104,7 @@ class FacebookAdsPreview
     {
         $imageFile = $this->storeImage($url, $name);
         $image = $this->createAdImage($imageFile);
-
         $imageProperties = collect($image->images)->first();
-
         $imageHash = $imageProperties['hash'];
 
         $data = [
@@ -144,12 +141,12 @@ class FacebookAdsPreview
      */
     private function storeImage($url, $name)
     {
-        try {
-            $imageContents = file_get_contents($url, $name);
-            Storage::put("pets/$name.png", $imageContents);
-        } catch (Exception $e) {
-            throw new ImageNotFoundException($e->getMessage());
-        }
+        $image = Http::get($url);
+        $image->onError(function ($err) {
+            throw new ImageNotFoundException($err->getReasonPhrase());
+        });
+
+        Storage::put("pets/$name.png", $image);
 
         return Storage::path("pets/$name.png");
     }

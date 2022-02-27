@@ -74,7 +74,8 @@ class FacebookAdsAdSet
             'status' => 'PAUSED',
         ];
 
-        dd($params);
+        // dd($params);
+        // dd(json_encode($params));
 
         return $account->createAdSet($fields, $params);
     }
@@ -87,6 +88,7 @@ class FacebookAdsAdSet
      */
     private function setAdDuration($budget)
     {
+        $fourDays = Carbon::today()->addDays(4)->timestamp;
         $oneWeek = Carbon::today()->addWeek()->timestamp;
         $twoWeeks = Carbon::today()->addWeeks(2)->timestamp;
         $threeWeeks = Carbon::today()->addWeeks(3)->timestamp;
@@ -95,10 +97,11 @@ class FacebookAdsAdSet
         $donation = collect([['value' => $budget]]);
 
         $duration = collect([
-            ['duration' => $oneWeek, 'budget' => $donation->where('value', '<=', 10)->all()],
-            ['duration' => $twoWeeks, 'budget' => $donation->whereBetween('value', [11, 20])->all()],
-            ['duration' => $threeWeeks, 'budget' => $donation->whereBetween('value', [21, 30])->all()],
-            ['duration' => $oneMonth, 'budget' => $donation->where('value', '>=', 31)->all()],
+            ['duration' => $fourDays, 'budget' => $donation->where('value', '<=', 10)->all()],
+            ['duration' => $oneWeek, 'budget' => $donation->whereBetween('value', [11, 20])->all()],
+            ['duration' => $twoWeeks, 'budget' => $donation->whereBetween('value', [21, 30])->all()],
+            ['duration' => $threeWeeks, 'budget' => $donation->whereBetween('value', [31, 40])->all()],
+            ['duration' => $oneMonth, 'budget' => $donation->where('value', '>=', 41)->all()],
         ]);
 
         return $duration->filter(fn ($value) => $value['budget'])->flatten()->first();

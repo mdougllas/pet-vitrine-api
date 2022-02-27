@@ -2,11 +2,24 @@
 
 namespace App\Services\FacebookAds;
 
-use Illuminate\Support\Carbon;
+use App\Services\FacebookAds\FacebookAdsAdCreative;
 use App\Services\FacebookAds\FacebookAds;
+use FacebookAds\Object\Ad;
 
 class FacebookAdsAd
 {
+    /**
+     * Instantiates / set up the class.
+     *
+     * @param  object App\Services\FacebookAdsAdCreative
+     * @return void
+     */
+    public function __construct(FacebookAdsAccount $account, FacebookAdsAdCreative $creative)
+    {
+        $this->account = $account::adAccountInstance();
+        $this->creative = $creative;
+    }
+
     /**
      * Lists all Ads.
      *
@@ -14,14 +27,11 @@ class FacebookAdsAd
      */
     public function listAds()
     {
-        $account = FacebookAdsAccount::adAccountInstance();
         $ads = [];
 
-        $fields = [
-            'name', 'id'
-        ];
+        $fields = ['name'];
 
-        $cursor = $account->getAds($fields);
+        $cursor = $this->account->getAds($fields);
         $cursor->setUseImplicitFetch(true);
 
         foreach ($cursor as $ad) {
@@ -35,29 +45,45 @@ class FacebookAdsAd
     }
 
     /**
+     * Gets the ad previews.
+     *
+     * @param  string $url
+     * @param  string $link
+     * @param  string $name
+     *
+     * @return array
+     */
+    public function getAdPreview($url, $link, $name)
+    {
+        $fields = [];
+        $params = ['ad_format' => 'DESKTOP_FEED_STANDARD'];
+        $adCreative = $this->creative->createAdCreative($url, $link, $name);
+
+        $previews = $adCreative->getPreviews($fields, $params)
+            ->getResponse()
+            ->getContent();
+
+        return $previews;
+    }
+
+    /**
      * Creates Ad.
      *
      * @param  string $name
-     * @param  integer $campaignId
-     * @param  integer $zipCode
-     * @param  integer $budget
-     * @return FacebookAds\Object\AdSet
+     * @param  integer $adSetId
+     * @param  integer $creativeId
+     * @return FacebookAds\Object\Ad
      */
-    public function createAd($name, $campaignId, $zipCode, $budget)
+    public function createAd($name, $adSetId, $creativeId)
     {
-        $account = FacebookAdsAccount::adAccountInstance();
         $fields = ['name'];
-
-        $zip = collect([
-            'key' => "US:$zipCode",
-            'radius' => 15,
-            'distance_unit' => 'mile'
-        ])->toJson();
-
         $params = [
-            'name' => $name,
+            'name' => "Ad for $name",
+            'adset_id' => $adSetId,
+            'creative' => ['creative_id' => $creativeId],
+            'status' => 'ACTIVE'
         ];
 
-        return $account->createAd($fields, $params);
+        return $this->account->createAd($fields, $params);
     }
 }
