@@ -71,8 +71,11 @@ class FacebookAdsController extends Controller
 
         return response()->json([
             'data' => [
-                'name' => $ad->name,
-                'id' => $ad->id,
+                'Ad' => [
+                    'name' => $ad->name,
+                    'id' => $ad->id,
+                ],
+                'Targeting' => [$adSet->targeting]
             ]
         ]);
     }

@@ -47,7 +47,7 @@ class FacebookAdsAdSet
     public function createAdSet($name, $campaignId, $zipCode, $budget)
     {
         $account = FacebookAdsAccount::adAccountInstance();
-        $fields = ['name'];
+        $fields = ['name', 'targeting'];
 
         $zip = collect([
             'key' => "US:$zipCode",
@@ -69,13 +69,16 @@ class FacebookAdsAdSet
                     'zips' => [
                         $zip
                     ]
-                ]
+                ],
+                'interests' => [
+                    ['id' => 6003430816269, 'name' => 'Pets at Home'],
+                    ['id' => 6003132295608, 'name' => 'Pets Lovers'],
+                    ['id' => 6003225292461, 'name' => 'Pet adoption'],
+                    ['id' => 6003741164891, 'name' => 'Animal shelter'],
+                ],
             ],
             'status' => 'PAUSED',
         ];
-
-        // dd($params);
-        // dd(json_encode($params));
 
         return $account->createAdSet($fields, $params);
     }
