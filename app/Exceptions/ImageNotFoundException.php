@@ -27,6 +27,6 @@ class ImageNotFoundException extends Exception
         return response()->json([
             'status' => 404,
             'message' => "We couldn't find an image with the URL $request->url"
-        ]);
+        ], 404);
     }
 }
