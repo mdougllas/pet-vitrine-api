@@ -4,7 +4,7 @@ namespace App\Exceptions;
 
 use Exception;
 
-class ImageNotFoundException extends Exception
+class HttpException extends Exception
 {
     /**
      * Report the exception.
@@ -19,14 +19,14 @@ class ImageNotFoundException extends Exception
     /**
      * Render the exception into an HTTP response.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function render($request)
     {
         return response()->json([
-            'status' => 404,
-            'message' => "We couldn't find an image with the URL $request->url"
-        ], 404);
+            'status' => $this->getCode(),
+            'message' => $this->getMessage()
+        ], $this->getCode());
     }
 }

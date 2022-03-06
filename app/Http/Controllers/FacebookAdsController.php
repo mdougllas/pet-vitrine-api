@@ -11,10 +11,10 @@ use App\Services\FacebookAds\FacebookAdsCampaign;
 class FacebookAdsController extends Controller
 {
     /**
-     * Creates a preview for the ad.
+     * Creates a preview for the Facebook Ad.
      *
-     * @param  object Illuminate\Http\Request
-     * @param  object App\Services\FacebookAds\FacebookAdsPreview
+     * @param  Illuminate\Http\Request $request
+     * @param  App\Services\FacebookAds\FacebookAdsAd $ad
 
      * @return object Illuminate\Http\response
      */
@@ -36,10 +36,13 @@ class FacebookAdsController extends Controller
     }
 
     /**
-     * Todo - finish this adblock.
+     * Creates Facebook Ad
      *
-     * @param  object Illuminate\Http\Request
-     * @param  object App\Services\FacebookAds\FacebookAdsPreview
+     * @param  Illuminate\Http\Request $request
+     * @param  App\Services\FacebookAds\FacebookAdsCampaign $campaign
+     * @param  App\Services\FacebookAds\FacebookAdsAdSet $adSet
+     * @param  App\Services\FacebookAds\FacebookAdsAdCreative $creative
+     * @param  App\Services\FacebookAds\FacebookAdsAd $ad
 
      * @return object Illuminate\Http\response
      */
@@ -81,9 +84,9 @@ class FacebookAdsController extends Controller
     }
 
     /**
-     * Lists all Ad Sets.
+     * Lists all Facebook Ad Sets.
      *
-     * @param  object App\Services\FacebookAds\FacebookAdsAdSet
+     * @param  App\Services\FacebookAds\FacebookAdsAdSet $adSet
 
      * @return object Illuminate\Http\response
      */
@@ -97,9 +100,9 @@ class FacebookAdsController extends Controller
     }
 
     /**
-     * Lists all Ads.
+     * Lists all Facebook Ads.
      *
-     * @param  object App\Services\FacebookAds\FacebookAdsAdSet
+     * @param  App\Services\FacebookAds\FacebookAdsAdSet $ad
 
      * @return object Illuminate\Http\response
      */

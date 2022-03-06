@@ -54,5 +54,13 @@ return [
     'recaptcha' => [
         'url' => env('RECAPTCHA_URL'),
         'secret_key' => env('RECAPTCHA_SECRET_KEY')
+    ],
+
+    'paypal' => [
+        'account' => env('APP_ENV') == 'production' ? env('PAYPAL_LIVE_ACCOUNT') : env('PAYPAL_SANDBOX_ACCOUNT'),
+        'url' => env('APP_ENV') == 'production' ? env('PAYPAL_LIVE_ROOT_URL') : env('PAYPAL_SANDBOX_ROOT_URL'),
+        'client_id' => env('PAYPAL_CLIENT_ID'),
+        'secret' => env('PAYPAL_SECRET')
+
     ]
 ];

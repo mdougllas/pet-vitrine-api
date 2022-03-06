@@ -2,13 +2,12 @@
 
 namespace App\Services\FacebookAds;
 
-use Exception;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Storage;
-use App\Services\FacebookAds\FacebookAds;
-use App\Exceptions\ImageNotFoundException;
 use FacebookAds\Object\AdCreativeLinkData;
 use FacebookAds\Object\AdCreativeObjectStorySpec;
+use App\Helpers\HandleHttpException;
+use App\Services\FacebookAds\FacebookAds;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 
 class FacebookAdsAdCreative
 {
@@ -145,9 +144,7 @@ class FacebookAdsAdCreative
     private function storeImage($url, $name)
     {
         $image = Http::get($url);
-        $image->onError(function ($err) {
-            throw new ImageNotFoundException($err->getReasonPhrase());
-        });
+        $image->onError(fn ($err) => HandleHttpException::throw($err));
 
         Storage::put("pets/$name.png", $image);
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use App\Helpers\HandleHttpException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cookie;
 
@@ -25,12 +26,7 @@ class PetfinderController extends Controller
         ];
 
         $response = Http::post(self::PETFINDER_ROOT, $data);
-
-        if (!$response->ok()) {
-            $responseObject = $response->object();
-
-            return response()->json($responseObject, $responseObject->status);
-        }
+        $response->onError(fn ($err) => HandleHttpException::throw($err));
 
         $cookie = cookie(
             'petfinder_token',
