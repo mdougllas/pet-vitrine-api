@@ -29,6 +29,7 @@ Route::post('recaptcha-token', [RecaptchaController::class, 'checkToken']);
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('mobile/logout', [MobileAuthController::class, 'destroyToken']);
     Route::get('/user', [UserController::class, 'getUser']);
+    Route::post('payment', [PaypalController::class, 'createOrder']);
 
     //Testing route - will be removed
     Route::get('/auth-tests', function (Request $request) {
@@ -44,5 +45,3 @@ Route::post('ad-preview', [FacebookAdsController::class, 'adPreview']);
 Route::post('list-ad-sets', [FacebookAdsController::class, 'listAdSets']);
 Route::post('list-ads', [FacebookAdsController::class, 'listAds']);
 Route::post('create-ad', [FacebookAdsController::class, 'createAd']);
-
-Route::get('payment', [PaypalController::class, 'createOrder']);
