@@ -38,6 +38,11 @@ class PaypalOrder extends Paypal
                         'value' => '5.00'
                     ]
                 ]
+            ],
+            'application_context' => [
+                'brand_name' => 'Pet Vitrine',
+                'shipping_preference' => 'NO_SHIPPING',
+                'return_url' => 'http://localhost:3000/pet/advertise/completed'
             ]
         ];
 
