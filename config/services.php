@@ -60,7 +60,7 @@ return [
         'account' => env('APP_ENV') == 'production' ? env('PAYPAL_LIVE_ACCOUNT') : env('PAYPAL_SANDBOX_ACCOUNT'),
         'url' => env('APP_ENV') == 'production' ? env('PAYPAL_LIVE_ROOT_URL') : env('PAYPAL_SANDBOX_ROOT_URL'),
         'client_id' => env('PAYPAL_CLIENT_ID'),
-        'secret' => env('PAYPAL_SECRET')
-
+        'secret' => env('PAYPAL_SECRET'),
+        'return_url' => env('PAYPAL_RETURN_URL')
     ]
 ];

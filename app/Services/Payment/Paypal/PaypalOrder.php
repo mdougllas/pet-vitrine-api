@@ -18,6 +18,8 @@ class PaypalOrder extends Paypal
         parent::__construct();
 
         $this->url = "$this->rootUrl/v2/checkout/orders";
+        $this->returnUrl = config('services.paypal.return_url');
+        $this->token = $this->getToken();
     }
 
     /**
@@ -25,28 +27,26 @@ class PaypalOrder extends Paypal
      *
      * @return object Illuminate\Support\Facades\Http
      */
-    public function createOrder()
+    public function createOrder($amount)
     {
-        $token = $this->getToken();
-
         $data = [
             'intent' => 'CAPTURE',
             'purchase_units' => [
                 [
                     'amount' => [
                         'currency_code' => 'USD',
-                        'value' => '5.00'
+                        'value' => $amount
                     ]
                 ]
             ],
             'application_context' => [
                 'brand_name' => 'Pet Vitrine',
                 'shipping_preference' => 'NO_SHIPPING',
-                'return_url' => 'http://localhost:3000/pet/advertise/completed'
+                'return_url' => $this->returnUrl
             ]
         ];
 
-        $order = Http::withToken($token)->post($this->url, $data);
+        $order = Http::withToken($this->token)->post($this->url, $data);
         $order->onError(fn ($err) => HandleHttpException::throw($err));
 
         return $order->object();
@@ -72,5 +72,45 @@ class PaypalOrder extends Paypal
      */
     public function orderDetails()
     {
+    }
+
+    /**
+     * FINISH THIS DOCBLOCK.
+     *
+     * @param  array  $fields
+     * @param  array  $params
+     * @return FacebookAds\Object\Campaign
+     */
+    public function capturePayment()
+    {
+        // $curl = curl_init();
+
+        // curl_setopt_array($curl, array(
+        //     CURLOPT_URL => 'https://api.sandbox.paypal.com/v2/checkout/orders/8U478874457976903/capture',
+        //     CURLOPT_RETURNTRANSFER => true,
+        //     CURLOPT_ENCODING => '',
+        //     CURLOPT_MAXREDIRS => 10,
+        //     CURLOPT_TIMEOUT => 0,
+        //     CURLOPT_FOLLOWLOCATION => true,
+        //     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        //     CURLOPT_CUSTOMREQUEST => 'POST',
+        //     CURLOPT_HTTPHEADER => array(
+        //         'Content-Type: application/json',
+        //         'Authorization: Bearer A21AALP-zTFmrCJTMf8Bdw_5Tj5xUh8QwVyFAyA7cKH9GsrHEDE62me_rG5piYvTOxdud1rnthA3AxG_lPdEEvCRYIhBuyM3g'
+        //     ),
+        // ));
+
+        // $response = curl_exec($curl);
+
+        // curl_close($curl);
+        // return $response;
+
+        $url = session('paypal_url');
+        $data = ['' => ''];
+
+        $capture = Http::withToken($this->token)->post($url, $data);
+        $capture->onError(fn ($err) => HandleHttpException::throw($err));
+
+        return $capture->object();
     }
 }

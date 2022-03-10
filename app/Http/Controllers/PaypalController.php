@@ -10,10 +10,27 @@ class PaypalController extends Controller
 {
     public function createOrder(PaypalOrder $paypal, Request $request)
     {
-        $response = $paypal->createOrder();
+        $validData = $request->validate([
+            'amount' => 'required|numeric|min:5'
+        ]);
+
+        $response = $paypal->createOrder($validData['amount']);
+        $link = $response->links[3];
+        $url = $link->href;
+
+        session(['paypal_url' => $url]);
 
         return response()->json([
             'token' => $response
+        ]);
+    }
+
+    public function capturePayment(PaypalOrder $paypal, Request $request)
+    {
+        $test = $paypal->capturePayment();
+
+        return response()->json([
+            'data' => $test
         ]);
     }
 }
