@@ -83,28 +83,6 @@ class PaypalOrder extends Paypal
      */
     public function capturePayment()
     {
-        // $curl = curl_init();
-
-        // curl_setopt_array($curl, array(
-        //     CURLOPT_URL => 'https://api.sandbox.paypal.com/v2/checkout/orders/8U478874457976903/capture',
-        //     CURLOPT_RETURNTRANSFER => true,
-        //     CURLOPT_ENCODING => '',
-        //     CURLOPT_MAXREDIRS => 10,
-        //     CURLOPT_TIMEOUT => 0,
-        //     CURLOPT_FOLLOWLOCATION => true,
-        //     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        //     CURLOPT_CUSTOMREQUEST => 'POST',
-        //     CURLOPT_HTTPHEADER => array(
-        //         'Content-Type: application/json',
-        //         'Authorization: Bearer A21AALP-zTFmrCJTMf8Bdw_5Tj5xUh8QwVyFAyA7cKH9GsrHEDE62me_rG5piYvTOxdud1rnthA3AxG_lPdEEvCRYIhBuyM3g'
-        //     ),
-        // ));
-
-        // $response = curl_exec($curl);
-
-        // curl_close($curl);
-        // return $response;
-
         $url = session('paypal_url');
         $data = ['' => ''];
 
