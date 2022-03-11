@@ -2,15 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 use App\Helpers\HandleHttpException;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Cookie;
 
 class PetfinderController extends Controller
 {
-    const PETFINDER_ROOT = 'https://api.petfinder.com/v2/oauth2/token';
+    const PETFINDER_TOKEN_URL = 'https://api.petfinder.com/v2/oauth2/token';
 
     /**
      * Display a listing of the resource.
@@ -25,21 +22,9 @@ class PetfinderController extends Controller
             'client_secret' => config('services.petfinder.api_secret')
         ];
 
-        $response = Http::post(self::PETFINDER_ROOT, $data);
+        $response = Http::post(self::PETFINDER_TOKEN_URL, $data);
         $response->onError(fn ($err) => HandleHttpException::throw($err));
 
-        $cookie = cookie(
-            'petfinder_token',
-            $response['access_token'],
-            60,
-            '/petfinderToken/',
-            null,
-            true,
-            true,
-            false,
-            'strict'
-        );
-
-        return response()->json($response->object())->cookie($cookie);
+        return response()->json($response->object());
     }
 }
