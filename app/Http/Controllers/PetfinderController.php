@@ -10,7 +10,7 @@ class PetfinderController extends Controller
     const PETFINDER_TOKEN_URL = 'https://api.petfinder.com/v2/oauth2/token';
 
     /**
-     * Display a listing of the resource.
+     * Requests access token for Petfinder API.
      *
      * @return \Illuminate\Http\Response
      */

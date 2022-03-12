@@ -81,7 +81,7 @@ class FacebookAdsAd
             'name' => "Ad for $name",
             'adset_id' => $adSetId,
             'creative' => ['creative_id' => $creativeId],
-            'status' => 'ACTIVE'
+            'status' => 'PAUSED'
         ];
 
         return $this->account->createAd($fields, $params);

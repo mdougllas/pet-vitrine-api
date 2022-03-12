@@ -42,8 +42,8 @@ return [
         'app_secret' => env('FB_APP_SECRET'),
         'business_id' => env('FB_BUSINESS_ID'),
         'page_id' => env('FB_PAGE_ID'),
-        'access_token' => env('APP_ENV') == "production" ? env('FB_ACCESS_TOKEN') : env('SANDBOX_FB_ACCESS_TOKEN'),
-        'ad_account_id' => env('APP_ENV') == "production" ? env('FB_AD_ACCOUNT_ID') : env('SANDBOX_FB_AD_ACCOUNT_ID'),
+        'access_token' => env('FB_ACCESS_TOKEN'),
+        'ad_account_id' => env('FB_AD_ACCOUNT_ID'),
     ],
 
     'petfinder' => [
@@ -57,8 +57,8 @@ return [
     ],
 
     'paypal' => [
-        'account' => env('APP_ENV') == 'production' ? env('PAYPAL_LIVE_ACCOUNT') : env('PAYPAL_SANDBOX_ACCOUNT'),
-        'url' => env('APP_ENV') == 'production' ? env('PAYPAL_LIVE_ROOT_URL') : env('PAYPAL_SANDBOX_ROOT_URL'),
+        'account' => env('PAYPAL_ACCOUNT'),
+        'url' => env('PAYPAL_ROOT_URL'),
         'client_id' => env('PAYPAL_CLIENT_ID'),
         'secret' => env('PAYPAL_SECRET'),
         'return_url' => env('PAYPAL_RETURN_URL')
