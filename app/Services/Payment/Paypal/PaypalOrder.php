@@ -25,6 +25,7 @@ class PaypalOrder extends Paypal
     /**
      * Creates PayPal Order.
      *
+     * @param  integer $amount
      * @return object Illuminate\Support\Facades\Http
      */
     public function createOrder($amount)
@@ -53,37 +54,13 @@ class PaypalOrder extends Paypal
     }
 
     /**
-     * FINISH THIS DOCBLOCK.
+     * Captures payment for an authorized PayPal order.
      *
-     * @param  array  $fields
-     * @param  array  $params
-     * @return FacebookAds\Object\Campaign
+     * @param  string $url
+     * @return object Illuminate\Support\Facades\Http
      */
-    public function updateOrder()
+    public function capturePayment($url)
     {
-    }
-
-    /**
-     * FINISH THIS DOCBLOCK.
-     *
-     * @param  array  $fields
-     * @param  array  $params
-     * @return FacebookAds\Object\Campaign
-     */
-    public function orderDetails()
-    {
-    }
-
-    /**
-     * FINISH THIS DOCBLOCK.
-     *
-     * @param  array  $fields
-     * @param  array  $params
-     * @return FacebookAds\Object\Campaign
-     */
-    public function capturePayment()
-    {
-        $url = session('paypal_url');
         $data = ['' => ''];
 
         $capture = Http::withToken($this->token)->post($url, $data);

@@ -3,11 +3,17 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 use App\Services\Payment\Paypal\PaypalOrder;
 
 class PaypalController extends Controller
 {
+    /**
+     * Creates PayPal order.
+     *
+     * @param  App\Services\Payment\Paypal\PaypalOrder $paypal
+     * @param  Illuminate\Http\Request $request
+     * @return Illuminate\Http\Response
+     */
     public function createOrder(PaypalOrder $paypal, Request $request)
     {
         $validData = $request->validate([
@@ -32,15 +38,23 @@ class PaypalController extends Controller
         ]);
     }
 
+    /**
+     * Captures payment for an authorized PayPal order.
+     *
+     * @param  App\Services\Payment\Paypal\PaypalOrder $paypal
+     * @return Illuminate\Http\Response
+     */
     public function capturePayment(PaypalOrder $paypal)
     {
-        $test = $paypal->capturePayment();
+        $url = session('paypal_url');
         $petId = session('pet_id');
         $donation = session('donation');
 
+        $payment = $paypal->capturePayment($url);
+
         return response()->json([
             'data' => [
-                'payment' => $test,
+                'payment' => $payment,
                 'petId' => $petId,
                 'donation' => $donation
             ]
