@@ -14,16 +14,8 @@ class CamelCaseResponse
      * @param Object $object
      * @return Object
      */
-    public static function convert($collection, $object)
+    public static function convert($collection)
     {
-        foreach ($collection as $key => $value) {
-            $parameter = Str::contains($key, '_')
-                ? Str::camel($key)
-                : $key;
-
-            $object->{$parameter} = $value;
-        }
-
-        return $object;
+        return $collection->mapWithKeys(fn ($item, $key) => [Str::camel($key) => $item]);
     }
 }
