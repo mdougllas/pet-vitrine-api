@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PaypalController;
@@ -40,6 +41,18 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 Route::post('/tests', function (Request $request) {
     return response()->json(['ok']);
+});
+
+Route::post('stripe-create-intent', function () {
+    $payload = [
+        'amount' => 500,
+        'currency' => 'usd',
+        'payment_method_types' => ['card']
+    ];
+
+    $test = Http::asForm()->withBasicAuth(config('services.stripe.secret_key'), '')->post('https://api.stripe.com/v1/payment_intents', $payload);
+
+    return response()->json($test->object(), 200);
 });
 
 Route::post('ad-preview', [FacebookAdsController::class, 'adPreview']);
