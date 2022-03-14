@@ -1,14 +1,14 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PaypalController;
 use App\Http\Controllers\PetfinderController;
 use App\Http\Controllers\RecaptchaController;
 use App\Http\Controllers\MobileAuthController;
 use App\Http\Controllers\FacebookAdsController;
+use App\Http\Controllers\StripeController;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 use Laravel\Fortify\Http\Controllers\RegisteredUserController;
 
 /*
@@ -32,6 +32,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('user', [UserController::class, 'getUser']);
     Route::post('paypal-create-order', [PaypalController::class, 'createOrder']);
     Route::post('paypal-capture-payment', [PaypalController::class, 'capturePayment']);
+    Route::post('stripe-create-intent', [StripeController::class, 'createPaymentIntent']);
 
     //Testing route - will be removed
     Route::get('/auth-tests', function (Request $request) {
@@ -41,18 +42,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 Route::post('/tests', function (Request $request) {
     return response()->json(['ok']);
-});
-
-Route::post('stripe-create-intent', function () {
-    $payload = [
-        'amount' => 500,
-        'currency' => 'usd',
-        'payment_method_types' => ['card']
-    ];
-
-    $test = Http::asForm()->withBasicAuth(config('services.stripe.secret_key'), '')->post('https://api.stripe.com/v1/payment_intents', $payload);
-
-    return response()->json($test->object(), 200);
 });
 
 Route::post('ad-preview', [FacebookAdsController::class, 'adPreview']);
