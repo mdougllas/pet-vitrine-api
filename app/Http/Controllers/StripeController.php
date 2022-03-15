@@ -9,13 +9,12 @@ class StripeController extends Controller
 {
     public function createPaymentIntent(Request $request)
     {
-        // $validData = $request->validate([
-        //     'amount' => 'required|numeric|min:5'
-        // ]);
+        $validData = $request->validate([
+            'amount' => 'required|numeric|min:500'
+        ]);
 
         $payload = [
-            'amount' => 500,
-            // 'amount' => $validData['amount'],
+            'amount' => $validData['amount'],
             'currency' => 'usd',
             'payment_method_types' => ['card']
         ];
