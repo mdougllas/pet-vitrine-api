@@ -33,6 +33,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('paypal-create-order', [PaypalController::class, 'createOrder']);
     Route::post('paypal-capture-payment', [PaypalController::class, 'capturePayment']);
     Route::post('stripe-create-intent', [StripeController::class, 'createPaymentIntent']);
+    Route::post('stripe-request-intent', [StripeController::class, 'requestPaymentIntent']);
 
     //Testing route - will be removed
     Route::get('/auth-tests', function (Request $request) {

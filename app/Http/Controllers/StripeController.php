@@ -28,5 +28,17 @@ class StripeController extends Controller
 
     public function requestPaymentIntent(Request $request)
     {
+        $validData = $request->validate([
+            'payment_intent' => 'required|string'
+        ]);
+
+        $paymentIntentId = $validData['payment_intent'];
+
+        $url = "https://api.stripe.com/v1/payment_intents/$paymentIntentId";
+
+        $paymentIntent = Http::withBasicAuth(config('services.stripe.secret_key'), '')
+            ->get($url);
+
+        return response()->json($paymentIntent->object(), 200);
     }
 }
