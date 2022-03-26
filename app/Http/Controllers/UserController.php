@@ -2,32 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use Illuminate\Support\Str;
+use App\Helpers\CamelCaseResponse;
 use Illuminate\Http\Request;
-use SebastianBergmann\GlobalState\Snapshot;
 
 class UserController extends Controller
 {
-    public function getUser(Request $request, User $user)
+    /**
+     * Gets the authenticated user.
+     *
+     * @param Illuminate\Http\Request $request
+     * @throws App\Models\User $user
+     * @return Json Illuminate\Http\Response
+     */
+    public function getUser(Request $request)
     {
         $userSnakeCase = collect($request->user());
+        $userCamelCase = CamelCaseResponse::convert($userSnakeCase);
 
-        $userCamelCase = $this->toCamelCase($userSnakeCase, $user);
-
-        return $userCamelCase;
-    }
-
-    private function toCamelCase($arr, $user)
-    {
-        foreach ($arr as $key => $value) {
-            $camel = Str::contains($key, '_')
-                ? Str::camel($key)
-                : $key;
-
-            $user->{$camel} = $value;
-        }
-
-        return $user;
+        return response()->json($userCamelCase, 200);
     }
 }

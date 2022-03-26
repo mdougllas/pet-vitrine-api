@@ -56,7 +56,7 @@ class FacebookAdsAd
     public function getAdPreview($url, $link, $name)
     {
         $fields = [];
-        $params = ['ad_format' => 'DESKTOP_FEED_STANDARD'];
+        $params = ['ad_format' => 'MOBILE_FEED_STANDARD'];
         $adCreative = $this->creative->createAdCreative($url, $link, $name);
 
         $previews = $adCreative->getPreviews($fields, $params)

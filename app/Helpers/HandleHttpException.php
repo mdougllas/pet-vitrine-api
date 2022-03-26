@@ -4,15 +4,15 @@ namespace App\Helpers;
 
 use App\Exceptions\HttpException;
 
-/**
- * Handles HTTP requests errors.
- *
- * @param  array  $error
- * @throws App\Exceptions\HttpException
- * @return void
- */
 class HandleHttpException
 {
+    /**
+     * Handles HTTP requests errors.
+     *
+     * @param  App\Exceptions\HttpException  $error
+     * @throws App\Exceptions\HttpException
+     * @return void
+     */
     public static function throw($error)
     {
         $code = $error->getStatusCode();
