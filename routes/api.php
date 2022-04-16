@@ -35,6 +35,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('paypal-capture-payment', [PaypalController::class, 'capturePayment']);
     Route::post('stripe-create-intent', [StripeController::class, 'createPaymentIntent']);
     Route::post('stripe-request-intent', [StripeController::class, 'requestPaymentIntent']);
+    Route::post('create-ad', [FacebookAdsController::class, 'createAd']);
 
     //Testing route - will be removed
     Route::get('/auth-tests', function (Request $request) {
@@ -49,6 +50,5 @@ Route::post('/tests', function (Request $request) {
 Route::post('ad-preview', [FacebookAdsController::class, 'adPreview']);
 Route::post('list-ad-sets', [FacebookAdsController::class, 'listAdSets']);
 Route::post('list-ads', [FacebookAdsController::class, 'listAds']);
-Route::post('create-ad', [FacebookAdsController::class, 'createAd']);
 
 Route::middleware(['auth:sanctum'])->resource('ad', AdController::class)->except(['create', 'edit']);

@@ -47,7 +47,7 @@ class FacebookAdsAdSet
     public function createAdSet($name, $campaignId, $zipCode, $budget)
     {
         $account = FacebookAdsAccount::adAccountInstance();
-        $fields = ['name', 'targeting'];
+        $fields = ['name', 'targeting', 'start_time', 'end_time'];
 
         $zip = collect([
             'key' => "US:$zipCode",

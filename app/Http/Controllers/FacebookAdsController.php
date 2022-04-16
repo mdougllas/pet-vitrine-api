@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Ad;
 use App\Services\FacebookAds\FacebookAdsAd;
-use App\Services\FacebookAds\FacebookAdsAdCreative;
 use App\Services\FacebookAds\FacebookAdsAdSet;
 use App\Services\FacebookAds\FacebookAdsCampaign;
+use App\Services\FacebookAds\FacebookAdsAdCreative;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class FacebookAdsController extends Controller
 {
@@ -47,6 +50,7 @@ class FacebookAdsController extends Controller
      * @return object Illuminate\Http\response
      */
     public function createAd(
+        Ad $storeAd,
         Request $request,
         FacebookAdsCampaign $campaign,
         FacebookAdsAdSet $adSet,
@@ -54,6 +58,7 @@ class FacebookAdsController extends Controller
         FacebookAdsAd $ad
     ) {
         $validData = $request->validate([
+            'petId' => 'required|numeric',
             'petName' => 'required|string',
             'zipCode' => 'required|digits:5',
             'budget' => 'required|numeric|min:5',
@@ -61,6 +66,8 @@ class FacebookAdsController extends Controller
             'link' => 'required'
         ]);
 
+        $userId = $request->user()->id;
+        $petId = $validData['petId'];
         $petName = $validData['petName'];
         $zipCode = $validData['zipCode'];
         $budget = (int) $validData['budget'];
@@ -72,13 +79,24 @@ class FacebookAdsController extends Controller
         $adCreative = $creative->createAdCreative($url, $link, $petName);
         $ad = $ad->createAd($petName, $adSet->id, $adCreative->id);
 
+        $this->store(
+            $petId,
+            $lastCampaignId,
+            $adSet,
+            $adCreative,
+            $ad->id,
+            $budget,
+            $storeAd,
+            $userId
+        );
+
         return response()->json([
             'data' => [
-                'Ad' => [
+                'ad' => [
                     'name' => $ad->name,
                     'id' => $ad->id,
                 ],
-                'Targeting' => [$adSet->targeting]
+                'targeting' => [$adSet->targeting]
             ]
         ]);
     }
@@ -113,5 +131,20 @@ class FacebookAdsController extends Controller
         return response()->json([
             'ads' => $ads
         ]);
+    }
+
+    private function store($id, $campaign, $adSet, $adCreative, $adId, $budget, $ad, $userId)
+    {
+        $ad->ad_id = $adId;
+        $ad->ad_set_id = $adSet->id;
+        $ad->budget = $budget;
+        $ad->campaign_id = $campaign;
+        $ad->creative_id = $adCreative->id;
+        $ad->end_time = new Carbon($adSet->end_time);
+        $ad->pet_id = $id;
+        $ad->start_time = new Carbon($adSet->start_time);
+        $ad->uuid = Str::uuid();
+        $ad->user_id = $userId;
+        $ad->save();
     }
 }
