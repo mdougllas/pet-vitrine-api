@@ -17,20 +17,23 @@ class PaypalController extends Controller
     public function createOrder(PaypalOrder $paypal, Request $request)
     {
         $validData = $request->validate([
-            'amount' => 'required|numeric|min:5',
+            'donation' => 'required|numeric|min:5',
+            'total' => 'required|numeric|min:5',
             'pet_id' => 'required|numeric'
         ]);
 
         $petId = $validData['pet_id'];
-        $donation = $validData['amount'];
-        $response = $paypal->createOrder($donation);
+        $donation = $validData['donation'];
+        $total = $validData['total'];
+        $response = $paypal->createOrder($total);
         $link = $response->links[3];
         $url = $link->href;
 
         session([
             'paypal_url' => $url,
             'pet_id' => $petId,
-            'donation' => $donation
+            'donation' => $donation,
+            'total' => $total,
         ]);
 
         return response()->json([
@@ -49,6 +52,7 @@ class PaypalController extends Controller
         $url = session('paypal_url');
         $petId = session('pet_id');
         $donation = session('donation');
+        $total = session('total');
 
         $payment = $paypal->capturePayment($url);
 
@@ -56,7 +60,8 @@ class PaypalController extends Controller
             'data' => [
                 'payment' => $payment,
                 'petId' => $petId,
-                'donation' => $donation
+                'donation' => $donation,
+                'total' => $total
             ]
         ]);
     }
