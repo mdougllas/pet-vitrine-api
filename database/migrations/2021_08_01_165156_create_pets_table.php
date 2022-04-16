@@ -16,9 +16,7 @@ class CreatePetsTable extends Migration
         Schema::create('pets', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid');
-            $table->string('species');
-            $table->string('name');
-            $table->tinyInteger('status');
+            $table->bigInteger('petfinder_id');
             $table->timestamps();
             $table
                 ->foreignId('ad_id')
