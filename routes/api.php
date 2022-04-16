@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PaypalController;
 use App\Http\Controllers\PetfinderController;
@@ -49,3 +50,5 @@ Route::post('ad-preview', [FacebookAdsController::class, 'adPreview']);
 Route::post('list-ad-sets', [FacebookAdsController::class, 'listAdSets']);
 Route::post('list-ads', [FacebookAdsController::class, 'listAds']);
 Route::post('create-ad', [FacebookAdsController::class, 'createAd']);
+
+Route::middleware(['auth:sanctum'])->resource('ad', AdController::class)->except(['create', 'edit']);
