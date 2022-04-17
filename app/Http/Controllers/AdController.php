@@ -16,7 +16,6 @@ class AdController extends Controller
     public function index()
     {
         $ads = Auth::user()->ads;
-
         return new AdResource($ads->paginate(12));
     }
 

@@ -23,32 +23,36 @@ use Laravel\Fortify\Http\Controllers\RegisteredUserController;
 |
 */
 
+// Native Mobile App Routes
 Route::post('mobile/register', [RegisteredUserController::class, 'store']);
 Route::post('mobile/login', [MobileAuthController::class, 'requestToken']);
-Route::get('petfinder-token', [PetfinderController::class, 'requestToken']);
-Route::post('recaptcha-token', [RecaptchaController::class, 'checkToken']);
 
-Route::middleware(['auth:sanctum'])->group(function () {
-    Route::post('mobile/logout', [MobileAuthController::class, 'destroyToken']);
-    Route::get('user', [UserController::class, 'getUser']);
-    Route::post('paypal-create-order', [PaypalController::class, 'createOrder']);
-    Route::post('paypal-capture-payment', [PaypalController::class, 'capturePayment']);
-    Route::post('stripe-create-intent', [StripeController::class, 'createPaymentIntent']);
-    Route::post('stripe-request-intent', [StripeController::class, 'requestPaymentIntent']);
-    Route::post('create-ad', [FacebookAdsController::class, 'createAd']);
-
-    //Testing route - will be removed
-    Route::get('/auth-tests', function (Request $request) {
-        dd(config('cors.allowed_origins'));
-    });
-});
-
-Route::post('/tests', function (Request $request) {
-    return response()->json(['ok']);
-});
-
+// Facebook Routes
 Route::post('ad-preview', [FacebookAdsController::class, 'adPreview']);
 Route::post('list-ad-sets', [FacebookAdsController::class, 'listAdSets']);
 Route::post('list-ads', [FacebookAdsController::class, 'listAds']);
 
-Route::middleware(['auth:sanctum'])->resource('ad', AdController::class)->except(['create', 'edit']);
+// Miscellaneous Routes
+Route::get('petfinder-token', [PetfinderController::class, 'requestToken']);
+Route::post('recaptcha-token', [RecaptchaController::class, 'checkToken']);
+
+// Auth Protected Routes
+Route::middleware(['auth:sanctum'])->group(function () {
+    // User
+    Route::post('mobile/logout', [MobileAuthController::class, 'destroyToken']);
+    Route::get('user', [UserController::class, 'getUser']);
+
+    // Paypal
+    Route::post('paypal-create-order', [PaypalController::class, 'createOrder']);
+    Route::post('paypal-capture-payment', [PaypalController::class, 'capturePayment']);
+
+    // Stripe
+    Route::post('stripe-create-intent', [StripeController::class, 'createPaymentIntent']);
+    Route::post('stripe-request-intent', [StripeController::class, 'requestPaymentIntent']);
+
+    // Facebook
+    Route::post('create-ad', [FacebookAdsController::class, 'createAd']);
+
+    // Miscellaneous
+    Route::resource('ad', AdController::class)->except(['create', 'edit']);
+});
