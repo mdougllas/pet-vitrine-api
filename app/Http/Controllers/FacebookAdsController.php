@@ -102,6 +102,19 @@ class FacebookAdsController extends Controller
     }
 
     /**
+     * Shows results for given ad set.
+     *
+     * @param  $id
+
+     * @return object Illuminate\Http\response
+     */
+    public function adResults($id, FacebookAdsAdSet $adSet)
+    {
+        $results = $adSet->getAdSet($id);
+        return $results;
+    }
+
+    /**
      * Lists all Facebook Ad Sets.
      *
      * @param  App\Services\FacebookAds\FacebookAdsAdSet $adSet

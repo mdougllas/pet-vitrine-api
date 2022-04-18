@@ -52,6 +52,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     // Facebook
     Route::post('create-ad', [FacebookAdsController::class, 'createAd']);
+    Route::get('ad-results/{id}', [FacebookAdsController::class, 'adResults']);
 
     // Miscellaneous
     Route::resource('ad', AdController::class)->except(['create', 'edit']);

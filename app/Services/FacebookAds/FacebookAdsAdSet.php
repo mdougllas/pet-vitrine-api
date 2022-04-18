@@ -4,6 +4,7 @@ namespace App\Services\FacebookAds;
 
 use Illuminate\Support\Carbon;
 use App\Services\FacebookAds\FacebookAds;
+use FacebookAds\Object\AdSet;
 
 class FacebookAdsAdSet
 {
@@ -32,6 +33,25 @@ class FacebookAdsAdSet
         }
 
         return collect($adSets)->all();
+    }
+
+    public function getAdSet($id)
+    {
+        FacebookAdsAccount::adAccountInstance();
+
+        $fields = [
+            'impressions', 'clicks'
+        ];
+
+        $params = [
+            'date_preset' => 'maximum'
+        ];
+
+        $set = (new AdSet($id));
+
+        $test = $set->getInsights($fields, $params)->getResponse()->getContent();
+
+        return $test;
     }
 
 
