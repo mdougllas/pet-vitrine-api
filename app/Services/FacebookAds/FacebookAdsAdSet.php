@@ -40,18 +40,18 @@ class FacebookAdsAdSet
         FacebookAdsAccount::adAccountInstance();
 
         $fields = [
-            'impressions', 'clicks'
+            'spend', 'clicks', 'cpc', 'reach', 'impressions'
         ];
 
         $params = [
-            'date_preset' => 'maximum'
+            'date_preset' => 'maximum' //Use time_range in the future: https://developers.facebook.com/docs/marketing-api/insights/parameters/v13.0
         ];
 
-        $set = (new AdSet($id));
+        $set = new AdSet($id);
+        $rawData = $set->getInsights($fields, $params)->getResponse()->getContent();
+        $data = collect($rawData['data'])->first();
 
-        $test = $set->getInsights($fields, $params)->getResponse()->getContent();
-
-        return $test;
+        return $data;
     }
 
 

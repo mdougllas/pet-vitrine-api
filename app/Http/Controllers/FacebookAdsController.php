@@ -111,7 +111,10 @@ class FacebookAdsController extends Controller
     public function adResults($id, FacebookAdsAdSet $adSet)
     {
         $results = $adSet->getAdSet($id);
-        return $results;
+
+        return response()->json([
+            'data' => $results
+        ]);
     }
 
     /**
