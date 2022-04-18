@@ -24,6 +24,11 @@ class Ad extends Model
      */
     // protected $with = ['pet'];
 
+    protected $casts = [
+        'start_time' => 'datetime:m-d-Y',
+        'end_time' => 'datetime:m-d-Y',
+    ];
+
     /**
      * The relationship between Ad and Pet
      *
