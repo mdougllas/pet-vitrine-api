@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\DuplicateEntryException;
 use App\Helpers\CamelCaseResponse;
-use App\Helpers\HandleHttpException;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class UserController extends Controller
 {
@@ -37,15 +37,31 @@ class UserController extends Controller
         ]);
 
         $petId = $validData['petId'];
-
         $user = $request->user();
         $favorites = collect($user->favorites);
-
         $idExists = $favorites->contains($petId);
+
         if ($idExists) throw new DuplicateEntryException('This pet is favorite already.', 409);
 
         $favorites->push($validData['petId']);
         $user->favorites = $favorites;
+        $user->save();
+
+        return response()->json([
+            'user' => $user
+        ]);
+    }
+
+    public function removeFromFavorites(Request $request, $id)
+    {
+        $user = $request->user();
+        $favorites = collect($user->favorites);
+
+        if (!$favorites->contains($id)) throw new NotFoundHttpException('This pet was not found in favorites.');
+
+        $newFavorites = $favorites->reject(fn ($value) => $value == $id);
+
+        $user->favorites = $newFavorites->flatten();
         $user->save();
 
         return response()->json([

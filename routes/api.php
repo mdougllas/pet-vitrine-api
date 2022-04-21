@@ -42,6 +42,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('mobile/logout', [MobileAuthController::class, 'destroyToken']);
     Route::get('user', [UserController::class, 'getUser']);
     Route::post('add-to-favorites', [UserController::class, 'addToFavorites']);
+    Route::get('remove-from-favorites/{id}', [UserController::class, 'removeFromFavorites']);
 
     // Paypal
     Route::post('paypal-create-order', [PaypalController::class, 'createOrder']);
