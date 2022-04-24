@@ -25,6 +25,7 @@ class Ad extends Model
     // protected $with = ['pet'];
 
     protected $casts = [
+        'budget' => 'integer',
         'start_time' => 'datetime:m-d-Y',
         'end_time' => 'datetime:m-d-Y',
     ];
