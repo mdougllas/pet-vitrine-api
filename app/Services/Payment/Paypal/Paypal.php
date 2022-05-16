@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Payment\paypal;
+namespace App\Services\Payment\Paypal;
 
 use Illuminate\Support\Carbon;
 use App\Helpers\HandleHttpException;
