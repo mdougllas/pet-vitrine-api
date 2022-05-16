@@ -6,7 +6,7 @@ use App\Http\Controllers\PaypalController;
 use App\Http\Controllers\PetfinderController;
 use App\Http\Controllers\RecaptchaController;
 use App\Http\Controllers\MobileAuthController;
-use App\Http\Controllers\FacebookAdsController;
+use App\Http\Controllers\FacebookAdController;
 use App\Http\Controllers\StripeController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -28,9 +28,9 @@ Route::post('mobile/register', [RegisteredUserController::class, 'store']);
 Route::post('mobile/login', [MobileAuthController::class, 'requestToken']);
 
 // Facebook Routes
-Route::post('ad-preview', [FacebookAdsController::class, 'adPreview']);
-Route::post('list-ad-sets', [FacebookAdsController::class, 'listAdSets']);
-Route::post('list-ads', [FacebookAdsController::class, 'listAds']);
+Route::post('ad-preview', [FacebookAdController::class, 'adPreview']);
+Route::post('list-ad-sets', [FacebookAdController::class, 'listAdSets']);
+Route::post('list-ads', [FacebookAdController::class, 'listAds']);
 
 // Miscellaneous Routes
 Route::get('petfinder-token', [PetfinderController::class, 'requestToken']);
@@ -53,8 +53,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('stripe-request-intent', [StripeController::class, 'requestPaymentIntent']);
 
     // Facebook
-    Route::post('create-ad', [FacebookAdsController::class, 'createAd']);
-    Route::get('ad-results/{id}', [FacebookAdsController::class, 'adResults']);
+    Route::post('create-ad', [FacebookAdController::class, 'createAd']);
+    Route::get('ad-results/{id}', [FacebookAdController::class, 'adResults']);
 
     // Miscellaneous
     Route::resource('ad', AdController::class)->except(['create', 'edit']);

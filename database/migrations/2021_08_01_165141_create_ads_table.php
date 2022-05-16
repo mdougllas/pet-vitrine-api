@@ -15,8 +15,8 @@ class CreateAdsTable extends Migration
     {
         Schema::create('ads', function (Blueprint $table) {
             $table->id();
-            $table->uuid('uuid');
-            $table->bigInteger('ad_id');
+            $table->uuid('uuid')->unique();
+            $table->bigInteger('ad_id')->unique();
             $table->bigInteger('ad_set_id');
             $table->float('amount_spent', 8, 2)->nullable();
             $table->float('budget', 8, 2);
@@ -25,6 +25,7 @@ class CreateAdsTable extends Migration
             $table->bigInteger('creative_id');
             $table->timestamp('end_time');
             $table->integer('impressions')->nullable();
+            $table->string('payment_id')->unique()->nullable();
             $table->bigInteger('pet_id');
             $table->integer('results')->nullable();
             $table->integer('reach')->nullable();

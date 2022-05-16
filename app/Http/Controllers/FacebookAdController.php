@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\DuplicateEntryException;
 use App\Models\Ad;
 use App\Services\FacebookAds\FacebookAdsAd;
 use App\Services\FacebookAds\FacebookAdsAdSet;
@@ -11,7 +12,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
-class FacebookAdsController extends Controller
+class FacebookAdController extends Controller
 {
     /**
      * Creates a preview for the Facebook Ad.
@@ -59,6 +60,7 @@ class FacebookAdsController extends Controller
     ) {
         $validData = $request->validate([
             'petId' => 'required|numeric',
+            'paymentId' => 'required|string',
             'petName' => 'required|string',
             'zipCode' => 'required|digits:5',
             'budget' => 'required|numeric|min:5',
@@ -67,12 +69,15 @@ class FacebookAdsController extends Controller
         ]);
 
         $userId = $request->user()->id;
+        $paymentId = $request['paymentId'];
         $petId = $validData['petId'];
         $petName = $validData['petName'];
         $zipCode = $validData['zipCode'];
         $budget = (int) $validData['budget'];
         $url = $validData['url'];
         $link = $validData['link'];
+
+        $this->verifyPaymentId($paymentId);
 
         $lastCampaignId = $campaign->getLastCampaign()->id;
         $adSet = $adSet->createAdSet($petName, $lastCampaignId, $zipCode, $budget);
@@ -81,6 +86,7 @@ class FacebookAdsController extends Controller
 
         $this->store(
             $petId,
+            $paymentId,
             $lastCampaignId,
             $adSet,
             $adCreative,
@@ -149,9 +155,39 @@ class FacebookAdsController extends Controller
         ]);
     }
 
-    private function store($id, $campaign, $adSet, $adCreative, $adId, $budget, $ad, $userId)
+    /**
+     * Helper function to verify paymentId exists.
+     *
+     * @param  String $id
+
+     * @return App\Models\Ad;
+     */
+    private function verifyPaymentId($id)
+    {
+        $exists = Ad::where('payment_id', $id)->get();
+
+        if ($exists->count() > 0) throw new DuplicateEntryException('This ad already exists.', 409);
+    }
+
+    /**
+     * Helper function to store the data.
+     *
+     * @param  Integer $id
+     * @param  String $paymentId
+     * @param  App\Services\FacebookAds\FacebookAdsAdSet $ad
+     * @param  App\Services\FacebookAds\FacebookAdsAdSet $ad
+     * @param  App\Services\FacebookAds\FacebookAdsAdSet $ad
+     * @param  App\Services\FacebookAds\FacebookAdsAdSet $ad
+     * @param  App\Services\FacebookAds\FacebookAdsAdSet $ad
+     * @param  App\Services\FacebookAds\FacebookAdsAdSet $ad
+     * @param  App\Services\FacebookAds\FacebookAdsAdSet $ad
+
+     * @return void
+     */
+    private function store($id, $paymentId, $campaign, $adSet, $adCreative, $adId, $budget, $ad, $userId)
     {
         $ad->ad_id = $adId;
+        $ad->payment_id = $paymentId;
         $ad->ad_set_id = $adSet->id;
         $ad->budget = $budget;
         $ad->campaign_id = $campaign;
