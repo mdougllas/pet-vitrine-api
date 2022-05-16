@@ -3,10 +3,11 @@
 namespace App\Services\Payment\Paypal;
 
 use App\Helpers\HandleHttpException;
+use App\Services\Payment\PaymentInterface;
 use Illuminate\Support\Facades\Http;
-use App\Services\Payment\Paypal\Paypal;
+use App\Services\Payment\paypal\Paypal;
 
-class PaypalOrder extends Paypal
+class PaypalOrder extends Paypal implements PaymentInterface
 {
     /**
      * Instantiates PayPal Order.
@@ -67,5 +68,15 @@ class PaypalOrder extends Paypal
         $capture->onError(fn ($err) => HandleHttpException::throw($err));
 
         return $capture->object();
+    }
+
+    /**
+     * Checks if payment ID is valid.
+     *
+     * @param  string $url
+     * @return object Illuminate\Support\Facades\Http
+     */
+    public function validatePaymentId()
+    {
     }
 }

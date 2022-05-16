@@ -3,14 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Services\Payment\Paypal\PaypalOrder;
+use App\Services\Payment\paypal\PaypalOrder;
 
 class PaypalController extends Controller
 {
     /**
      * Creates PayPal order.
      *
-     * @param  App\Services\Payment\Paypal\PaypalOrder $paypal
+     * @param  App\Services\Paypal\PaypalOrder $paypal
      * @param  Illuminate\Http\Request $request
      * @return Illuminate\Http\Response
      */
@@ -44,7 +44,7 @@ class PaypalController extends Controller
     /**
      * Captures payment for an authorized PayPal order.
      *
-     * @param  App\Services\Payment\Paypal\PaypalOrder $paypal
+     * @param  App\Services\Payment\paypal\PaypalOrder $paypal
      * @return Illuminate\Http\Response
      */
     public function capturePayment(PaypalOrder $paypal)

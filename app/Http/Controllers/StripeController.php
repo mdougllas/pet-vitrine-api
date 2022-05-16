@@ -3,16 +3,19 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Services\Payment\Stripe\StripeOrder;
 use Illuminate\Support\Facades\Http;
 
 class StripeController extends Controller
 {
-    public function createPaymentIntent(Request $request)
+    public function createPaymentIntent(StripeOrder $stripe, Request $request)
     {
         $validData = $request->validate([
             'donation' => 'required|numeric|min:5',
             'total' => 'required|numeric|min:5'
         ]);
+
+        $stripe->validatePaymentId();
 
         $payload = [
             'amount' => $validData['total'] * 100,
@@ -20,9 +23,7 @@ class StripeController extends Controller
             'payment_method_types' => ['card']
         ];
 
-        $paymentIntent = Http::asForm()
-            ->withBasicAuth(config('services.stripe.secret_key'), '')
-            ->post('https://api.stripe.com/v1/payment_intents', $payload);
+        $paymentIntent = $stripe->createPaymentIntent($payload);
 
         return response()->json($paymentIntent->object(), 200);
     }

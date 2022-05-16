@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\DuplicateEntryException;
 use App\Models\Ad;
+use Carbon\Carbon;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use App\Exceptions\DuplicateEntryException;
 use App\Services\FacebookAds\FacebookAdsAd;
 use App\Services\FacebookAds\FacebookAdsAdSet;
 use App\Services\FacebookAds\FacebookAdsCampaign;
 use App\Services\FacebookAds\FacebookAdsAdCreative;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
-use Illuminate\Support\Str;
+use App\Services\Payment\PaymentInterface;
 
 class FacebookAdController extends Controller
 {
@@ -52,11 +53,11 @@ class FacebookAdController extends Controller
      */
     public function createAd(
         Ad $storeAd,
-        Request $request,
         FacebookAdsCampaign $campaign,
         FacebookAdsAdSet $adSet,
         FacebookAdsAdCreative $creative,
-        FacebookAdsAd $ad
+        FacebookAdsAd $ad,
+        Request $request
     ) {
         $validData = $request->validate([
             'petId' => 'required|numeric',
@@ -77,7 +78,8 @@ class FacebookAdController extends Controller
         $url = $validData['url'];
         $link = $validData['link'];
 
-        $this->verifyPaymentId($paymentId);
+        // $payment->validatePaymentId();
+        $this->verifyAdExists($paymentId);
 
         $lastCampaignId = $campaign->getLastCampaign()->id;
         $adSet = $adSet->createAdSet($petName, $lastCampaignId, $zipCode, $budget);
@@ -156,13 +158,25 @@ class FacebookAdController extends Controller
     }
 
     /**
-     * Helper function to verify paymentId exists.
+     * Helper function to verify payment id is valid.
      *
      * @param  String $id
 
      * @return App\Models\Ad;
      */
-    private function verifyPaymentId($id)
+    private function validatePaymentId($id)
+    {
+        return 'good';
+    }
+
+    /**
+     * Helper function to verify ad exists.
+     *
+     * @param  String $id
+
+     * @return App\Models\Ad;
+     */
+    private function verifyAdExists($id)
     {
         $exists = Ad::where('payment_id', $id)->get();
 
