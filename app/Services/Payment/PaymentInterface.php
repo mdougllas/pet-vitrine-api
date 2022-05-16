@@ -4,5 +4,5 @@ namespace App\Services\Payment;
 
 interface PaymentInterface
 {
-    public function validatePaymentId();
+    public function validatePaymentId($id);
 }

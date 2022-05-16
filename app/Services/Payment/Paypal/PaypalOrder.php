@@ -73,10 +73,12 @@ class PaypalOrder extends Paypal implements PaymentInterface
     /**
      * Checks if payment ID is valid.
      *
-     * @param  string $url
-     * @return object Illuminate\Support\Facades\Http
+     * @param  string $id
+     * @return void
      */
-    public function validatePaymentId()
+    public function validatePaymentId($id)
     {
+        $order = Http::withToken($this->token)->get("$this->rootUrl/v2/checkout/orders/$id");
+        $order->onError(fn ($err) => HandleHttpException::throw($err));
     }
 }

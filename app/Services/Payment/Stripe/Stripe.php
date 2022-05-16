@@ -13,5 +13,6 @@ class Stripe
     {
         $this->publishableKey = config('services.stripe.publishable_key');
         $this->secretKey = config('services.stripe.secret_key');
+        $this->baseUrl = config('services.stripe.base_url');
     }
 }

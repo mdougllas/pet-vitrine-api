@@ -15,8 +15,6 @@ class StripeController extends Controller
             'total' => 'required|numeric|min:5'
         ]);
 
-        $stripe->validatePaymentId();
-
         $payload = [
             'amount' => $validData['total'] * 100,
             'currency' => 'usd',

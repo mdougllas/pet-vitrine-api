@@ -13,11 +13,11 @@ class HandleHttpException
      * @throws App\Exceptions\HttpException
      * @return void
      */
-    public static function throw($error)
+    public static function throw($error, $customException = null)
     {
-        $code = $error->getStatusCode();
-        $message = $error->getReasonPhrase();
+        $code = $customException ? $customException->getCode() : $error->getStatusCode();
+        $message = $customException ? $customException->getMessage() : $error->getReasonPhrase();
 
-        throw new HttpException($message, $code);
+        throw new HttpException($message, $code, $customException);
     }
 }

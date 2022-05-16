@@ -67,5 +67,6 @@ return [
     'stripe' => [
         'publishable_key' => env('STRIPE_PUBLISHABLE_KEY'),
         'secret_key' => env('STRIPE_SECRET_KEY'),
+        'base_url' => env('STRIPE_BASE_URL'),
     ],
 ];

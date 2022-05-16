@@ -11,7 +11,8 @@ use App\Services\FacebookAds\FacebookAdsAd;
 use App\Services\FacebookAds\FacebookAdsAdSet;
 use App\Services\FacebookAds\FacebookAdsCampaign;
 use App\Services\FacebookAds\FacebookAdsAdCreative;
-use App\Services\Payment\PaymentInterface;
+use App\Services\Payment\paypal\PaypalOrder;
+use App\Services\Payment\Stripe\StripeOrder;
 
 class FacebookAdController extends Controller
 {
@@ -57,11 +58,14 @@ class FacebookAdController extends Controller
         FacebookAdsAdSet $adSet,
         FacebookAdsAdCreative $creative,
         FacebookAdsAd $ad,
-        Request $request
+        Request $request,
+        PaypalOrder $paypal,
+        StripeOrder $stripe
     ) {
         $validData = $request->validate([
             'petId' => 'required|numeric',
             'paymentId' => 'required|string',
+            'paymentProvider' => 'required|string',
             'petName' => 'required|string',
             'zipCode' => 'required|digits:5',
             'budget' => 'required|numeric|min:5',
@@ -71,6 +75,7 @@ class FacebookAdController extends Controller
 
         $userId = $request->user()->id;
         $paymentId = $request['paymentId'];
+        $paymentProvider = $request['paymentProvider'];
         $petId = $validData['petId'];
         $petName = $validData['petName'];
         $zipCode = $validData['zipCode'];
@@ -78,7 +83,7 @@ class FacebookAdController extends Controller
         $url = $validData['url'];
         $link = $validData['link'];
 
-        // $payment->validatePaymentId();
+        $this->validatePaymentId($paypal, $stripe, $paymentId, $paymentProvider);
         $this->verifyAdExists($paymentId);
 
         $lastCampaignId = $campaign->getLastCampaign()->id;
@@ -164,9 +169,11 @@ class FacebookAdController extends Controller
 
      * @return App\Models\Ad;
      */
-    private function validatePaymentId($id)
+    private function validatePaymentId(PaypalOrder $paypal, StripeOrder $stripe, $id, $provider)
     {
-        return 'good';
+        return $provider === 'paypal'
+            ? $paypal->validatePaymentId($id)
+            : $stripe->validatePaymentId($id);
     }
 
     /**
@@ -186,31 +193,32 @@ class FacebookAdController extends Controller
     /**
      * Helper function to store the data.
      *
+     * @param  App\Services\FacebookAds\FacebookAdsAd $ad
+     * @param  Integer $adCreative
+     * @param  Integer $adId
+     * @param  Integer $adSet
+     * @param  Integer $budget
+     * @param  Integer $campaign
      * @param  Integer $id
      * @param  String $paymentId
-     * @param  App\Services\FacebookAds\FacebookAdsAdSet $ad
-     * @param  App\Services\FacebookAds\FacebookAdsAdSet $ad
-     * @param  App\Services\FacebookAds\FacebookAdsAdSet $ad
-     * @param  App\Services\FacebookAds\FacebookAdsAdSet $ad
-     * @param  App\Services\FacebookAds\FacebookAdsAdSet $ad
-     * @param  App\Services\FacebookAds\FacebookAdsAdSet $ad
-     * @param  App\Services\FacebookAds\FacebookAdsAdSet $ad
+     * @param  Integer $userId
 
      * @return void
      */
     private function store($id, $paymentId, $campaign, $adSet, $adCreative, $adId, $budget, $ad, $userId)
     {
         $ad->ad_id = $adId;
-        $ad->payment_id = $paymentId;
         $ad->ad_set_id = $adSet->id;
         $ad->budget = $budget;
         $ad->campaign_id = $campaign;
         $ad->creative_id = $adCreative->id;
         $ad->end_time = new Carbon($adSet->end_time);
+        $ad->payment_id = $paymentId;
         $ad->pet_id = $id;
         $ad->start_time = new Carbon($adSet->start_time);
-        $ad->uuid = Str::uuid();
         $ad->user_id = $userId;
+        $ad->uuid = Str::uuid();
+
         $ad->save();
     }
 }

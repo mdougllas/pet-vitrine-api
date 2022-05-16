@@ -10,7 +10,7 @@ use App\Services\Payment\Stripe\Stripe;
 class StripeOrder extends Stripe implements PaymentInterface
 {
     /**
-     * Instantiates PayPal Order.
+     * Instantiates Stripe API
      *
      * @return void;
      */
@@ -19,14 +19,33 @@ class StripeOrder extends Stripe implements PaymentInterface
         parent::__construct();
     }
 
+    /**
+     * Creates Stripe Payment Intent
+     *
+     * @param array $payload
+     *
+     * @return void;
+     */
     public function createPaymentIntent($payload)
     {
         return Http::asForm()
             ->withBasicAuth($this->secretKey, '')
-            ->post('https://api.stripe.com/v1/payment_intents', $payload);
+            ->post("$this->baseUrl/v1/payment_intents", $payload);
     }
 
-    public function validatePaymentId()
+    /**
+     * Validates Stripe Payment Intent Id
+     *
+     * @param String $id
+     *
+     * @return void;
+     */
+    public function validatePaymentId($id)
     {
+        $paymentIntent = Http::asForm()
+            ->withBasicAuth($this->secretKey, '')
+            ->post("$this->baseUrl/v1/payment_intents/$id");
+
+        $paymentIntent->onError(fn ($err) => HandleHttpException::throw($err));
     }
 }
