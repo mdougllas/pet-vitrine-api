@@ -5,7 +5,7 @@ namespace App\Services\Payment\Paypal;
 use App\Helpers\HandleHttpException;
 use App\Services\Payment\PaymentInterface;
 use Illuminate\Support\Facades\Http;
-use App\Services\Payment\paypal\Paypal;
+use App\Services\Payment\Paypal\Paypal;
 
 class PaypalOrder extends Paypal implements PaymentInterface
 {
