@@ -11,7 +11,7 @@ use App\Services\FacebookAds\FacebookAdsAd;
 use App\Services\FacebookAds\FacebookAdsAdSet;
 use App\Services\FacebookAds\FacebookAdsCampaign;
 use App\Services\FacebookAds\FacebookAdsAdCreative;
-use App\Services\Payment\paypal\PaypalOrder;
+use App\Services\Payment\Paypal\PaypalOrder;
 use App\Services\Payment\Stripe\StripeOrder;
 
 class FacebookAdController extends Controller
