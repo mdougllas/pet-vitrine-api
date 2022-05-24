@@ -1,15 +1,15 @@
 <?php
 
 use App\Http\Controllers\AdController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\FacebookAdController;
+use App\Http\Controllers\MobileAuthController;
 use App\Http\Controllers\PaypalController;
 use App\Http\Controllers\PetfinderController;
 use App\Http\Controllers\RecaptchaController;
-use App\Http\Controllers\MobileAuthController;
-use App\Http\Controllers\FacebookAdController;
 use App\Http\Controllers\StripeController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Http\Controllers\RegisteredUserController;
 
 /*
@@ -58,4 +58,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     // Miscellaneous
     Route::resource('ad', AdController::class)->except(['create', 'edit']);
+
+    // Tests
+    Route::get('test-email-verified', function () {
+        return response()->json([
+            'emailVerified' => true
+        ]);
+    })->middleware('verified');
 });

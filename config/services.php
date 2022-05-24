@@ -18,6 +18,7 @@ return [
         'root' => env('PET_VITRINE_ROOT', 'https://petvitrine.org'),
         'login' => env('PET_VITRINE_LOGIN', 'https://petvitrine.org/login'),
         'reset_password' => env('PET_VITRINE_RESET_PASSWORD', 'https://petvitrine.org/reset-password'),
+        'verify_email' => env('PET_VITRINE_VERIFY_EMAIL', 'https://petvitrine.org/verify-email'),
     ],
 
     'mailgun' => [
