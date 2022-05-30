@@ -11,8 +11,7 @@ class CamelCaseResponse
      * from snake_case to CamelCase.
      *
      * @param Illuminate\Support\Collection $collection
-     * @param Object $object
-     * @return Object
+     * @return Illuminate\Support\Collection
      */
     public static function convert($collection)
     {

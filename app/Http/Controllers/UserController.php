@@ -13,13 +13,11 @@ class UserController extends Controller
      * Gets the authenticated user.
      *
      * @param Illuminate\Http\Request $request
-     * @throws App\Models\User $user
      * @return Json Illuminate\Http\Response
      */
     public function getUser(Request $request)
     {
-        $userSnakeCase = collect($request->user());
-        $userCamelCase = CamelCaseResponse::convert($userSnakeCase);
+        $userCamelCase = $this->userCamelCase($request->user());
 
         return response()->json($userCamelCase, 200);
     }
@@ -28,6 +26,7 @@ class UserController extends Controller
      * Adds a pet to users' favorites.
      *
      * @param Illuminate\Http\Request $request
+     * @throws App\Exceptions\DuplicateEntryException
      * @return Json Illuminate\Http\Response
      */
     public function addToFavorites(Request $request)
@@ -47,11 +46,21 @@ class UserController extends Controller
         $user->favorites = $favorites;
         $user->save();
 
+        $userCamelCase = $this->userCamelCase($user);
+
         return response()->json([
-            'user' => $user
+            'user' => $userCamelCase
         ]);
     }
 
+    /**
+     * Removes a pet to users' favorites.
+     *
+     * @param Illuminate\Http\Request $request
+     * @param Integer $id
+     * @throws Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     * @return Json Illuminate\Http\Response
+     */
     public function removeFromFavorites(Request $request, $id)
     {
         $user = $request->user();
@@ -64,8 +73,22 @@ class UserController extends Controller
         $user->favorites = $newFavorites->flatten();
         $user->save();
 
+        $userCamelCase = $this->userCamelCase($user);
+
         return response()->json([
-            'user' => $user
+            'user' => $userCamelCase
         ]);
+    }
+
+    /**
+     * Converts user to camelCase.
+     *
+     * @param Illuminate\Support\Collection $user
+     * @return Illuminate\Support\Collection
+     */
+    private function userCamelCase($user)
+    {
+        $userSnakeCase = collect($user);
+        return CamelCaseResponse::convert($userSnakeCase);
     }
 }
