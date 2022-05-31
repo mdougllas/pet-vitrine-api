@@ -2,6 +2,7 @@
 
 namespace App\Actions\Fortify;
 
+use App\Exceptions\HttpException;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -30,9 +31,11 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
             // ],
         ])->validateWithBag('updateProfileInformation');
 
-        $user->forceFill([
-            'name' => $input['name'],
-        ])->save();
+        return $user->hasVerifiedEmail()
+            ? $user->forceFill([
+                'name' => $input['name'],
+            ])->save()
+            : throw new HttpException("Your email address is not verified.", 401);
 
         // if (
         //     $input['email'] !== $user->email &&
