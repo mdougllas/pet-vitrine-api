@@ -1,15 +1,15 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdController;
-use App\Http\Controllers\FacebookAdController;
-use App\Http\Controllers\MobileAuthController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\PaypalController;
+use App\Http\Controllers\StripeController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PetfinderController;
 use App\Http\Controllers\RecaptchaController;
-use App\Http\Controllers\StripeController;
-use App\Http\Controllers\UserController;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\FacebookAdController;
+use App\Http\Controllers\MobileAuthController;
 use Laravel\Fortify\Http\Controllers\RegisteredUserController;
 
 /*
@@ -35,6 +35,7 @@ Route::post('list-ads', [FacebookAdController::class, 'listAds']);
 // Miscellaneous Routes
 Route::get('petfinder-token', [PetfinderController::class, 'requestToken']);
 Route::post('recaptcha-token', [RecaptchaController::class, 'checkToken']);
+Route::post('send-contact-message', [ContactController::class, 'sendContactMessage']);
 
 // Auth Protected Routes
 Route::middleware(['auth:sanctum'])->group(function () {
