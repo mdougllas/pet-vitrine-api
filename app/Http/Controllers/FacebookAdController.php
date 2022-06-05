@@ -57,7 +57,7 @@ class FacebookAdController extends Controller
         FacebookAdsCampaign $campaign,
         FacebookAdsAdSet $adSet,
         FacebookAdsAdCreative $creative,
-        // FacebookAdsAd $ad,
+        FacebookAdsAd $ad,
         Request $request
         // PaypalOrder $paypal,
         // StripeOrder $stripe
@@ -73,7 +73,7 @@ class FacebookAdController extends Controller
             'url' => 'required',
             'link' => 'required'
         ]);
-        var_dump($creative);
+        var_dump($ad);
 
         // $userId = $request->user()->id;
         // $paymentId = $request['paymentId'];
