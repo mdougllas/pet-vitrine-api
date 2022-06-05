@@ -83,8 +83,8 @@ class FacebookAdController extends Controller
         $url = $validData['url'];
         $link = $validData['link'];
 
-        $this->validatePaymentId($paypal, $stripe, $paymentId, $paymentProvider);
         $this->verifyAdExists($paymentId);
+        $this->validatePayment($paypal, $stripe, $paymentId, $paymentProvider, $budget);
 
         $lastCampaignId = $campaign->getLastCampaign()->id;
         $adSet = $adSet->createAdSet($petName, $lastCampaignId, $zipCode, $budget);
@@ -169,11 +169,11 @@ class FacebookAdController extends Controller
 
      * @return App\Models\Ad;
      */
-    private function validatePaymentId(PaypalOrder $paypal, StripeOrder $stripe, $id, $provider)
+    private function validatePayment(PaypalOrder $paypal, StripeOrder $stripe, $id, $provider, $amount)
     {
         return $provider === 'paypal'
-            ? $paypal->validatePaymentId($id)
-            : $stripe->validatePaymentId($id);
+            ? $paypal->validatePayment($id, $amount)
+            : $stripe->validatePayment($id, $amount);
     }
 
     /**
@@ -187,11 +187,12 @@ class FacebookAdController extends Controller
     {
         $exists = Ad::where('payment_id', $id)->get();
 
-        if ($exists->count() > 0) throw new DuplicateEntryException('This ad already exists.', 409);
+        return $exists->count() > 0
+            ?? throw new DuplicateEntryException('This ad already exists.', 409);
     }
 
     /**
-     * Helper function to store the data.
+     * Helper function to store the ad.
      *
      * @param  App\Services\FacebookAds\FacebookAdsAd $ad
      * @param  Integer $adCreative
