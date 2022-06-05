@@ -13,7 +13,6 @@ class FacebookAds
      */
     protected function __construct()
     {
-        var_dump('got here');
         $this->accessToken = config('services.facebook.access_token');
         $this->adAccountId = config('services.facebook.ad_account_id');
         $this->appSecret = config('services.facebook.app_secret');
@@ -23,6 +22,5 @@ class FacebookAds
         Api::init($this->appId, $this->appSecret, $this->accessToken);
 
         $this->api = Api::instance();
-        var_dump('got to the end');
     }
 }

@@ -17,16 +17,21 @@ class FacebookAdsAccount extends FacebookAds
 
     protected function adAccount()
     {
+        var_dump('adaccount');
         return new AdAccount($this->adAccountId);
     }
 
     public static function adAccountInstance()
     {
+        var_dump('adaccount instance');
+
         return app(FacebookAdsAccount::class)->adAccount();
     }
 
     public function getPageId()
     {
+        var_dump('adaccount get page id');
+
         return $this->pageId;
     }
 }
