@@ -49,7 +49,6 @@ class FacebookAdsCampaign
      */
     public function getLastCampaign()
     {
-        var_dump('get Last Campaign');
         $account = FacebookAdsAccount::adAccountInstance();
 
         $fields = [
