@@ -58,8 +58,8 @@ class FacebookAdController extends Controller
         FacebookAdsAdSet $adSet,
         FacebookAdsAdCreative $creative,
         FacebookAdsAd $ad,
-        Request $request
-        // PaypalOrder $paypal,
+        Request $request,
+        PaypalOrder $paypal
         // StripeOrder $stripe
     ) {
         var_dump('route called');
