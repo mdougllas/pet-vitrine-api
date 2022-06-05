@@ -53,9 +53,9 @@ class FacebookAdController extends Controller
      * @return object Illuminate\Http\response
      */
     public function createAd(
-        // Ad $storeAd,
+        Ad $storeAd,
         FacebookAdsCampaign $campaign,
-        // FacebookAdsAdSet $adSet,
+        FacebookAdsAdSet $adSet,
         // FacebookAdsAdCreative $creative,
         // FacebookAdsAd $ad,
         Request $request
@@ -73,7 +73,7 @@ class FacebookAdController extends Controller
             'url' => 'required',
             'link' => 'required'
         ]);
-        var_dump($campaign);
+        var_dump($adSet);
 
         // $userId = $request->user()->id;
         // $paymentId = $request['paymentId'];
