@@ -59,10 +59,9 @@ class FacebookAdController extends Controller
         FacebookAdsAdCreative $creative,
         FacebookAdsAd $ad,
         Request $request,
-        PaypalOrder $paypal
-        // StripeOrder $stripe
+        PaypalOrder $paypal,
+        StripeOrder $stripe
     ) {
-        var_dump('route called');
         $validData = $request->validate([
             'petId' => 'required|numeric',
             'paymentId' => 'required|string',
@@ -73,47 +72,46 @@ class FacebookAdController extends Controller
             'url' => 'required',
             'link' => 'required'
         ]);
-        var_dump($ad);
 
-        // $userId = $request->user()->id;
-        // $paymentId = $request['paymentId'];
-        // $paymentProvider = $request['paymentProvider'];
-        // $petId = $validData['petId'];
-        // $petName = $validData['petName'];
-        // $zipCode = $validData['zipCode'];
-        // $budget = (int) $validData['budget'];
-        // $url = $validData['url'];
-        // $link = $validData['link'];
+        $userId = $request->user()->id;
+        $paymentId = $request['paymentId'];
+        $paymentProvider = $request['paymentProvider'];
+        $petId = $validData['petId'];
+        $petName = $validData['petName'];
+        $zipCode = $validData['zipCode'];
+        $budget = (int) $validData['budget'];
+        $url = $validData['url'];
+        $link = $validData['link'];
 
-        // $this->verifyAdExists($paymentId);
-        // $this->validatePayment($paypal, $stripe, $paymentId, $paymentProvider, $budget);
-        // var_dump('I got here');
-        // $lastCampaignId = $campaign->getLastCampaign()->id;
-        // $adSet = $adSet->createAdSet($petName, $lastCampaignId, $zipCode, $budget);
-        // $adCreative = $creative->createAdCreative($url, $link, $petName);
-        // $ad = $ad->createAd($petName, $adSet->id, $adCreative->id);
+        $this->verifyAdExists($paymentId);
+        $this->validatePayment($paypal, $stripe, $paymentId, $paymentProvider, $budget);
+        var_dump('I got here');
+        $lastCampaignId = $campaign->getLastCampaign()->id;
+        $adSet = $adSet->createAdSet($petName, $lastCampaignId, $zipCode, $budget);
+        $adCreative = $creative->createAdCreative($url, $link, $petName);
+        $ad = $ad->createAd($petName, $adSet->id, $adCreative->id);
 
-        // $this->store(
-        //     $petId,
-        //     $paymentId,
-        //     $lastCampaignId,
-        //     $adSet,
-        //     $adCreative,
-        //     $ad->id,
-        //     $budget,
-        //     $storeAd,
-        //     $userId
-        // );
+        $this->store(
+            $petId,
+            $paymentId,
+            $lastCampaignId,
+            $adSet,
+            $adCreative,
+            $ad->id,
+            $budget,
+            $storeAd,
+            $userId
+        );
 
-        // return response()->json([
-        //     'data' => [
-        //         'ad' => [
-        //             'name' => $ad->name,
-        //             'id' => $ad->id,
-        //         ],
-        //         'targeting' => [$adSet->targeting]
-        //     ]
-        // ]);
+        return response()->json([
+            'data' => [
+                'ad' => [
+                    'name' => $ad->name,
+                    'id' => $ad->id,
+                ],
+                'targeting' => [$adSet->targeting]
+            ]
+        ]);
     }
 
     /**
