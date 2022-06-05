@@ -23,5 +23,6 @@ class FacebookAds
         Api::init($this->appId, $this->appSecret, $this->accessToken);
 
         $this->api = Api::instance();
+        var_dump('got to the end');
     }
 }
