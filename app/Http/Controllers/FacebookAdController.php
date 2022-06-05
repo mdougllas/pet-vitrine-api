@@ -58,22 +58,22 @@ class FacebookAdController extends Controller
         // FacebookAdsAdSet $adSet,
         // FacebookAdsAdCreative $creative,
         // FacebookAdsAd $ad,
-        // Request $request,
+        Request $request
         // PaypalOrder $paypal,
         // StripeOrder $stripe
-    )
-    {
+    ) {
         var_dump('route called');
-        // $validData = $request->validate([
-        //     'petId' => 'required|numeric',
-        //     'paymentId' => 'required|string',
-        //     'paymentProvider' => 'required|string',
-        //     'petName' => 'required|string',
-        //     'zipCode' => 'required|digits:5',
-        //     'budget' => 'required|numeric|min:5',
-        //     'url' => 'required',
-        //     'link' => 'required'
-        // ]);
+        $validData = $request->validate([
+            'petId' => 'required|numeric',
+            'paymentId' => 'required|string',
+            'paymentProvider' => 'required|string',
+            'petName' => 'required|string',
+            'zipCode' => 'required|digits:5',
+            'budget' => 'required|numeric|min:5',
+            'url' => 'required',
+            'link' => 'required'
+        ]);
+        var_dump($validData);
 
         // $userId = $request->user()->id;
         // $paymentId = $request['paymentId'];
