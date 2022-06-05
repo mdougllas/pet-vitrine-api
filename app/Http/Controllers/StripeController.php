@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Services\Payment\Stripe\StripeOrder;
-use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Http\Request;
 
 class StripeController extends Controller
 {
@@ -26,19 +26,27 @@ class StripeController extends Controller
         return response()->json($paymentIntent->object(), 200);
     }
 
-    public function requestPaymentIntent(Request $request)
+    public function requestPaymentIntent(Request $request, StripeOrder $stripe)
     {
         $validData = $request->validate([
             'payment_intent' => 'required|string'
         ]);
 
         $paymentIntentId = $validData['payment_intent'];
+        $paymentIntent = $stripe->getPaymentIntent($paymentIntentId);
 
-        $url = "https://api.stripe.com/v1/payment_intents/$paymentIntentId";
+        return response()->json($paymentIntent, 200);
+    }
 
-        $paymentIntent = Http::withBasicAuth(config('services.stripe.secret_key'), '')
-            ->get($url);
+    public function sendEmailReceipt(Request $request, Mail $mail, StripeOrder $stripe)
+    {
+        $validData = $request->validate([
+            'payment_intent' => 'required|string'
+        ]);
 
-        return response()->json($paymentIntent->object(), 200);
+        $paymentIntentId = $validData['payment_intent'];
+        $response = $stripe->sendEmailReceipt($paymentIntentId, $request);
+
+        return response()->json($response, 200);
     }
 }
