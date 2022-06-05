@@ -85,7 +85,7 @@ class FacebookAdController extends Controller
 
         $this->verifyAdExists($paymentId);
         $this->validatePayment($paypal, $stripe, $paymentId, $paymentProvider, $budget);
-
+        var_dump('I got here');
         $lastCampaignId = $campaign->getLastCampaign()->id;
         $adSet = $adSet->createAdSet($petName, $lastCampaignId, $zipCode, $budget);
         $adCreative = $creative->createAdCreative($url, $link, $petName);
