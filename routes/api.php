@@ -55,12 +55,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('send-email-stripe-receipt', [StripeController::class, 'sendEmailReceipt']);
 
     // Facebook
-    // Route::post('create-ad', [FacebookAdController::class, 'createAd']);
-    Route::post('create-ad', function () {
-        return response()->json([
-            'Reached' => true
-        ]);
-    });
+    Route::post('create-ad', [FacebookAdController::class, 'createAd']);
     Route::get('ad-results/{id}', [FacebookAdController::class, 'adResults']);
 
     // Miscellaneous
