@@ -52,6 +52,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Stripe
     Route::post('stripe-create-intent', [StripeController::class, 'createPaymentIntent']);
     Route::post('stripe-request-intent', [StripeController::class, 'requestPaymentIntent']);
+    Route::post('send-email-stripe-receipt', [StripeController::class, 'sendEmailReceipt']);
 
     // Facebook
     Route::post('create-ad', [FacebookAdController::class, 'createAd']);

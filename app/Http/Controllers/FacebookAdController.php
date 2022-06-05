@@ -181,14 +181,16 @@ class FacebookAdController extends Controller
      *
      * @param  String $id
 
-     * @return App\Models\Ad;
+     * @throws App\Exceptions\DuplicateEntryException
+     * @return void;
      */
     private function verifyAdExists($id)
     {
         $exists = Ad::where('payment_id', $id)->get();
 
-        return $exists->count() > 0
-            ?? throw new DuplicateEntryException('This ad already exists.', 409);
+        if ($exists->count() !== 0) {
+            throw new DuplicateEntryException('This ad already exists.', 409);
+        }
     }
 
     /**

@@ -4,8 +4,8 @@ namespace App\Services\Payment\Paypal;
 
 use App\Helpers\HandleHttpException;
 use App\Services\Payment\PaymentInterface;
-use Illuminate\Support\Facades\Http;
 use App\Services\Payment\Paypal\Paypal;
+use Illuminate\Support\Facades\Http;
 
 class PaypalOrder extends Paypal implements PaymentInterface
 {
@@ -76,7 +76,7 @@ class PaypalOrder extends Paypal implements PaymentInterface
      * @param  string $id
      * @return void
      */
-    public function validatePaymentId($id)
+    public function validatePayment($id, $amount)
     {
         $order = Http::withToken($this->token)->get("$this->rootUrl/v2/checkout/orders/$id");
         $order->onError(fn ($err) => HandleHttpException::throw($err));
