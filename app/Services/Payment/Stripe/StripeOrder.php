@@ -136,9 +136,13 @@ class StripeOrder extends Stripe implements PaymentInterface
      */
     private function validateAmountPaid($intentObject, $amount)
     {
-        $amountReceived = floor($intentObject->amount_received / 100);
+        $amountReceived = $intentObject->amount_received / 100;
+        $percentual = 3.5;
+        $fixed = 1.35;
+        $variableFees = ($amount / 100) * $percentual;
+        $amountPlusFees = $amount + $fixed + $variableFees;
 
-        if ($amountReceived != $amount) {
+        if (round($amountPlusFees, 2) != $amountReceived) {
             throw new PaymentException('The amount requested is different from the paid amount', 409);
         }
     }
