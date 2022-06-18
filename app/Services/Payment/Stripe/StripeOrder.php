@@ -37,7 +37,7 @@ class StripeOrder extends Stripe implements PaymentInterface
     }
 
     /**
-     * Fetches Stripe Payment Intent
+     * Fetches Stripe Payment Intent.
      *
      * @param integer $id
      *
@@ -55,7 +55,7 @@ class StripeOrder extends Stripe implements PaymentInterface
     }
 
     /**
-     * Validates Stripe Payment Intent Id
+     * Validates Stripe Payment Intent Id.
      *
      * @param string $id
      *
