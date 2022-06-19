@@ -15,7 +15,7 @@ class AdController extends Controller
      */
     public function index()
     {
-        $ads = Auth::user()->ads;
+        $ads = Auth::user()->ads->reverse();
         return new AdResource($ads->paginate(12));
     }
 
