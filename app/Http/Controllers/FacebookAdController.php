@@ -85,11 +85,11 @@ class FacebookAdController extends Controller
 
         $this->verifyAdExists($paymentId);
         $this->validatePayment($paypal, $stripe, $paymentId, $paymentProvider, $budget);
-        dd('I am ahere');
         $lastCampaignId = $campaign->getLastCampaign()->id;
         $adSet = $adSet->createAdSet($petName, $lastCampaignId, $zipCode, $budget);
         $adCreative = $creative->createAdCreative($url, $link, $petName);
         $ad = $ad->createAd($petName, $adSet->id, $adCreative->id);
+        dd('I am ahere');
 
         $this->store(
             $petId,
