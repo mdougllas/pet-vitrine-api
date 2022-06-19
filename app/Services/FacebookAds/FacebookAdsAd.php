@@ -76,6 +76,8 @@ class FacebookAdsAd
      */
     public function createAd($name, $adSetId, $creativeId)
     {
+        var_dump('I am here');
+        die;
         $fields = ['name'];
         $params = [
             'name' => "Ad for $name",

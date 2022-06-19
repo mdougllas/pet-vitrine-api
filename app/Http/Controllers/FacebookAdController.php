@@ -89,7 +89,6 @@ class FacebookAdController extends Controller
         $adSet = $adSet->createAdSet($petName, $lastCampaignId, $zipCode, $budget);
         $adCreative = $creative->createAdCreative($url, $link, $petName);
         $ad = $ad->createAd($petName, $adSet->id, $adCreative->id);
-        dd('I am ahere');
 
         $this->store(
             $petId,
