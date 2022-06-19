@@ -100,9 +100,6 @@ class FacebookAdsAdSet
             'status' => 'PAUSED',
         ];
 
-        var_dump('Right before calling createAdSet');
-        die;
-
         return $account->createAdSet($fields, $params);
     }
 
