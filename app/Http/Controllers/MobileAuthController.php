@@ -16,7 +16,7 @@ class MobileAuthController extends Controller
      * Verify user info and issue new token
      * Destroy old token if found
      *
-     * @param  mixed $request
+     * @param  Illuminate\Http\Request $request
      * @return string
      */
     public function requestToken(Request $request)
@@ -40,6 +40,12 @@ class MobileAuthController extends Controller
         return $user->createToken($request->device_name)->plainTextToken;
     }
 
+    /**
+     * Destroys Pet Vitrine access token
+     *
+     * @param  Illuminate\Http\Request $request
+     * @return void
+     */
     public function destroyToken(Request $request)
     {
         $request->user()->currentAccessToken()->delete();

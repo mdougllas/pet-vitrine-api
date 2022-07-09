@@ -9,7 +9,26 @@ class Ad extends Model
 {
     use HasFactory;
 
-    protected $guarded = []; //yolo
+    /**
+     * Do not protect any attributes from mass assignment.
+     * yolo
+     *
+     * @var array
+     */
+    protected $guarded = [];
+
+    /**
+     * Always eager loads the pet for each ad.
+     *
+     * @var array
+     */
+    // protected $with = ['pet'];
+
+    protected $casts = [
+        'budget' => 'integer',
+        'start_time' => 'datetime:m-d-Y',
+        'end_time' => 'datetime:m-d-Y',
+    ];
 
     /**
      * The relationship between Ad and Pet

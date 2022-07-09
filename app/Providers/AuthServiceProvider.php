@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Str;
+use Illuminate\Auth\Notifications\VerifyEmail;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Gate;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -25,6 +27,15 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        //
+        VerifyEmail::toMailUsing(function ($notifiable, $url) {
+            $urlPath = Str::afterLast($url, 'verify/');
+            $frontEndUrl = config('services.frontend.verify_email');
+            $finalUrl = "$frontEndUrl/?path=$urlPath";
+
+            return (new MailMessage)
+                ->subject('Verify Email Address')
+                ->line('Click the button below to verify your email address.')
+                ->action('Verify Email Address', $finalUrl);
+        });
     }
 }

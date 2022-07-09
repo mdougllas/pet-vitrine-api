@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['https://petvitrine.org', env('PET_VITRINE_ROOT')],
+    'allowed_origins' => [env('CORS_ALLOWED')],
 
     'allowed_origins_patterns' => [],
 

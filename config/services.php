@@ -17,6 +17,8 @@ return [
     'frontend' => [
         'root' => env('PET_VITRINE_ROOT', 'https://petvitrine.org'),
         'login' => env('PET_VITRINE_LOGIN', 'https://petvitrine.org/login'),
+        'reset_password' => env('PET_VITRINE_RESET_PASSWORD', 'https://petvitrine.org/reset-password'),
+        'verify_email' => env('PET_VITRINE_VERIFY_EMAIL', 'https://petvitrine.org/verify-email'),
     ],
 
     'mailgun' => [
@@ -36,19 +38,36 @@ return [
     ],
 
     'facebook' => [
-        'appId' => env('FB_APP_ID'),
-        'appSecret' => env('FB_APP_SECRET'),
-        'accessToken' => env('APP_ENV') == "production" ? env('FB_ACCESS_TOKEN') : env('SANDBOX_FB_ACCESS_TOKEN'),
-        'adAccountId' => env('APP_ENV') == "production" ? env('FB_AD_ACCOUNT_ID') : env('SANDBOX_FB_AD_ACCOUNT_ID'),
-        'pageId' => env('FB_PAGE_ID'),
+        'graph_api_root_url' => env('FB_GRAPH_API_ROOT_URL'),
+        'app_id' => env('FB_APP_ID'),
+        'app_secret' => env('FB_APP_SECRET'),
+        'business_id' => env('FB_BUSINESS_ID'),
+        'page_id' => env('FB_PAGE_ID'),
+        'access_token' => env('FB_ACCESS_TOKEN'),
+        'ad_account_id' => env('FB_AD_ACCOUNT_ID'),
     ],
 
     'petfinder' => [
-        'apiKey' => env('PETFINDER_API_KEY'),
-        'apiSecret' => env('PETFINDER_API_SECRET')
+        'api_key' => env('PETFINDER_API_KEY'),
+        'api_secret' => env('PETFINDER_API_SECRET')
     ],
 
-    'petVitrineUrls' => [
-        'root' => env('PET_VITRINE_ROOT'),
+    'recaptcha' => [
+        'url' => env('RECAPTCHA_URL'),
+        'secret_key' => env('RECAPTCHA_SECRET_KEY')
+    ],
+
+    'paypal' => [
+        'account' => env('PAYPAL_ACCOUNT'),
+        'url' => env('PAYPAL_ROOT_URL'),
+        'client_id' => env('PAYPAL_CLIENT_ID'),
+        'secret' => env('PAYPAL_SECRET'),
+        'return_url' => env('PAYPAL_RETURN_URL')
+    ],
+
+    'stripe' => [
+        'publishable_key' => env('STRIPE_PUBLISHABLE_KEY'),
+        'secret_key' => env('STRIPE_SECRET_KEY'),
+        'base_url' => env('STRIPE_BASE_URL'),
     ],
 ];

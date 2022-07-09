@@ -2,6 +2,7 @@
 
 namespace App\Actions\Fortify;
 
+use App\Exceptions\HttpException;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -21,24 +22,32 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
         Validator::make($input, [
             'name' => ['required', 'string', 'max:255'],
 
-            'email' => [
-                'required',
-                'string',
-                'email',
-                'max:255',
-                Rule::unique('users')->ignore($user->id),
-            ],
+            // 'email' => [
+            //     'required',
+            //     'string',
+            //     'email',
+            //     'max:255',
+            //     Rule::unique('users')->ignore($user->id),
+            // ],
         ])->validateWithBag('updateProfileInformation');
 
-        if ($input['email'] !== $user->email &&
-            $user instanceof MustVerifyEmail) {
-            $this->updateVerifiedUser($user, $input);
-        } else {
-            $user->forceFill([
+        return $user->hasVerifiedEmail()
+            ? $user->forceFill([
                 'name' => $input['name'],
-                'email' => $input['email'],
-            ])->save();
-        }
+            ])->save()
+            : throw new HttpException("Your email address is not verified.", 401);
+
+        // if (
+        //     $input['email'] !== $user->email &&
+        //     $user instanceof MustVerifyEmail
+        // ) {
+        //     $this->updateVerifiedUser($user, $input);
+        // } else {
+        //     $user->forceFill([
+        //         'name' => $input['name'],
+        //         'email' => $input['email'],
+        //     ])->save();
+        // }
     }
 
     /**
