@@ -55,16 +55,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('send-email-stripe-receipt', [StripeController::class, 'sendEmailReceipt']);
 
     // Facebook
+    Route::post('check-postal-code', [FacebookAdController::class, 'checkPostalCode']);
     Route::post('create-ad', [FacebookAdController::class, 'createAd']);
     Route::get('ad-results/{id}', [FacebookAdController::class, 'adResults']);
 
     // Miscellaneous
     Route::resource('ad', AdController::class)->except(['create', 'edit']);
-
-    // Tests
-    Route::get('test-email-verified', function () {
-        return response()->json([
-            'emailVerified' => true
-        ]);
-    })->middleware('verified');
 });
