@@ -11,6 +11,7 @@ use App\Services\FacebookAds\FacebookAdsAd;
 use App\Services\FacebookAds\FacebookAdsAdSet;
 use App\Services\FacebookAds\FacebookAdsCampaign;
 use App\Services\FacebookAds\FacebookAdsAdCreative;
+use App\Services\FacebookAds\FacebookAdsTargetingSearch;
 use App\Services\Payment\Paypal\PaypalOrder;
 use App\Services\Payment\Stripe\StripeOrder;
 
@@ -39,6 +40,20 @@ class FacebookAdController extends Controller
         $preview = $ad->getAdPreview($url, $link, $name);
 
         return $preview;
+    }
+
+    public function checkPostalCode(Request $request, FacebookAdsTargetingSearch $target)
+    {
+        $validData = $request->validate([
+            'zipCode' => 'required|digits:5',
+        ]);
+
+        $zipCode = $validData['zipCode'];
+        $validZip = collect($target->search('adgeolocation', 'zip', $zipCode));
+
+        return response()->json([
+            'data' => $validZip->isNotEmpty()
+        ]);
     }
 
     /**
