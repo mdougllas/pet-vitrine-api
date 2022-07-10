@@ -31,6 +31,7 @@ Route::post('mobile/login', [MobileAuthController::class, 'requestToken']);
 Route::post('ad-preview', [FacebookAdController::class, 'adPreview']);
 Route::post('list-ad-sets', [FacebookAdController::class, 'listAdSets']);
 Route::post('list-ads', [FacebookAdController::class, 'listAds']);
+Route::post('check-postal-code', [FacebookAdController::class, 'checkPostalCode']);
 
 // Miscellaneous Routes
 Route::get('petfinder-token', [PetfinderController::class, 'requestToken']);
@@ -55,7 +56,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('send-email-stripe-receipt', [StripeController::class, 'sendEmailReceipt']);
 
     // Facebook
-    Route::post('check-postal-code', [FacebookAdController::class, 'checkPostalCode']);
     Route::post('create-ad', [FacebookAdController::class, 'createAd']);
     Route::get('ad-results/{id}', [FacebookAdController::class, 'adResults']);
 
