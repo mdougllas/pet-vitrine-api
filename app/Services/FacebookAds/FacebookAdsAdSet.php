@@ -64,16 +64,16 @@ class FacebookAdsAdSet
      * @param  integer $budget
      * @return FacebookAds\Object\AdSet
      */
-    public function createAdSet($name, $campaignId, $zipCode, $budget)
+    public function createAdSet($name, $campaignId, $cityKey, $budget)
     {
         $account = FacebookAdsAccount::adAccountInstance();
         $fields = ['name', 'targeting', 'start_time', 'end_time'];
 
-        $zip = collect([
-            'key' => "US:$zipCode",
-            'radius' => 15,
+        $city = collect([
+            'key' => $cityKey,
+            'radius' => 10,
             'distance_unit' => 'mile'
-        ])->toJson();
+        ]);
 
         $params = [
             'name' => $name,
@@ -86,8 +86,8 @@ class FacebookAdsAdSet
             'campaign_id' => $campaignId,
             'targeting' => [
                 'geo_locations' => [
-                    'zips' => [
-                        $zip
+                    'cities' => [
+                        $city
                     ]
                 ],
                 'interests' => [
