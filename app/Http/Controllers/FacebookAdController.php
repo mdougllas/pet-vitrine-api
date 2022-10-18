@@ -82,7 +82,7 @@ class FacebookAdController extends Controller
             'paymentId' => 'required|string',
             'paymentProvider' => 'required|string',
             'petName' => 'required|string',
-            'zipCode' => 'required|digits:5',
+            'cityKey' => 'required|numeric',
             'budget' => 'required|numeric|min:5',
             'url' => 'required',
             'link' => 'required'
@@ -93,7 +93,7 @@ class FacebookAdController extends Controller
         $paymentProvider = $request['paymentProvider'];
         $petId = $validData['petId'];
         $petName = $validData['petName'];
-        $zipCode = $validData['zipCode'];
+        $cityKey = $validData['cityKey'];
         $budget = (int) $validData['budget'];
         $url = $validData['url'];
         $link = $validData['link'];
@@ -101,7 +101,7 @@ class FacebookAdController extends Controller
         $this->verifyAdExists($paymentId);
         $this->validatePayment($paypal, $stripe, $paymentId, $paymentProvider, $budget);
         $lastCampaignId = $campaign->getLastCampaign()->id;
-        $adSet = $adSet->createAdSet($petName, $lastCampaignId, $zipCode, $budget);
+        $adSet = $adSet->createAdSet($petName, $lastCampaignId, $cityKey, $budget);
         $adCreative = $creative->createAdCreative($url, $link, $petName);
         $ad = $ad->createAd($petName, $adSet->id, $adCreative->id);
 
