@@ -15,7 +15,7 @@ class FacebookAdsTargetingSearch
      *
      * @return Object
      */
-    public function search($type, $targeting, $query)
+    public static function search($type, $targeting, $query)
     {
         FacebookAdsAccount::adAccountInstance();
 
