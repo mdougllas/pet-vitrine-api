@@ -54,7 +54,6 @@ class FacebookAdsAdSet
         return $data;
     }
 
-
     /**
      * Creates Ad Set.
      *
@@ -64,13 +63,14 @@ class FacebookAdsAdSet
      * @param  integer $budget
      * @return FacebookAds\Object\AdSet
      */
-    public function createAdSet($name, $campaignId, $cityKey, $budget)
+    public function createAdSet($name, $campaignId, $city, $budget)
     {
         $account = FacebookAdsAccount::adAccountInstance();
         $fields = ['name', 'targeting', 'start_time', 'end_time'];
+        $cityData = FacebookAdsTargetingSearch::search('adgeolocation', 'city', $city);
 
         $city = collect([
-            'key' => $cityKey,
+            'key' => $cityData->key,
             'radius' => 10,
             'distance_unit' => 'mile'
         ]);

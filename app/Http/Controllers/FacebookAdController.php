@@ -42,17 +42,17 @@ class FacebookAdController extends Controller
         return $preview;
     }
 
-    public function checkPostalCode(Request $request, FacebookAdsTargetingSearch $target)
+    public function checkCityValid(Request $request, FacebookAdsTargetingSearch $target)
     {
         $validData = $request->validate([
-            'zipCode' => 'required|digits:5',
+            'city' => 'required|string',
         ]);
 
-        $zipCode = $validData['zipCode'];
-        $validZip = collect($target->search('adgeolocation', 'zip', $zipCode));
+        $city = $validData['city'];
+        $cityData = $target->search('adgeolocation', 'city', $city);
 
         return response()->json([
-            'data' => $validZip->isNotEmpty()
+            'data' => $cityData->supports_city ?? false
         ]);
     }
 
@@ -82,7 +82,7 @@ class FacebookAdController extends Controller
             'paymentId' => 'required|string',
             'paymentProvider' => 'required|string',
             'petName' => 'required|string',
-            'cityKey' => 'required|numeric',
+            'city' => 'required|string',
             'budget' => 'required|numeric|min:5',
             'url' => 'required',
             'link' => 'required'
@@ -93,15 +93,16 @@ class FacebookAdController extends Controller
         $paymentProvider = $request['paymentProvider'];
         $petId = $validData['petId'];
         $petName = $validData['petName'];
-        $cityKey = $validData['cityKey'];
+        $city = $validData['city'];
         $budget = (int) $validData['budget'];
         $url = $validData['url'];
         $link = $validData['link'];
 
         $this->verifyAdExists($paymentId);
         $this->validatePayment($paypal, $stripe, $paymentId, $paymentProvider, $budget);
+
         $lastCampaignId = $campaign->getLastCampaign()->id;
-        $adSet = $adSet->createAdSet($petName, $lastCampaignId, $cityKey, $budget);
+        $adSet = $adSet->createAdSet($petName, $lastCampaignId, $city, $budget);
         $adCreative = $creative->createAdCreative($url, $link, $petName);
         $ad = $ad->createAd($petName, $adSet->id, $adCreative->id);
 

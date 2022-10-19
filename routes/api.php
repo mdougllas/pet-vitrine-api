@@ -31,7 +31,7 @@ Route::post('mobile/login', [MobileAuthController::class, 'requestToken']);
 Route::post('ad-preview', [FacebookAdController::class, 'adPreview']);
 Route::post('list-ad-sets', [FacebookAdController::class, 'listAdSets']);
 Route::post('list-ads', [FacebookAdController::class, 'listAds']);
-Route::post('check-postal-code', [FacebookAdController::class, 'checkPostalCode']);
+Route::post('check-city', [FacebookAdController::class, 'checkCityValid']);
 
 // Miscellaneous Routes
 Route::get('petfinder-token', [PetfinderController::class, 'requestToken']);
