@@ -4,9 +4,28 @@ namespace App\Services\Spider;
 
 class HttpRequest
 {
-    public function getPets($token)
+    /**
+     * Blueprint for HttpRequest.
+     *
+     * @param \App\Services\Spider\HttpRequest $spider
+     * @return void
+     */
+    public function __construct()
     {
-        $url = "https://www.petfinder.com/search/?page=1&limit[]=300&status=adoptable&token=$token&distance[]=Anywhere&include_transportable=true";
+        $this->perPage = 10;
+    }
+
+    /**
+     * Blueprint for SpiderPetsManager.
+     *
+     * @param \App\Services\Spider\HttpRequest $spider
+     * @return void
+     */
+    public function getPets($page = 1)
+    {
+        $perPage = $this->perPage;
+        $token = config('spider.token',);
+        $url = "https://www.petfinder.com/search/?page=$page&limit[]=$perPage&status=adoptable&token=$token&distance[]=Anywhere&include_transportable=true";
 
         $ch = curl_init();
 
