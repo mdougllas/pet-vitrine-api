@@ -23,7 +23,7 @@ return new class extends Migration
             $table->tinyInteger('longitude');
             $table->string('name');
             $table->smallInteger('postal_code');
-            $table->bigInteger('petfinder_id');
+            $table->string('petfinder_id');
             $table->tinyText('state', 30);
 
             $table->timestamps();
