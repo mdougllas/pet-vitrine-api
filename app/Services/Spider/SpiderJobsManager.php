@@ -27,11 +27,8 @@ class SpiderJobsManager
      */
     public function startJobs()
     {
-        $page = 1;
-        $response = $this->spider->getPets($page);
-
+        $response = $this->spider->getPets();
         $this->parseMetaInfo($response->result);
-
         $data = $this->pets->listPets();
 
         return $data;
@@ -45,7 +42,14 @@ class SpiderJobsManager
      */
     private function parseMetaInfo($result)
     {
-        $pages = collect()->range(1, $result->pagination->total_pages);
+        $pages = collect()
+            ->range(1, $result->pagination->total_pages)
+            ->sortDesc();
         $pages->each(fn ($page) => $this->pets->parsePets($page));
+    }
+
+    private function sortResult($result)
+    {
+        return collect($result->organizations)->sortBy('id');
     }
 }
