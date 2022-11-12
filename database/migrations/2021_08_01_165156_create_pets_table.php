@@ -23,12 +23,12 @@ class CreatePetsTable extends Migration
                 ->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
-            $table->enum('age', ['adult', 'baby', 'senior', 'young', 'unknown']);
+            $table->enum('age', ['adult', 'baby', 'senior', 'young']);
             $table->string('breed');
             $table->text('description');
             $table->string('name');
             $table->json('photo_urls');
-            $table->enum('sex', ['female', 'male']);
+            $table->enum('sex', ['female', 'male', 'unknown']);
             $table->enum('species', ['Cat', 'Dog']);
             $table->enum('status', ['adoptable', 'adopted']);
             $table->string('organization_id');
