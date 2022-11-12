@@ -15,10 +15,11 @@ class SpiderPetsManager
      * @param \App\Services\Spider\HttpRequest $spider
      * @return void
      */
-    public function __construct(HttpRequest $spider, Pet $pet)
+    public function __construct(HttpRequest $spider)
     {
         $this->spider = $spider;
-        $this->pet = $pet;
+        $this->pet = null;
+        $this->counter = 0;
     }
 
     /**
@@ -33,23 +34,28 @@ class SpiderPetsManager
         $pets = collect($response->result->animals);
 
         $pets->each(function ($pet) {
+            var_dump($this->counter += 1);
             $petData = $pet->animal;
 
-            if ($this->getLatestParsedId() >= $petData->id) {
-                return false;
+            if ($this->petExists($petData->id)) {
+                var_dump('Pet already on DB. Skipping saving the pet.');
+                return true;
             }
 
-            $this->checkPhotos($petData->photo_urls);
+            if ($this->checkDuplicatedPet($pet)) {
+                var_dump("This is a dulicate. Skipping saving the pet.");
+                return true;
+            }
+
+            if (!$this->filterSpecies($petData->species->name)) {
+                var_dump('Not a cat or a dog. Skipping saving the pet.');
+                return true;
+            }
+
             $this->savePet($pet);
 
             sleep(2);
         });
-
-        $latestPet = collect($response->result->animals)->first()->animal;
-
-        if ($latestPet->id > $this->getLatestParsedId()) {
-            $this->setLatestParsedId($latestPet->id);
-        }
 
         return false;
     }
@@ -70,14 +76,14 @@ class SpiderPetsManager
     }
 
     /**
-     * Store the id for the latest parsed pet.
+     * Retrieve the id for the latest parsed pet.
      *
      * @return Illuminate\Database\Eloquent\Collection
      * @return Illuminate\Database\Eloquent\Collection
      */
-    private function setLatestParsedId($id)
+    private function petExists($id)
     {
-        Redis::set('latest_parsed_pet', $id);
+        return Pet::where('petfinder_id', $id)->exists();
     }
 
     /**
@@ -86,21 +92,38 @@ class SpiderPetsManager
      * @return Illuminate\Database\Eloquent\Collection
      * @return Illuminate\Database\Eloquent\Collection
      */
-    private function getLatestParsedId()
+    private function checkDuplicatedPet($pet)
     {
-        return (int) Redis::get('latest_parsed_pet');
+        $petData = $pet->animal;
+        $organizationData = $pet->organization;
+
+        $nameMatches = Pet::where('name', $petData->name)->get();
+
+        if (!$nameMatches->isEmpty()) {
+            $checkDuplicate = $nameMatches->map(function ($pet) use ($petData, $organizationData) {
+                $sexMatches = $pet->sex == $petData->sex;
+                $speciesMatches = $pet->species == $petData->species->name;
+                $organizationMatches = $pet->organization_id == $organizationData->display_id;
+
+                return $sexMatches && $speciesMatches && $organizationMatches;
+            });
+
+            return $checkDuplicate;
+        }
+
+        return false;
     }
 
+
     /**
-     * Check if the pet has photos available.
+     * Retrieve the id for the latest parsed pet.
      *
-     * @return void||true;
+     * @return Illuminate\Database\Eloquent\Collection
+     * @return Illuminate\Database\Eloquent\Collection
      */
-    private function checkPhotos($urls)
+    private function filterSpecies($species)
     {
-        if (count($urls) < 1) {
-            return true;
-        }
+        return $species === 'Cat' || $species === 'Dog';
     }
 
     /**
@@ -111,6 +134,8 @@ class SpiderPetsManager
      */
     private function savePet($pet)
     {
+        var_dump('SAVE PET CALLED');
+
         $this->getPetData($pet);
         $this->pet->save();
         Redis::lpush('pets', json_encode($pet));
@@ -123,13 +148,14 @@ class SpiderPetsManager
      */
     private function getPetData($pet)
     {
+        $this->pet = new Pet;
         $petData = $pet->animal;
 
         $this->pet->uuid = Str::uuid();
         $this->pet->ad_id = null;
         $this->pet->age = $petData->age;
         $this->pet->breed = $petData->primary_breed->name;
-        $this->pet->description = $petData->description;
+        $this->pet->description = $petData->description ?? 'No description available.';
         $this->pet->name = $petData->name;
         $this->pet->photo_urls = $petData->photo_urls;
         $this->pet->sex = $petData->sex;
