@@ -2,8 +2,8 @@
 
 namespace App\Services\Spider;
 
-use Illuminate\Support\Facades\Redis;
-use App\Services\Spider\SpiderPetsManager;
+use App\Models\Pet;
+use Illuminate\Support\Str;
 
 class SpiderDataManager
 {
@@ -13,17 +13,34 @@ class SpiderDataManager
      * @param \App\Services\Spider\SpiderPetsManager $pets
      * @return void
      */
-    public function __construct(SpiderPetsManager $pets)
+    public function __construct()
     {
-        $this->pets = $pets;
     }
 
+
     /**
-     * Start the jobs to scrape and store data.
+     * Check if the pet has photos available.
      *
-     * @return Illuminate\Database\Eloquent\Collection
+     * @return void;
      */
-    public function startJobs()
+    public function getPetData($pet)
     {
+        $petModel = new Pet;
+        $petData = $pet->animal;
+
+        $petModel->uuid = Str::uuid();
+        $petModel->ad_id = null;
+        $petModel->age = $petData->age;
+        $petModel->breed = $petData->primary_breed->name;
+        $petModel->description = $petData->description ?? 'No description available.';
+        $petModel->name = $petData->name;
+        $petModel->photo_urls = $petData->photo_urls;
+        $petModel->sex = $petData->sex;
+        $petModel->species = $petData->species->name;
+        $petModel->status = $petData->adoption_status;
+        $petModel->organization_id = $pet->organization->display_id;
+        $petModel->petfinder_id = $petData->id;
+
+        return $petModel;
     }
 }
