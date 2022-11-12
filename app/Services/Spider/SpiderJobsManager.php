@@ -57,15 +57,19 @@ class SpiderJobsManager
         var_dump("Number of pages to parse", $pages->count());
 
         $pages->each(function ($page) {
-            if ($this->cicle === 2) return false;
-
             var_dump("Parse meta info cicle", $this->cicle);
             var_dump('For Page', $page);
             $this->pets->parsePets($page);
             $this->cicle += 1;
+
+            if ($this->cicle === 5) {
+                $this->setLatestParsedPage($page - 1);
+
+                return false;
+            }
         });
 
-        $this->setLatestParsedPage($result->pagination->total_pages - 5);
+        // $this->setLatestParsedPage($result->pagination->total_pages - 5);
     }
 
     private function sortResult($result)

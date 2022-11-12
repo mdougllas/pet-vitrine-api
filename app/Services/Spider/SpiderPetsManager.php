@@ -19,7 +19,6 @@ class SpiderPetsManager
     {
         $this->spider = $spider;
         $this->pet = null;
-        $this->counter = 0;
     }
 
     /**
@@ -34,11 +33,10 @@ class SpiderPetsManager
         $pets = collect($response->result->animals);
 
         $pets->each(function ($pet) {
-            var_dump($this->counter += 1);
             $petData = $pet->animal;
 
             if ($this->petExists($petData->id)) {
-                var_dump('Pet already on DB. Skipping saving the pet.');
+                var_dump("Pet $petData->id already on DB. Skipping saving the pet.");
                 return true;
             }
 
