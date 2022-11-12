@@ -28,7 +28,6 @@ class SpiderJobsManager
      */
     public function startJobs()
     {
-        var_dump('Start Jobs');
         $response = $this->spider->getPets();
         $this->parseMetaInfo($response->result);
         $data = $this->pets->listPets();
@@ -44,25 +43,17 @@ class SpiderJobsManager
      */
     private function parseMetaInfo($result)
     {
-        Var_dump('Parse Meta Info');
-
         $fromPage = $this->getLatestParsedPage();
         $toPage = $result->pagination->total_pages;
-        var_dump("Current page", $fromPage);
-        var_dump("Total Pages on request", $toPage);
 
         $pages = collect()
             ->range($fromPage, $toPage);
 
-        var_dump("Number of pages to parse", $pages->count());
-
         $pages->each(function ($page) {
-            var_dump("Parse meta info cicle", $this->cicle);
-            var_dump('For Page', $page);
             $this->pets->parsePets($page);
             $this->cicle += 1;
 
-            if ($this->cicle === 5) {
+            if ($this->cicle === 11) {
                 $this->setLatestParsedPage($page - 1);
 
                 return false;
@@ -85,10 +76,7 @@ class SpiderJobsManager
      */
     private function setLatestParsedPage($page)
     {
-        var_dump('Set Latest Parsed Page');
-        var_dump('Page', $page);
-        var_dump('Last Parsed Page', $this->getLatestParsedPage());
-        Redis::set('latest_parsed_pet', $page);
+        Redis::set('latest_parsed_page', $page);
     }
 
     /**
@@ -99,8 +87,6 @@ class SpiderJobsManager
      */
     private function getLatestParsedPage()
     {
-        var_dump('Get Latest Parsed Page');
-        var_dump((int) Redis::get('latest_parsed_pet'));
-        return (int) Redis::get('latest_parsed_pet');
+        return (int) Redis::get('latest_parsed_page');
     }
 }
