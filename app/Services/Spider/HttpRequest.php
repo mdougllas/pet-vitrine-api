@@ -12,7 +12,7 @@ class HttpRequest
      */
     public function __construct()
     {
-        $this->perPage = 5;
+        $this->perPage = 300;
     }
 
     /**
