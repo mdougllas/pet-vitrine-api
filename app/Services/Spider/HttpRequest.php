@@ -12,7 +12,7 @@ class HttpRequest
      */
     public function __construct()
     {
-        $this->perPage = 10;
+        $this->perPage = 5;
     }
 
     /**
@@ -25,7 +25,7 @@ class HttpRequest
     {
         $perPage = $this->perPage;
         $token = config('spider.token',);
-        $url = "https://www.petfinder.com/search/?page=$page&limit[]=$perPage&status=adoptable&token=$token&distance[]=Anywhere&include_transportable=true";
+        $url = "https://www.petfinder.com/search/?token=$token&page=$page&limit[]=$perPage&status=adoptable&sort[]=recenly_added&distance[]=Anywhere&include_transportable=true";
 
         $ch = curl_init();
 
