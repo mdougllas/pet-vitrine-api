@@ -6,6 +6,7 @@ use App\Models\Pet;
 use Illuminate\Support\Str;
 use App\Services\Spider\HttpRequest;
 use Illuminate\Support\Facades\Redis;
+use App\Services\Spider\SpiderDataManager;
 
 class SpiderPetsManager
 {
@@ -15,10 +16,10 @@ class SpiderPetsManager
      * @param \App\Services\Spider\HttpRequest $spider
      * @return void
      */
-    public function __construct(HttpRequest $spider)
+    public function __construct(HttpRequest $spider, SpiderDataManager $dataManager)
     {
         $this->spider = $spider;
-        $this->pet = null;
+        $this->dataManager = $dataManager;
     }
 
     /**
@@ -134,32 +135,8 @@ class SpiderPetsManager
     {
         var_dump('SAVE PET CALLED');
 
-        $this->getPetData($pet);
-        $this->pet->save();
+        $petData = $this->dataManager->getPetData($pet);
+        $petData->save();
         Redis::lpush('pets', json_encode($pet));
-    }
-
-    /**
-     * Check if the pet has photos available.
-     *
-     * @return void;
-     */
-    private function getPetData($pet)
-    {
-        $this->pet = new Pet;
-        $petData = $pet->animal;
-
-        $this->pet->uuid = Str::uuid();
-        $this->pet->ad_id = null;
-        $this->pet->age = $petData->age;
-        $this->pet->breed = $petData->primary_breed->name;
-        $this->pet->description = $petData->description ?? 'No description available.';
-        $this->pet->name = $petData->name;
-        $this->pet->photo_urls = $petData->photo_urls;
-        $this->pet->sex = $petData->sex;
-        $this->pet->species = $petData->species->name;
-        $this->pet->status = $petData->adoption_status;
-        $this->pet->organization_id = $pet->organization->display_id;
-        $this->pet->petfinder_id = $petData->id;
     }
 }
