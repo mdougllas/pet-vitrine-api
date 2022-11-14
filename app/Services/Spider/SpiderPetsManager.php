@@ -20,6 +20,7 @@ class SpiderPetsManager
     {
         $this->spider = $spider;
         $this->dataManager = $dataManager;
+        $this->loop = 1;
     }
 
     /**
@@ -35,25 +36,26 @@ class SpiderPetsManager
 
         $pets->each(function ($pet) {
             $petData = $pet->animal;
+            echo ("This is pets loop # $this->loop \n");
+
+            $this->loop += 1;
 
             if ($this->petExists($petData->id)) {
-                var_dump("Pet $petData->id already on DB. Skipping saving the pet.");
+                echo ("Pet $petData->id already on DB. Skipping saving the pet. \n");
                 return true;
             }
 
             if ($this->checkDuplicatedPet($pet)) {
-                var_dump("This is a dulicate. Skipping saving the pet.");
+                echo ("This is a dulicate. Skipping saving the pet. \n");
                 return true;
             }
 
             if (!$this->filterSpecies($petData->species->name)) {
-                var_dump('Not a cat or a dog. Skipping saving the pet.');
+                echo ("Not a cat or a dog. Skipping saving the pet. \n");
                 return true;
             }
 
             $this->savePet($pet);
-
-            sleep(2);
         });
 
         return false;
@@ -133,7 +135,7 @@ class SpiderPetsManager
      */
     private function savePet($pet)
     {
-        var_dump('SAVE PET CALLED');
+        echo ("SAVE PET CALLED \n");
 
         $petData = $this->dataManager->getPetData($pet);
         $petData->save();
