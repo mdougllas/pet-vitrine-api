@@ -30,9 +30,6 @@ class SpiderJobsManager
     {
         $response = $this->spider->getPets();
         $this->parseMetaInfo($response->result);
-        $data = $this->pets->listPets();
-
-        return $data;
     }
 
     /**
@@ -50,17 +47,26 @@ class SpiderJobsManager
             ->range($fromPage, $toPage);
 
         $pages->each(function ($page) {
+            echo ("Parsing Page $page \n");
+            echo ("Cicle $this->cicle \n");
             $this->pets->parsePets($page);
             $this->cicle += 1;
 
-            if ($this->cicle === 11) {
-                $this->setLatestParsedPage($page - 1);
+            if ($this->cicle >= 3) {
+                $this->setLatestParsedPage($page);
 
                 return false;
             }
+
+            $randomNumber = collect([5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15])->random();
+
+            echo ("Pause for $randomNumber seconds.");
+
+            sleep($randomNumber);
         });
 
         // $this->setLatestParsedPage($result->pagination->total_pages - 5);
+        echo ("Jobs finished.");
     }
 
     private function sortResult($result)
