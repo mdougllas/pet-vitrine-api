@@ -5,7 +5,7 @@ namespace App\Console\Commands;
 use App\Services\Spider\SpiderJobsManager;
 use Illuminate\Console\Command;
 
-class StartJob extends Command
+class StartSpiderCommand extends Command
 {
     /**
      * The name and signature of the console command.
