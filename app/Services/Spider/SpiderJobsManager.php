@@ -2,8 +2,8 @@
 
 namespace App\Services\Spider;
 
+use App\Models\SpiderJob;
 use App\Services\Spider\HttpRequest;
-use Illuminate\Support\Facades\Redis;
 use App\Services\Spider\SpiderPetsManager;
 
 class SpiderJobsManager
@@ -28,8 +28,21 @@ class SpiderJobsManager
      */
     public function startJobs()
     {
+        echo "Spider jobs initiated." . PHP_EOL;
+
+        if ($this->getJobRunning()) {
+            echo "Spider is already running." . PHP_EOL;
+            exit;
+        }
+
+        $this->setJobRunning(true);
+
         $response = $this->spider->getPets();
         $this->parseMetaInfo($response->result);
+
+        $this->setJobRunning(false);
+
+        echo ("Spider jobs finished.");
     }
 
     /**
@@ -47,8 +60,8 @@ class SpiderJobsManager
             ->range($fromPage, $toPage);
 
         $pages->each(function ($page) {
-            echo ("Parsing Page $page \n");
-            echo ("Cicle $this->cicle \n");
+            echo "Parsing Page $page" . PHP_EOL;
+            echo "Cicle $this->cicle \n" . PHP_EOL;
             $this->pets->parsePets($page);
             $this->cicle += 1;
 
@@ -60,18 +73,35 @@ class SpiderJobsManager
 
             $randomNumber = collect([5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15])->random();
 
-            echo ("Pause for $randomNumber seconds.");
+            echo "Pause for $randomNumber seconds." . PHP_EOL;
 
             sleep($randomNumber);
         });
 
         // $this->setLatestParsedPage($result->pagination->total_pages - 5);
-        echo ("Jobs finished.");
     }
 
-    private function sortResult($result)
+    /**
+     * Store the id for the latest parsed pet.
+     *
+     * @return Illuminate\Database\Eloquent\Collection
+     */
+    private function getJobRunning()
     {
-        return collect($result->organizations)->sortBy('id');
+        return SpiderJob::first()->job_running;
+    }
+
+    /**
+     * Store the id for the latest parsed pet.
+     *
+     * @return void
+     */
+    private function setJobRunning($state)
+    {
+        $spiderJob = SpiderJob::first();
+        $spiderJob->job_running = $state;
+
+        $spiderJob->save();
     }
 
     /**
@@ -82,7 +112,10 @@ class SpiderJobsManager
      */
     private function setLatestParsedPage($page)
     {
-        Redis::set('latest_parsed_page', $page);
+        $spiderJob = SpiderJob::first();
+        $spiderJob->last_page_processed = $page;
+
+        $spiderJob->save();
     }
 
     /**
@@ -93,6 +126,6 @@ class SpiderJobsManager
      */
     private function getLatestParsedPage()
     {
-        return (int) Redis::get('latest_parsed_page');
+        return SpiderJob::first()->last_page_processed;
     }
 }
