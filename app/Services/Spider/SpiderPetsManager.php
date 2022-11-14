@@ -36,22 +36,22 @@ class SpiderPetsManager
 
         $pets->each(function ($pet) {
             $petData = $pet->animal;
-            echo ("This is pets loop # $this->loop \n");
+            echo "This is pets loop # $this->loop" . PHP_EOL;
 
             $this->loop += 1;
 
             if ($this->petExists($petData->id)) {
-                echo ("Pet $petData->id already on DB. Skipping saving the pet. \n");
+                echo "Pet $petData->id already on DB. Skipping saving the pet. \n" . PHP_EOL;
                 return true;
             }
 
             if ($this->checkDuplicatedPet($pet)) {
-                echo ("This is a dulicate. Skipping saving the pet. \n");
+                echo "This is a dulicate. Skipping saving the pet. \n" . PHP_EOL;
                 return true;
             }
 
             if (!$this->filterSpecies($petData->species->name)) {
-                echo ("Not a cat or a dog. Skipping saving the pet. \n");
+                echo "Not a cat or a dog. Skipping saving the pet. \n" . PHP_EOL;
                 return true;
             }
 
@@ -135,7 +135,7 @@ class SpiderPetsManager
      */
     private function savePet($pet)
     {
-        echo ("SAVE PET CALLED \n");
+        echo "SAVE PET CALLED \n" . PHP_EOL;
 
         $petData = $this->dataManager->getPetData($pet);
         $petData->save();
