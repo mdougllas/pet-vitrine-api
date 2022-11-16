@@ -4,6 +4,7 @@ namespace App\Services\Spider;
 
 use App\Models\Pet;
 use Illuminate\Support\Str;
+use App\Models\Organization;
 
 class SpiderDataManager
 {
@@ -17,6 +18,32 @@ class SpiderDataManager
     {
     }
 
+
+    /**
+     * Check if the pet has photos available.
+     *
+     * @return void;
+     */
+    public function getShelterData($shelter)
+    {
+        $shelterModel = new Organization;
+        $location = $shelter->location->address;
+        $geo = $shelter->location->geo;
+
+        $shelterModel->uuid = Str::uuid();
+        $shelterModel->address_1 = $location->address1;
+        $shelterModel->address_2 = $location->address2;
+        $shelterModel->city = $location->city;
+        $shelterModel->country = $location->country;
+        $shelterModel->latitude = $geo->latitude;
+        $shelterModel->longitude = $geo->longitude;
+        $shelterModel->name = $shelter->name;
+        $shelterModel->postal_code = $location->postal_code;
+        $shelterModel->petfinder_id = $shelter->display_id;
+        $shelterModel->state = $location->state;
+
+        return $shelterModel;
+    }
 
     /**
      * Check if the pet has photos available.
