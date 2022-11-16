@@ -3,6 +3,7 @@
 namespace App\Services\Spider;
 
 use App\Models\SpiderJob;
+use App\Models\Organization;
 use App\Services\Spider\HttpRequest;
 use App\Services\Spider\SpiderPetsManager;
 
@@ -14,9 +15,10 @@ class SpiderJobsManager
      * @param \App\Services\Spider\HttpRequest $spider
      * @return void
      */
-    public function __construct(HttpRequest $spider, SpiderPetsManager $pets)
+    public function __construct(HttpRequest $spider, SpiderPetsManager $pets, SpiderSheltersManager $shelters)
     {
         $this->spider = $spider;
+        $this->shelters = $shelters;
         $this->pets = $pets;
         $this->cicle = 1;
     }
@@ -37,12 +39,14 @@ class SpiderJobsManager
 
         $this->setJobRunning(true);
 
-        $response = $this->spider->getPets();
-        $this->parseMetaInfo($response->result);
+        $organizations = $this->spider->getOrganizations();
+        $pets = $this->spider->getPets();
 
+        $this->parseSheltersInfo($organizations);
+        $this->parsePetsInfo($pets->result);
         $this->setJobRunning(false);
 
-        echo ("Spider jobs finished.");
+        echo "Spider jobs finished." . PHP_EOL;
     }
 
     /**
@@ -51,21 +55,51 @@ class SpiderJobsManager
      * @param  json  $result
      * @return mixed void | null
      */
-    private function parseMetaInfo($result)
+    public function parseSheltersInfo($result)
+    {
+        $totalShelters = $result->pagination->total_count;
+        $totalPages = $result->pagination->total_pages;
+        $sheltersOnDatabase = Organization::count();
+
+        if ($sheltersOnDatabase >= $totalShelters) {
+            echo "No new shelters where created." . PHP_EOL;
+
+            return;
+        }
+
+        $pages = collect()->range(1, $totalPages);
+
+        $pages->each(function ($page) {
+            $this->shelters->parseShelters($page);
+            dd($page);
+        });
+
+        dd($totalShelters);
+    }
+
+    /**
+     * Parse meta-data to collect number of pages.
+     *
+     * @param  json  $result
+     * @return mixed void | null
+     */
+    private function parsePetsInfo($result)
     {
         $fromPage = $this->getLatestParsedPage();
         $toPage = $result->pagination->total_pages;
 
+        dd($toPage);
+
         $pages = collect()
             ->range($fromPage, $toPage);
 
-        $pages->each(function ($page) {
+        $pages->each(function ($page) use ($toPage) {
             echo "Parsing Page $page" . PHP_EOL;
             echo "Cicle $this->cicle \n" . PHP_EOL;
             $this->pets->parsePets($page);
             $this->cicle += 1;
 
-            if ($this->cicle >= 3) {
+            if ($page >= $toPage || $this->cicle >= 100) {
                 $this->setLatestParsedPage($page);
 
                 return false;
