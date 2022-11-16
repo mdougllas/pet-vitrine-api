@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdController;
+use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PaypalController;
 use App\Http\Controllers\StripeController;
@@ -37,6 +38,10 @@ Route::post('check-city', [FacebookAdController::class, 'checkCityValid']);
 Route::get('petfinder-token', [PetfinderController::class, 'requestToken']);
 Route::post('recaptcha-token', [RecaptchaController::class, 'checkToken']);
 Route::post('send-contact-message', [ContactController::class, 'sendContactMessage']);
+
+Route::get('dispatch-spider', function () {
+    Artisan::call('spider:start');
+});
 
 // Auth Protected Routes
 Route::middleware(['auth:sanctum'])->group(function () {
