@@ -1,8 +1,5 @@
 <?php
 
-use App\Models\Organization;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -23,8 +20,8 @@ return new class extends Migration
             $table->string('address_2')->nullable();
             $table->string('city');
             $table->string('country');
-            $table->tinyInteger('latitude');
-            $table->tinyInteger('longitude');
+            $table->decimal('latitude', 9, 7);
+            $table->decimal('longitude', 9, 7);
             $table->string('name');
             $table->integer('postal_code');
             $table->string('petfinder_id');
