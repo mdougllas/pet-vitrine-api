@@ -72,7 +72,7 @@ class HttpRequest
     {
         $ch = curl_init();
 
-        curl_setopt($ch, CURLOPT_URL, 'https://www.petfinder.com/v2/search/organizations?&page=1&limit=10');
+        curl_setopt($ch, CURLOPT_URL, "https://www.petfinder.com/v2/search/organizations?&page=$page&limit=300&sort=name");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
 
@@ -82,7 +82,7 @@ class HttpRequest
             'Authority: www.petfinder.com',
             'Accept: */*',
             'Accept-Language: en-US,en;q=0.9,pt-BR;q=0.8,pt;q=0.7,es;q=0.6',
-            'Referer: https://www.petfinder.com/animal-shelters-and-rescues/search/?location=&shelter_name=',
+            'Referer: https://www.petfinder.com',
             'Sec-Ch-Ua: \"Google Chrome\";v=\"107\", \"Chromium\";v=\"107\", \"Not=A?Brand\";v=\"24\"',
             'Sec-Ch-Ua-Mobile: ?0',
             'Sec-Ch-Ua-Platform: \"macOS\"',
@@ -92,7 +92,6 @@ class HttpRequest
             'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36',
             'X-Requested-With: XMLHttpRequest',
         ];
-
 
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
