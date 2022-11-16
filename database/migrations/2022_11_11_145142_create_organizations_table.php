@@ -1,8 +1,11 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+use App\Models\Organization;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
@@ -13,16 +16,17 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('organization', function (Blueprint $table) {
+        Schema::create('organizations', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid');
-            $table->string('address_1');
-            $table->string('address_2');
+            $table->string('address_1')->nullable();
+            $table->string('address_2')->nullable();
             $table->string('city');
+            $table->string('country');
             $table->tinyInteger('latitude');
             $table->tinyInteger('longitude');
             $table->string('name');
-            $table->smallInteger('postal_code');
+            $table->integer('postal_code');
             $table->string('petfinder_id');
             $table->tinyText('state', 30);
 
@@ -37,6 +41,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('organization');
+        Schema::dropIfExists('organizations');
     }
 };
