@@ -3,9 +3,7 @@
 namespace App\Services\Spider;
 
 use App\Models\Pet;
-use Illuminate\Support\Str;
 use App\Services\Spider\HttpRequest;
-use Illuminate\Support\Facades\Redis;
 use App\Services\Spider\SpiderDataManager;
 
 class SpiderPetsManager
@@ -69,8 +67,9 @@ class SpiderPetsManager
      */
     public function listPets()
     {
-        $result = Redis::lrange('pets', 0, Redis::llen('pets'));
-        $pets = collect($result);
+        //todo
+        return;
+        $pets = Pet::all();
         $data = $pets->map(fn ($pet) => json_decode($pet));
 
         return $data;
@@ -139,6 +138,5 @@ class SpiderPetsManager
 
         $petData = $this->dataManager->getPetData($pet);
         $petData->save();
-        Redis::lpush('pets', json_encode($pet));
     }
 }
