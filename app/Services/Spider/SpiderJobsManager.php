@@ -59,13 +59,15 @@ class SpiderJobsManager
     {
         $totalShelters = $result->pagination->total_count;
         $totalPages = $result->pagination->total_pages;
-        $sheltersOnDatabase = Organization::count();
+        $numberOfShelters = $this->getNumberOfShelters();
 
-        if ($sheltersOnDatabase == $totalShelters) {
+        if ($numberOfShelters == $totalShelters) {
             echo "No new shelters where created." . PHP_EOL;
 
             return;
         }
+
+        $this->setNumberOfShelters($totalShelters);
 
         $pages = collect()->range(1, $totalPages);
 
@@ -87,8 +89,6 @@ class SpiderJobsManager
         $fromPage = $this->getLatestParsedPage();
         $toPage = $result->pagination->total_pages;
 
-        dd("You shall not pass!");
-
         $pages = collect()
             ->range($fromPage, $toPage);
 
@@ -100,14 +100,13 @@ class SpiderJobsManager
 
             if ($page >= $toPage || $this->cicle >= 100) {
                 $this->setLatestParsedPage($page);
+                // $this->setLatestParsedPage($result->pagination->total_pages - 5); // Should replace line above after all pages are parsed
 
                 return false;
             }
 
             $this->pauseJob();
         });
-
-        // $this->setLatestParsedPage($result->pagination->total_pages - 5);
     }
 
     /**
@@ -156,6 +155,31 @@ class SpiderJobsManager
     private function getLatestParsedPage()
     {
         return SpiderJob::first()->last_page_processed;
+    }
+
+    /**
+     * Store the id for the latest parsed pet.
+     *
+     * @return Illuminate\Database\Eloquent\Collection
+     * @return Illuminate\Database\Eloquent\Collection
+     */
+    private function setNumberOfShelters($qty)
+    {
+        $spiderJob = SpiderJob::first();
+        $spiderJob->number_of_shelters = $qty;
+
+        $spiderJob->save();
+    }
+
+    /**
+     * Retrieve the id for the latest parsed pet.
+     *
+     * @return Illuminate\Database\Eloquent\Collection
+     * @return Illuminate\Database\Eloquent\Collection
+     */
+    private function getNumberOfShelters()
+    {
+        return SpiderJob::first()->number_of_shelters;
     }
 
     /**
