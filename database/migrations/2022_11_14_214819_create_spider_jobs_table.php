@@ -16,13 +16,15 @@ return new class extends Migration
     {
         Schema::create('spider_jobs', function (Blueprint $table) {
             $table->boolean('job_running')->default(false);
-            $table->bigInteger('last_page_processed')->default(1);
+            $table->bigInteger('last_page_processed');
+            $table->bigInteger('number_of_shelters');
             $table->timestamps();
         });
 
         $spider = new SpiderJob;
         $spider->job_running = 0;
         $spider->last_page_processed = 0;
+        $spider->number_of_shelters = 0;
 
         $spider->save();
     }
