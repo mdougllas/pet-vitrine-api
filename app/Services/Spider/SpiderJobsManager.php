@@ -61,7 +61,7 @@ class SpiderJobsManager
         $totalPages = $result->pagination->total_pages;
         $sheltersOnDatabase = Organization::count();
 
-        if ($sheltersOnDatabase != $totalShelters) {
+        if ($sheltersOnDatabase == $totalShelters) {
             echo "No new shelters where created." . PHP_EOL;
 
             return;
@@ -71,6 +71,8 @@ class SpiderJobsManager
 
         $pages->each(function ($page) {
             $this->shelters->parseShelters($page);
+
+            $this->pauseJob();
         });
     }
 
@@ -85,7 +87,7 @@ class SpiderJobsManager
         $fromPage = $this->getLatestParsedPage();
         $toPage = $result->pagination->total_pages;
 
-        dd($toPage);
+        dd("You shall not pass!");
 
         $pages = collect()
             ->range($fromPage, $toPage);
@@ -102,11 +104,7 @@ class SpiderJobsManager
                 return false;
             }
 
-            $randomNumber = collect([5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15])->random();
-
-            echo "Pause for $randomNumber seconds." . PHP_EOL;
-
-            sleep($randomNumber);
+            $this->pauseJob();
         });
 
         // $this->setLatestParsedPage($result->pagination->total_pages - 5);
@@ -158,5 +156,18 @@ class SpiderJobsManager
     private function getLatestParsedPage()
     {
         return SpiderJob::first()->last_page_processed;
+    }
+
+    /**
+     * Retrieve the id for the latest parsed pet.
+     *
+     * @return void
+     */
+    private function pauseJob()
+    {
+        $randomNumber = collect([5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15])->random();
+        echo "Pause for $randomNumber seconds." . PHP_EOL;
+
+        sleep($randomNumber);
     }
 }
