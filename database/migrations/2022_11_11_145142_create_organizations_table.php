@@ -20,10 +20,10 @@ return new class extends Migration
             $table->string('address_2')->nullable();
             $table->string('city');
             $table->string('country');
-            $table->decimal('latitude', 9, 7);
-            $table->decimal('longitude', 9, 7);
+            $table->decimal('latitude', 10, 7);
+            $table->decimal('longitude', 10, 7);
             $table->string('name');
-            $table->integer('postal_code');
+            $table->string('postal_code');
             $table->string('petfinder_id');
             $table->tinyText('state', 30);
 
