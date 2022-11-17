@@ -2,7 +2,7 @@
 
 namespace App\Services\Spider;
 
-use App\Models\Pet;
+use App\Models\Organization;
 use App\Services\Spider\HttpRequest;
 use App\Services\Spider\SpiderDataManager;
 
@@ -36,20 +36,15 @@ class SpiderSheltersManager
             echo "This is shelter loop # $this->loop" . PHP_EOL;
             $this->loop += 1;
 
-            // if ($this->shelterExists($shelter->display_id)) {
-            //     echo "Shelter $shelter->display_id already on DB. Skipping saving the shelter. \n" . PHP_EOL;
-            //     return true;
-            // }
+            if ($this->shelterExists($shelter->display_id)) {
+                echo "Shelter $shelter->display_id already on DB. Skipping saving the shelter. \n" . PHP_EOL;
+                return true;
+            }
 
-            // if ($this->checkDuplicatedPet($pet)) {
-            //     echo "This is a dulicate. Skipping saving the pet. \n" . PHP_EOL;
-            //     return true;
-            // }
-
-            // if (!$this->filterSpecies($petData->species->name)) {
-            //     echo "Not a cat or a dog. Skipping saving the pet. \n" . PHP_EOL;
-            //     return true;
-            // }
+            if ($this->checkDuplicatedShelter($shelter)) {
+                echo "This is a dulicate. Skipping saving the shelter. \n" . PHP_EOL;
+                return true;
+            }
 
             $this->saveShelter($shelter);
         });
@@ -75,9 +70,9 @@ class SpiderSheltersManager
      * @return Illuminate\Database\Eloquent\Collection
      * @return Illuminate\Database\Eloquent\Collection
      */
-    private function petExists($id)
+    private function shelterExists($id)
     {
-        return Pet::where('petfinder_id', $id)->exists();
+        return Organization::where('petfinder_id', $id)->exists();
     }
 
     /**
@@ -86,38 +81,30 @@ class SpiderSheltersManager
      * @return Illuminate\Database\Eloquent\Collection
      * @return Illuminate\Database\Eloquent\Collection
      */
-    private function checkDuplicatedPet($pet)
+    private function checkDuplicatedShelter($shelter)
     {
-        $petData = $pet->animal;
-        $organizationData = $pet->organization;
-
-        $nameMatches = Pet::where('name', $petData->name)->get();
+        $location = $shelter->location->address;
+        $nameMatches = Organization::where('name', $shelter->name)->get();
 
         if (!$nameMatches->isEmpty()) {
-            $checkDuplicate = $nameMatches->map(function ($pet) use ($petData, $organizationData) {
-                $sexMatches = $pet->sex == $petData->sex;
-                $speciesMatches = $pet->species == $petData->species->name;
-                $organizationMatches = $pet->organization_id == $organizationData->display_id;
+            $checkDuplicate = $nameMatches->map(function ($match) use ($location) {
+                $address1Matches = $match->address_1 == $location->address1;
+                $address2Matches = $match->address_2 == $location->address2;
+                $cityMatches = $match->city == $location->city;
+                $stateMatches = $match->state == $location->state;
+                $postalCodeMatches = $match->postal_code == $location->postal_code;
 
-                return $sexMatches && $speciesMatches && $organizationMatches;
+                return $address1Matches &&
+                    $address2Matches &&
+                    $cityMatches &&
+                    $stateMatches &&
+                    $postalCodeMatches;
             });
 
             return $checkDuplicate;
         }
 
         return false;
-    }
-
-
-    /**
-     * Retrieve the id for the latest parsed pet.
-     *
-     * @return Illuminate\Database\Eloquent\Collection
-     * @return Illuminate\Database\Eloquent\Collection
-     */
-    private function filterSpecies($species)
-    {
-        return $species === 'Cat' || $species === 'Dog';
     }
 
     /**
@@ -132,6 +119,5 @@ class SpiderSheltersManager
         $shelterData = $this->dataManager->getShelterData($shelter);
 
         $shelterData->save();
-        dd($shelterData);
     }
 }
