@@ -61,7 +61,7 @@ class SpiderJobsManager
         $totalPages = $result->pagination->total_pages;
         $sheltersOnDatabase = Organization::count();
 
-        if ($sheltersOnDatabase >= $totalShelters) {
+        if ($sheltersOnDatabase != $totalShelters) {
             echo "No new shelters where created." . PHP_EOL;
 
             return;
@@ -71,10 +71,7 @@ class SpiderJobsManager
 
         $pages->each(function ($page) {
             $this->shelters->parseShelters($page);
-            dd($page);
         });
-
-        dd($totalShelters);
     }
 
     /**
