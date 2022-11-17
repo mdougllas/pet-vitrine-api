@@ -55,7 +55,7 @@ class SpiderJobsManager
      * @param  json  $result
      * @return mixed void | null
      */
-    public function parseSheltersInfo($result)
+    private function parseSheltersInfo($result)
     {
         $totalShelters = $result->pagination->total_count;
         $totalPages = $result->pagination->total_pages;
