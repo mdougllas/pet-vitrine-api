@@ -67,8 +67,6 @@ class SpiderJobsManager
             return;
         }
 
-        $this->setNumberOfShelters($totalShelters);
-
         $pages = collect()->range(1, $totalPages);
 
         $pages->each(function ($page) {
@@ -76,6 +74,8 @@ class SpiderJobsManager
 
             $this->pauseJob();
         });
+
+        $this->setNumberOfShelters($totalShelters);
     }
 
     /**
