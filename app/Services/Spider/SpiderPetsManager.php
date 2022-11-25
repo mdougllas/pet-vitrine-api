@@ -30,6 +30,12 @@ class SpiderPetsManager
     public function parsePets($page)
     {
         $response = $this->spider->getPets($page);
+
+        if (!$response || !$response->result) {
+            echo "No pets received from this request. Skipping parsing pets." . PHP_EOL;
+            return true;
+        }
+
         $pets = collect($response->result->animals);
 
         $pets->each(function ($pet) {
