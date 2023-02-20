@@ -9,7 +9,7 @@ use App\Models\Organization;
 class SpiderDataManager
 {
     /**
-     * Blueprint for SpiderJobsManager.
+     * Blueprint for SpiderDataManager.
      *
      * @param \App\Services\Spider\SpiderPetsManager $pets
      * @return void
@@ -20,7 +20,7 @@ class SpiderDataManager
 
 
     /**
-     * Check if the pet has photos available.
+     * Get the sehlter data to be persisted.
      *
      * @return void;
      */
@@ -46,7 +46,7 @@ class SpiderDataManager
     }
 
     /**
-     * Check if the pet has photos available.
+     * Get the pet data to be persisted..
      *
      * @return void;
      */

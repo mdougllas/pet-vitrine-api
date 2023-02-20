@@ -5,6 +5,18 @@ namespace App\Services\Spider;
 class HttpRequest
 {
     /**
+     * @property integer $perPage
+     */
+    private $perPage = null;
+
+    /**
+     * @property array $headers
+     */
+    private $headers = [];
+
+
+
+    /**
      * Blueprint for HttpRequest.
      *
      * @param \App\Services\Spider\HttpRequest $spider

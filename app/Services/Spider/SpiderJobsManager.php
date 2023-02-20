@@ -3,8 +3,8 @@
 namespace App\Services\Spider;
 
 use App\Models\SpiderJob;
-use App\Services\Spider\HttpRequest;
-use App\Services\Spider\SpiderPetsManager;
+// use App\Services\Spider\HttpRequest;
+// use App\Services\Spider\SpiderPetsManager;
 
 class SpiderJobsManager
 {
