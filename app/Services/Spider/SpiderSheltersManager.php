@@ -39,10 +39,10 @@ class SpiderSheltersManager
     /**
      * Start the jobs to scrape and store data.
      *
-     * @return Illuminate\Database\Eloquent\Collection;
+     * @return bool;
      * @return Illuminate\Database\Eloquent\Collection;
      */
-    public function parseShelters($page)
+    public function parseShelters($page): bool
     {
         $response = $this->spider->getOrganizations($page);
         $shelters = collect($response->organizations);
@@ -93,10 +93,10 @@ class SpiderSheltersManager
     /**
      * Retrieve the id for the latest parsed pet.
      *
-     * @return Illuminate\Database\Eloquent\Collection
-     * @return Illuminate\Database\Eloquent\Collection
+     * @param
+     * @return bool
      */
-    private function checkDuplicatedShelter($shelter)
+    private function checkDuplicatedShelter($shelter): bool
     {
         $location = $shelter->location->address;
         $nameMatches = Organization::where('name', $shelter->name)->get();

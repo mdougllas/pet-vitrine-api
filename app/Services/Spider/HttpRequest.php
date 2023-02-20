@@ -46,9 +46,9 @@ class HttpRequest
      * Blueprint for SpiderPetsManager.
      *
      * @param \App\Services\Spider\HttpRequest $spider
-     * @return void
+     * @return object
      */
-    public function getPets($page = 1)
+    public function getPets($page = 1): object
     {
         $perPage = $this->perPage;
         $token = config('spider.token',);
@@ -61,9 +61,9 @@ class HttpRequest
      * Blueprint for SpiderPetsManager.
      *
      * @param \App\Services\Spider\HttpRequest $spider
-     * @return void
+     * @return object
      */
-    public function getOrganizations($page = 1)
+    public function getOrganizations($page = 1): object
     {
         $url = "https://www.petfinder.com/v2/search/organizations?&page=$page&limit=300&sort=name";
 
@@ -74,9 +74,9 @@ class HttpRequest
      * Blueprint for SpiderPetsManager.
      *
      * @param \App\Services\Spider\HttpRequest $spider
-     * @return void
+     * @return object
      */
-    private function dispatch($url)
+    private function dispatch($url): object
     {
         $ch = curl_init();
 

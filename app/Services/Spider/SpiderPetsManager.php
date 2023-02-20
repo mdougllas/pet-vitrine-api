@@ -9,6 +9,20 @@ use App\Services\Spider\SpiderDataManager;
 class SpiderPetsManager
 {
     /**
+     * @property \App\Services\Spider\HttpRequest $spider
+     */
+    private $spider = null;
+
+    /**
+     * @property \App\Services\Spider\SpiderDataManager $shelters
+     */
+    private $dataManager = null;
+
+    /**
+     * @property integer $cicle
+     */
+    private $loop = 0;
+    /**
      * Blueprint for SpiderPetsManager.
      *
      * @param \App\Services\Spider\HttpRequest $spider

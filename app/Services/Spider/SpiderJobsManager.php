@@ -9,6 +9,26 @@ use App\Models\SpiderJob;
 class SpiderJobsManager
 {
     /**
+     * @property \App\Services\Spider\HttpRequest $spider
+     */
+    private $spider = null;
+
+    /**
+     * @property \App\Services\Spider\SpiderSheltersManager $shelters
+     */
+    private $shelters = null;
+
+    /**
+     * @property \App\Services\Spider\SpiderPetsManager $shelters
+     */
+    private $pets = null;
+
+    /**
+     * @property integer $cicle
+     */
+    private $cicle = 0;
+
+    /**
      * Blueprint for SpiderJobsManager.
      *
      * @param \App\Services\Spider\HttpRequest $spider
@@ -25,9 +45,9 @@ class SpiderJobsManager
     /**
      * Start the jobs to scrape and store data.
      *
-     * @return Illuminate\Database\Eloquent\Collection
+     * @return void
      */
-    public function startJobs()
+    public function startJobs(): void
     {
         echo "Spider jobs initiated." . PHP_EOL;
 
@@ -52,9 +72,9 @@ class SpiderJobsManager
      * Parse meta-data to collect number of pages.
      *
      * @param  json  $result
-     * @return mixed void | null
+     * @return mixed int
      */
-    private function parseSheltersInfo($result)
+    private function parseSheltersInfo($result): int
     {
         $totalShelters = $result->pagination->total_count;
         $totalPages = $result->pagination->total_pages;
@@ -63,7 +83,7 @@ class SpiderJobsManager
         if ($numberOfShelters == $totalShelters) {
             echo "No new shelters where created." . PHP_EOL;
 
-            return;
+            return 0;
         }
 
         $pages = collect()->range(1, $totalPages);
@@ -75,15 +95,17 @@ class SpiderJobsManager
         });
 
         $this->setNumberOfShelters($totalShelters);
+
+        return 1;
     }
 
     /**
      * Parse meta-data to collect number of pages.
      *
      * @param  json  $result
-     * @return mixed void | null
+     * @return mixed int
      */
-    private function parsePetsInfo($result)
+    private function parsePetsInfo($result): int
     {
         $fromPage = $this->getLatestParsedPage();
         $toPage = $result->pagination->total_pages;
@@ -101,11 +123,13 @@ class SpiderJobsManager
                 $this->setLatestParsedPage($page);
                 // $this->setLatestParsedPage($result->pagination->total_pages - 5); // Should replace line above after all pages are parsed
 
-                return false;
+                return 0;
             }
 
             $this->pauseJob();
         });
+
+        return 1;
     }
 
     /**
