@@ -3,8 +3,6 @@
 namespace App\Services\Spider;
 
 use App\Models\SpiderJob;
-// use App\Services\Spider\HttpRequest;
-// use App\Services\Spider\SpiderPetsManager;
 
 class SpiderJobsManager
 {
@@ -29,31 +27,37 @@ class SpiderJobsManager
     private $cicle = 0;
 
     /**
+     * @property object $output
+     */
+    protected $output;
+
+    /**
      * Blueprint for SpiderJobsManager.
      *
      * @param \App\Services\Spider\HttpRequest $spider
      * @return void
      */
-    public function __construct(HttpRequest $spider, SpiderPetsManager $pets, SpiderSheltersManager $shelters)
+    public function __construct($output)
     {
-        $this->spider = $spider;
-        $this->shelters = $shelters;
-        $this->pets = $pets;
+        $this->spider = new HttpRequest;
+        $this->shelters = new SpiderSheltersManager($output);
+        $this->pets = new SpiderPetsManager($output);
         $this->cicle = 1;
+        $this->output = $output;
     }
 
     /**
      * Start the jobs to scrape and store data.
      *
-     * @return void
+     * @return int
      */
-    public function startJobs(): void
+    public function startJobs(): int
     {
-        echo "Spider jobs initiated." . PHP_EOL;
+        $this->output->info("Spider jobs initiated.");
 
         if ($this->getJobRunning()) {
-            echo "Spider is already running." . PHP_EOL;
-            exit;
+            $this->output->warn("Spider is already running.");
+            return 0;
         }
 
         $this->setJobRunning(true);
@@ -61,11 +65,13 @@ class SpiderJobsManager
         $organizations = $this->spider->getOrganizations();
         $pets = $this->spider->getPets();
 
-        $this->parseSheltersInfo($organizations);
+        // $this->parseSheltersInfo($organizations);
         $this->parsePetsInfo($pets->result);
         $this->setJobRunning(false);
 
-        echo "Spider jobs finished." . PHP_EOL;
+        $this->output->info("Spider jobs finished.");
+
+        return 0;
     }
 
     /**
@@ -81,7 +87,7 @@ class SpiderJobsManager
         $numberOfShelters = $this->getNumberOfShelters();
 
         if ($numberOfShelters == $totalShelters) {
-            echo "No new shelters where created." . PHP_EOL;
+            $this->output->warn("No new shelters where created.");
 
             return 0;
         }
@@ -96,7 +102,7 @@ class SpiderJobsManager
 
         $this->setNumberOfShelters($totalShelters);
 
-        return 1;
+        return 0;
     }
 
     /**
@@ -114,8 +120,9 @@ class SpiderJobsManager
             ->range($fromPage, $toPage);
 
         $pages->each(function ($page) use ($toPage) {
-            echo "Parsing Page $page" . PHP_EOL;
-            echo "Cicle $this->cicle \n" . PHP_EOL;
+            $this->output->info("Parsing Page $page");
+            $this->output->info("Cicle $this->cicle");
+
             $this->pets->parsePets($page);
             $this->cicle += 1;
 
@@ -129,7 +136,7 @@ class SpiderJobsManager
             $this->pauseJob();
         });
 
-        return 1;
+        return 0;
     }
 
     /**
@@ -206,14 +213,17 @@ class SpiderJobsManager
     }
 
     /**
-     * Retrieve the id for the latest parsed pet.
+     * Pause the job for a random
+     * number of seconds
+     * from 5 to 15.
      *
      * @return void
      */
     private function pauseJob()
     {
         $randomNumber = collect([5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15])->random();
-        echo "Pause for $randomNumber seconds." . PHP_EOL;
+
+        $this->output->info("Pause for $randomNumber seconds.");
 
         sleep($randomNumber);
     }

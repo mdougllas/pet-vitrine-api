@@ -3,37 +3,35 @@
 namespace App\Services\Spider;
 
 use App\Models\Pet;
-use App\Services\Spider\HttpRequest;
-use App\Services\Spider\SpiderDataManager;
 
 class SpiderPetsManager
 {
     /**
-     * @property \App\Services\Spider\HttpRequest $spider
-     */
-    private $spider = null;
-
-    /**
-     * @property \App\Services\Spider\SpiderDataManager $shelters
-     */
-    private $dataManager = null;
-
-    /**
      * @property integer $cicle
      */
-    private $loop = 0;
+    private $loop = 1;
+
     /**
-     * Blueprint for SpiderPetsManager.
-     *
-     * @param \App\Services\Spider\HttpRequest $spider
-     * @return void
+     * @property \App\Services\Spider\HttpRequest $spider
      */
-    public function __construct(HttpRequest $spider, SpiderDataManager $dataManager)
+    private $spider;
+
+    /**
+     * @property object $output
+     */
+    private $output;
+
+    /**
+     * @property object $output
+     */
+    private $dataManager;
+
+    public function __construct($output)
     {
-        $this->spider = $spider;
-        $this->dataManager = $dataManager;
-        $this->loop = 1;
+        $this->spider = new HttpRequest;
+        $this->output = $output;
     }
+
 
     /**
      * Start the jobs to scrape and store data.
@@ -46,7 +44,8 @@ class SpiderPetsManager
         $response = $this->spider->getPets($page);
 
         if (!$response || !$response->result) {
-            echo "No pets received from this request. Skipping parsing pets." . PHP_EOL;
+            $this->output->warn("No pets received from this request. Skipping parsing pets.");
+
             return true;
         }
 
@@ -54,22 +53,28 @@ class SpiderPetsManager
 
         $pets->each(function ($pet) {
             $petData = $pet->animal;
-            echo "This is pets loop # $this->loop" . PHP_EOL;
+
+            $this->output->info("This is pets loop # $this->loop");
 
             $this->loop += 1;
 
             if ($this->petExists($petData->id)) {
-                echo "Pet $petData->id already on DB. Skipping saving the pet. \n" . PHP_EOL;
+                $this->output->warn("Pet $petData->id already on DB. Skipping saving the pet.");
+
                 return true;
             }
 
-            if ($this->checkDuplicatedPet($pet)) {
-                echo "This is a dulicate. Skipping saving the pet. \n" . PHP_EOL;
+            $duplicate = $this->checkDuplicateByName($pet);
+
+            if ($duplicate) {
+                $this->output->warn("Pet $petData->id is a dulicate. Skipping saving the pet.");
+
                 return true;
             }
 
             if (!$this->filterSpecies($petData->species->name)) {
-                echo "Not a cat or a dog. Skipping saving the pet. \n" . PHP_EOL;
+                $this->output->warn("Pet $petData->id is not a cat or a dog. Skipping saving the pet.");
+
                 return true;
             }
 
@@ -112,26 +117,38 @@ class SpiderPetsManager
      * @return Illuminate\Database\Eloquent\Collection
      * @return Illuminate\Database\Eloquent\Collection
      */
-    private function checkDuplicatedPet($pet)
+    private function checkDuplicateByName($pet)
     {
         $petData = $pet->animal;
         $organizationData = $pet->organization;
-
         $nameMatches = Pet::where('name', $petData->name)->get();
 
         if (!$nameMatches->isEmpty()) {
-            $checkDuplicate = $nameMatches->map(function ($pet) use ($petData, $organizationData) {
-                $sexMatches = $pet->sex == $petData->sex;
-                $speciesMatches = $pet->species == $petData->species->name;
-                $organizationMatches = $pet->organization_id == $organizationData->display_id;
+            $duplicate = $this->doubleCheckDuplicate($petData, $organizationData, $nameMatches);
 
-                return $sexMatches && $speciesMatches && $organizationMatches;
-            });
-
-            return $checkDuplicate;
+            return $duplicate;
         }
 
         return false;
+    }
+
+    /**
+     * Retrieve the id for the latest parsed pet.
+     *
+     * @return Illuminate\Database\Eloquent\Collection
+     * @return Illuminate\Database\Eloquent\Collection
+     */
+    private function doubleCheckDuplicate($petData, $organizationData, $nameMatches)
+    {
+        $checkDuplicate = $nameMatches->map(function ($pet) use ($petData, $organizationData) {
+            $sexMatches = $pet->sex == $petData->sex;
+            $speciesMatches = $pet->species == $petData->species->name;
+            $organizationMatches = $pet->organization_id == $organizationData->display_id;
+
+            return $sexMatches && $speciesMatches && $organizationMatches;
+        });
+
+        return $checkDuplicate->search(true);
     }
 
 
@@ -154,9 +171,9 @@ class SpiderPetsManager
      */
     private function savePet($pet)
     {
-        echo "SAVE PET CALLED \n" . PHP_EOL;
+        $this->output->info("SAVE PET CALLED");
 
-        $petData = $this->dataManager->getPetData($pet);
+        $petData = SpiderDataManager::getPetData($pet);
         $petData->save();
     }
 }

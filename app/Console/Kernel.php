@@ -25,7 +25,10 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command(StartSpiderCommand::class)->daily();
+        $schedule->command(StartSpiderCommand::class)
+            ->everyDay()
+            ->sendOutputTo($this->getSpiderLogFilePath())
+            ->withoutOverlapping();
     }
 
     /**
@@ -38,5 +41,18 @@ class Kernel extends ConsoleKernel
         $this->load(__DIR__ . '/Commands');
 
         require base_path('routes/console.php');
+    }
+
+    /**
+     * Generate a different file name for
+     * each day and return the full path.
+     *
+     * @return string
+     */
+    private function getSpiderLogFilePath(): string
+    {
+        $today = today()->format('m-d-Y');
+
+        return storage_path("logs/spider/$today.log");
     }
 }

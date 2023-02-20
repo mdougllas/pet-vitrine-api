@@ -7,40 +7,25 @@ class HttpRequest
     /**
      * @property integer $perPage
      */
-    private $perPage = null;
+    private $perPage = 300;
 
     /**
      * @property array $headers
      */
-    private $headers = [];
-
-
-
-    /**
-     * Blueprint for HttpRequest.
-     *
-     * @param \App\Services\Spider\HttpRequest $spider
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->perPage = 300;
-
-        $this->headers = [
-            'Authority: www.petfinder.com',
-            'Accept: application/json, text/plain, */*',
-            'Accept-Language: en-US,en;q=0.9,pt-BR;q=0.8,pt;q=0.7,es;q=0.6',
-            'Referer: https://www.petfinder.com',
-            'Sec-Ch-Ua: \"Google Chrome\";v=\"107\", \"Chromium\";v=\"107\", \"Not=A?Brand\";v=\"24\"',
-            'Sec-Ch-Ua-Mobile: ?0',
-            'Sec-Ch-Ua-Platform: \"macOS\"',
-            'Sec-Fetch-Dest: empty',
-            'Sec-Fetch-Mode: cors',
-            'Sec-Fetch-Site: same-origin',
-            'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36',
-            'X-Requested-With: XMLHttpRequest',
-        ];
-    }
+    private $headers = [
+        'Authority: www.petfinder.com',
+        'Accept: application/json, text/plain, */*',
+        'Accept-Language: en-US,en;q=0.9,pt-BR;q=0.8,pt;q=0.7,es;q=0.6',
+        'Referer: https://www.petfinder.com',
+        'Sec-Ch-Ua: \"Google Chrome\";v=\"107\", \"Chromium\";v=\"107\", \"Not=A?Brand\";v=\"24\"',
+        'Sec-Ch-Ua-Mobile: ?0',
+        'Sec-Ch-Ua-Platform: \"macOS\"',
+        'Sec-Fetch-Dest: empty',
+        'Sec-Fetch-Mode: cors',
+        'Sec-Fetch-Site: same-origin',
+        'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36',
+        'X-Requested-With: XMLHttpRequest',
+    ];
 
     /**
      * Blueprint for SpiderPetsManager.
@@ -71,9 +56,9 @@ class HttpRequest
     }
 
     /**
-     * Blueprint for SpiderPetsManager.
+     * Dispatch a CURL request to the server.
      *
-     * @param \App\Services\Spider\HttpRequest $spider
+     * @param string $url
      * @return object
      */
     private function dispatch($url): object

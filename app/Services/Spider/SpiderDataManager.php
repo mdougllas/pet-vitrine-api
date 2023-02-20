@@ -9,22 +9,10 @@ use App\Models\Organization;
 class SpiderDataManager
 {
     /**
-     * Blueprint for SpiderDataManager.
-     *
-     * @param \App\Services\Spider\SpiderPetsManager $pets
-     * @return void
-     */
-    public function __construct()
-    {
-    }
-
-
-    /**
      * Get the sehlter data to be persisted.
-     *
-     * @return void;
+     * @return /App/Models/Organization;
      */
-    public function getShelterData($shelter)
+    public static function getShelterData($shelter)
     {
         $shelterModel = new Organization;
         $location = $shelter->location->address;
@@ -50,7 +38,7 @@ class SpiderDataManager
      *
      * @return void;
      */
-    public function getPetData($pet)
+    public static function getPetData($pet)
     {
         $petModel = new Pet;
         $petData = $pet->animal;

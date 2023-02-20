@@ -5,35 +5,36 @@ namespace App\Services\Spider;
 use App\Models\Organization;
 use App\Services\Spider\HttpRequest;
 use App\Services\Spider\SpiderDataManager;
+use Illuminate\Support\Collection;
 
 class SpiderSheltersManager
 {
     /**
-     * @property \App\Services\Spider\ $spider
+     * @property \App\Services\Spider\HttpRequest $spider
      */
-    private $spider = null;
-
-    /**
-     * @property App\Services\Spider\SpiderDataManager $dataManager
-     */
-    private $dataManager = null;
+    private $spider;
 
     /**
      * @property integer $loop
      */
-    private $loop = 0;
+    private $loop = 1;
+
+    /**
+     * @property object $output
+     */
+    private $output;
 
     /**
      * Blueprint for SpiderPetsManager.
      *
-     * @param \App\Services\Spider\HttpRequest $spider
+     * @param object $output
      * @return void
      */
-    public function __construct(HttpRequest $spider, SpiderDataManager $dataManager)
+    public function __construct($output)
     {
-        $this->spider = $spider;
-        $this->dataManager = $dataManager;
+        $this->spider = new HttpRequest;
         $this->loop = 1;
+        $this->output = $output;
     }
 
     /**
@@ -48,16 +49,19 @@ class SpiderSheltersManager
         $shelters = collect($response->organizations);
 
         $shelters->each(function ($shelter) {
-            echo "This is shelter loop # $this->loop" . PHP_EOL;
+            $this->output->info("This is shelter loop # $this->loop");
+
             $this->loop += 1;
 
             if ($this->shelterExists($shelter->display_id)) {
-                echo "Shelter $shelter->display_id already on DB. Skipping saving the shelter. \n" . PHP_EOL;
+                $this->output->warn("Shelter $shelter->display_id already on DB. Skipping saving the shelter.");
+
                 return true;
             }
 
             if ($this->checkDuplicatedShelter($shelter)) {
-                echo "This is a dulicate. Skipping saving the shelter. \n" . PHP_EOL;
+                $this->output->warn("This is a duplicate. Skipping saving the shelter.");
+
                 return true;
             }
 
@@ -65,18 +69,6 @@ class SpiderSheltersManager
         });
 
         return false;
-    }
-
-    /**
-     * List all pets available.
-     *
-     * @param  Illuminate\Database\Eloquent\Collection
-     * @return Illuminate\Database\Eloquent\Collection
-     */
-    public function listShelters()
-    {
-        //todo
-        return;
     }
 
     /**
@@ -94,9 +86,9 @@ class SpiderSheltersManager
      * Retrieve the id for the latest parsed pet.
      *
      * @param
-     * @return bool
+     * @return \Illuminate\Support\Collection | false
      */
-    private function checkDuplicatedShelter($shelter): bool
+    private function checkDuplicatedShelter($shelter): Collection | false
     {
         $location = $shelter->location->address;
         $nameMatches = Organization::where('name', $shelter->name)->get();
@@ -130,9 +122,9 @@ class SpiderSheltersManager
      */
     private function saveShelter($shelter)
     {
-        echo "SAVE SHELTER CALLED \n" . PHP_EOL;
-        $shelterData = $this->dataManager->getShelterData($shelter);
+        $this->output->info("SAVE SHELTER CALLED");
 
+        $shelterData = SpiderDataManager::getShelterData($shelter);
         $shelterData->save();
     }
 }
