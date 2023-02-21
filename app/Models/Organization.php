@@ -10,7 +10,7 @@ class Organization extends Model
     use HasFactory;
 
     /**
-     * The relationship between Organization and Peta
+     * The relationship between Organization and Pets
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */

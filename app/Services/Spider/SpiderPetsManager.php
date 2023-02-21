@@ -152,14 +152,18 @@ class SpiderPetsManager
      * @return Illuminate\Database\Eloquent\Collection
      * @return Illuminate\Database\Eloquent\Collection
      */
-    private function attachToOrganization($pet, $organization_id)
+    private function attachToOrganization($pet, $organizationId)
     {
-        $petId = $pet->petfinder_id;
-        $organization = Organization::where('petfinder_id', $organization_id);
+        $organization = Organization::where('petfinder_id', $organizationId)
+            ->get();
 
-        $pet->organization()->associate($organization);
+        if ($organization->isEmpty()) {
+            return false;
+        }
 
-        $this->output->info("Pet $petId was attached to shelter $organization_id");
+        $pet->organization()->associate($organization[0]);
+
+        return true;
     }
 
     /**
@@ -171,10 +175,20 @@ class SpiderPetsManager
     private function savePet($pet)
     {
         $petData = SpiderDataManager::getPetData($pet);
+        $petId = $petData->petfinder_id;
+        $shelterId = $petData->petfinder_shelter_id;
 
-        $this->attachToOrganization($petData, $petData->petfinder_shelter_id);
+        if (!$this->attachToOrganization($petData, $shelterId)) {
+            $this->output->warn("Pet not associated with a valid organization. Skip saving the pet.");
+
+            return;
+        }
+
+
+
+        $this->output->info("Pet $petId was associated to shelter $shelterId.");
+
         $petData->save();
-
-        $this->output->info("Pet saved on the DB.");
+        $this->output->info("Pet $petId saved on database.");
     }
 }
