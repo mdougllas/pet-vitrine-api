@@ -53,7 +53,7 @@ class SpiderDataManager
         $petModel->sex = $petData->sex;
         $petModel->species = $petData->species->name;
         $petModel->status = $petData->adoption_status;
-        $petModel->organization_id = $pet->organization->display_id;
+        $petModel->petfinder_shelter_id = $pet->organization->display_id;
         $petModel->petfinder_id = $petData->id;
 
         return $petModel;
