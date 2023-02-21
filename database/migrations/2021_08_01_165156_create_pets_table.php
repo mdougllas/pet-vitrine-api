@@ -36,7 +36,7 @@ class CreatePetsTable extends Migration
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
             $table->string('petfinder_shelter_id');
-            $table->bigInteger('petfinder_id');
+            $table->bigInteger('petfinder_id')->unique();
 
             $table->timestamps();
         });

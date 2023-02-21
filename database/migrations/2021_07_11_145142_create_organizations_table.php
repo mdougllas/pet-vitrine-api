@@ -24,7 +24,7 @@ return new class extends Migration
             $table->decimal('longitude', 10, 7);
             $table->string('name');
             $table->string('postal_code');
-            $table->string('petfinder_id');
+            $table->string('petfinder_id')->unique();
             $table->tinyText('state', 30);
 
             $table->timestamps();
