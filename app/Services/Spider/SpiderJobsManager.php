@@ -65,7 +65,7 @@ class SpiderJobsManager
         $organizations = $this->spider->getOrganizations();
         $pets = $this->spider->getPets();
 
-        // $this->parseSheltersInfo($organizations);
+        $this->parseSheltersInfo($organizations);
         $this->parsePetsInfo($pets->result);
         $this->setJobRunning(false);
 
