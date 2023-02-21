@@ -171,9 +171,9 @@ class SpiderPetsManager
      */
     private function savePet($pet)
     {
-        $this->output->info("SAVE PET CALLED");
-
         $petData = SpiderDataManager::getPetData($pet);
         $petData->save();
+
+        $this->output->info("Pet saved on the DB.");
     }
 }
