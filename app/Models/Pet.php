@@ -24,4 +24,14 @@ class Pet extends Model
     {
         return $this->belongsTo(Ad::class);
     }
+
+    /**
+     * The relationship between Pet and Organization
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function organization()
+    {
+        return $this->belongsTo(Organization::class);
+    }
 }

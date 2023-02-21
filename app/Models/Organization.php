@@ -8,4 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class Organization extends Model
 {
     use HasFactory;
+
+    /**
+     * The relationship between Organization and Peta
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function pet()
+    {
+        return $this->hasMany(Pet::class);
+    }
 }
