@@ -59,7 +59,7 @@ class SpiderSheltersManager
                 return true;
             }
 
-            if ($this->checkDuplicatedShelter($shelter)) {
+            if ($this->checkDuplicatedByName($shelter) !== false) {
                 $this->output->warn("This is a duplicate. Skipping saving the shelter.");
 
                 return true;
@@ -86,32 +86,39 @@ class SpiderSheltersManager
      * Retrieve the id for the latest parsed pet.
      *
      * @param
-     * @return \Illuminate\Support\Collection | false
+     * @return int | false
      */
-    private function checkDuplicatedShelter($shelter): Collection | false
+    private function checkDuplicatedByName($shelter): int | false
     {
         $location = $shelter->location->address;
         $nameMatches = Organization::where('name', $shelter->name)->get();
 
         if (!$nameMatches->isEmpty()) {
-            $checkDuplicate = $nameMatches->map(function ($match) use ($location) {
-                $address1Matches = $match->address_1 == $location->address1;
-                $address2Matches = $match->address_2 == $location->address2;
-                $cityMatches = $match->city == $location->city;
-                $stateMatches = $match->state == $location->state;
-                $postalCodeMatches = $match->postal_code == $location->postal_code;
+            $duplicate = $this->doubleCheckDuplicate($location, $nameMatches);
 
-                return $address1Matches &&
-                    $address2Matches &&
-                    $cityMatches &&
-                    $stateMatches &&
-                    $postalCodeMatches;
-            });
-
-            return $checkDuplicate;
+            return $duplicate;
         }
 
         return false;
+    }
+
+    private function doubleCheckDuplicate($location, $nameMatches)
+    {
+        $checkDuplicate = $nameMatches->map(function ($match) use ($location) {
+            $address1Matches = $match->address_1 == $location->address1;
+            $address2Matches = $match->address_2 == $location->address2;
+            $cityMatches = $match->city == $location->city;
+            $stateMatches = $match->state == $location->state;
+            $postalCodeMatches = $match->postal_code == $location->postal_code;
+
+            return $address1Matches &&
+                $address2Matches &&
+                $cityMatches &&
+                $stateMatches &&
+                $postalCodeMatches;
+        });
+
+        return $checkDuplicate->search(true);
     }
 
     /**

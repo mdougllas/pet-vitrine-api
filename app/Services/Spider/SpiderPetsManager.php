@@ -2,6 +2,7 @@
 
 namespace App\Services\Spider;
 
+use App\Models\Organization;
 use App\Models\Pet;
 
 class SpiderPetsManager
@@ -66,7 +67,7 @@ class SpiderPetsManager
 
             $duplicate = $this->checkDuplicateByName($pet);
 
-            if ($duplicate) {
+            if ($duplicate !== false) {
                 $this->output->warn("Pet $petData->id is a dulicate. Skipping saving the pet.");
 
                 return true;
@@ -82,22 +83,6 @@ class SpiderPetsManager
         });
 
         return false;
-    }
-
-    /**
-     * List all pets available.
-     *
-     * @param  Illuminate\Database\Eloquent\Collection
-     * @return Illuminate\Database\Eloquent\Collection
-     */
-    public function listPets()
-    {
-        //todo
-        return;
-        $pets = Pet::all();
-        $data = $pets->map(fn ($pet) => json_decode($pet));
-
-        return $data;
     }
 
     /**
@@ -169,9 +154,27 @@ class SpiderPetsManager
      * @return Illuminate\Database\Eloquent\Collection
      * @return Illuminate\Database\Eloquent\Collection
      */
+    private function attachToOrganization($pet, $organization_id)
+    {
+        $petId = $pet->petfinder_id;
+        $organization = Organization::where('petfinder_id', $organization_id);
+
+        $pet->organization()->associate($organization);
+
+        $this->output->info("Pet $petId was attached to shelter $organization_id");
+    }
+
+    /**
+     * Retrieve the id for the latest parsed pet.
+     *
+     * @return Illuminate\Database\Eloquent\Collection
+     * @return Illuminate\Database\Eloquent\Collection
+     */
     private function savePet($pet)
     {
         $petData = SpiderDataManager::getPetData($pet);
+
+        $this->attachToOrganization($petData, $petData->petfinder_shelter_id);
         $petData->save();
 
         $this->output->info("Pet saved on the DB.");
