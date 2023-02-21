@@ -65,9 +65,7 @@ class SpiderPetsManager
                 return true;
             }
 
-            $duplicate = $this->checkDuplicateByName($pet);
-
-            if ($duplicate !== false) {
+            if ($this->checkDuplicateByName($pet) !== false) {
                 $this->output->warn("Pet $petData->id is a dulicate. Skipping saving the pet.");
 
                 return true;
