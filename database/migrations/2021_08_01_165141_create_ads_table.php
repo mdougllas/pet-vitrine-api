@@ -34,8 +34,8 @@ class CreateAdsTable extends Migration
             $table
                 ->foreignId('user_id')
                 ->constrained()
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
         });
     }
 

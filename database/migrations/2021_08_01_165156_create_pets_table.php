@@ -19,10 +19,10 @@ class CreatePetsTable extends Migration
 
             $table
                 ->foreignId('ad_id')
-                ->nullable()->unsigned()
+                ->nullable()
                 ->constrained()
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
             $table->enum('age', ['Adult', 'Baby', 'Senior', 'Young']);
             $table->string('breed');
             $table->text('description');
@@ -31,7 +31,11 @@ class CreatePetsTable extends Migration
             $table->enum('sex', ['Female', 'Male', 'Unknown']);
             $table->enum('species', ['Cat', 'Dog']);
             $table->enum('status', ['adoptable', 'adopted']);
-            $table->string('organization_id');
+            $table->foreignId('organization_id')
+                ->constrained()
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
+            $table->string('petfinder_shelter_id');
             $table->bigInteger('petfinder_id');
 
             $table->timestamps();
