@@ -53,6 +53,6 @@ class Kernel extends ConsoleKernel
     {
         $today = today()->format('m-d-Y');
 
-        return storage_path("logs/spider/$today.log");
+        return storage_path("app/public/spider/$today.log");
     }
 }

@@ -29,3 +29,10 @@ Route::get('test', function () {
         'Test ready' => true
     ]);
 });
+
+Route::get('logs', function () {
+    $today = today()->format('m-d-Y');
+    $file = \Illuminate\Support\Facades\Storage::download("public/spider/$today.log");
+
+    return $file;
+});
