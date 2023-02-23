@@ -21,6 +21,7 @@
 
 <body class="antialiased">
     <div>
+        <h1>These are the log files:</h1>
         @foreach ($files as $file)
             <div><a href="download/{{ $file }}">{{ $file }}</a></div>
         @endforeach
