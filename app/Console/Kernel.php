@@ -26,7 +26,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command(StartSpiderCommand::class)
-            ->everyFiveMinutes()
+            ->everyThirtyMinutes()
             ->sendOutputTo($this->getSpiderLogFilePath())
             ->withoutOverlapping();
     }
@@ -51,8 +51,8 @@ class Kernel extends ConsoleKernel
      */
     private function getSpiderLogFilePath(): string
     {
-        $today = today()->format('m-d-Y');
+        $fileName = now()->format('m-d-Y_H:i:s');
 
-        return storage_path("app/public/spider/$today.log");
+        return storage_path("app/public/spider/$fileName.log");
     }
 }

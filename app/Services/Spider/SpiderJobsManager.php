@@ -24,7 +24,7 @@ class SpiderJobsManager
     /**
      * @property integer $cicle
      */
-    private $cicle = 0;
+    private $cicle = 1;
 
     /**
      * @property object $output
@@ -51,7 +51,7 @@ class SpiderJobsManager
      *
      * @return int
      */
-    public function startJobs(): int
+    public function startJobs()
     {
         $this->output->info("Spider jobs initiated.");
 
@@ -80,7 +80,7 @@ class SpiderJobsManager
      * @param  json  $result
      * @return mixed int
      */
-    private function parseSheltersInfo($result): int
+    private function parseSheltersInfo($result)
     {
         $totalShelters = $result->pagination->total_count;
         $totalPages = $result->pagination->total_pages;
@@ -89,7 +89,7 @@ class SpiderJobsManager
         if ($numberOfShelters == $totalShelters) {
             $this->output->warn("No new shelters where created.");
 
-            return 0;
+            return;
         }
 
         $pages = collect()->range(1, $totalPages);
@@ -102,7 +102,7 @@ class SpiderJobsManager
 
         $this->setNumberOfShelters($totalShelters);
 
-        return 0;
+        return;
     }
 
     /**
@@ -111,7 +111,7 @@ class SpiderJobsManager
      * @param  json  $result
      * @return mixed int
      */
-    private function parsePetsInfo($result): int
+    private function parsePetsInfo($result)
     {
         $fromPage = $this->getLatestParsedPage();
         $toPage = $result->pagination->total_pages;
@@ -126,17 +126,17 @@ class SpiderJobsManager
             $this->pets->parsePets($page);
             $this->cicle += 1;
 
-            if ($page >= $toPage || $this->cicle >= 100) {
+            if ($page >= $toPage || $this->cicle > 10) {
                 $this->setLatestParsedPage($page);
                 // $this->setLatestParsedPage($result->pagination->total_pages - 5); // Should replace line above after all pages are parsed
 
-                return 0;
+                return false;
             }
 
             $this->pauseJob();
         });
 
-        return 0;
+        return;
     }
 
     /**
@@ -221,7 +221,8 @@ class SpiderJobsManager
      */
     private function pauseJob()
     {
-        $randomNumber = collect([5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15])->random();
+        // $randomNumber = collect([5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15])->random();
+        $randomNumber = collect([2, 3])->random();
 
         $this->output->info("Pause for $randomNumber seconds.");
 

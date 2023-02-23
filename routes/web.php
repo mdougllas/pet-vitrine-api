@@ -1,6 +1,8 @@
 <?php
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,9 +22,9 @@ Route::get('login', function () {
 /***
  * Redirect any route non /api to front end
  */
-Route::fallback(function () {
-    return redirect()->away(config('services.frontend.root'));
-});
+// Route::fallback(function () {
+//     return redirect()->away(config('services.frontend.root'));
+// });
 
 Route::get('test', function () {
     return response()->json([
@@ -31,8 +33,11 @@ Route::get('test', function () {
 });
 
 Route::get('logs', function () {
-    $today = today()->format('m-d-Y');
-    $file = \Illuminate\Support\Facades\Storage::download("public/spider/$today.log");
+    $files = collect(Storage::files("public/spider"));
 
-    return $file;
+    return view('logs', ['files' => $files]);
+});
+
+Route::get('download/public/spider/{file}', function (string $file) {
+    return Storage::download("public/spider/$file");
 });
