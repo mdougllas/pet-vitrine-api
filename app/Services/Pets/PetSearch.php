@@ -53,56 +53,18 @@ class PetSearch
     /**
      * Filter pets using a Zip Number as location
      *
-     * @param string $zipNumber
+     * @param string $zipCode
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    private function zipLocation($zipNumber): Collection
+    private function zipLocation($zipCode): Collection
     {
-        $latitude = 26.13765;
-        $longitude = -80.12302;
         $distance = 10;
+        $coordinates = $this->getLatLongFromZipCode($zipCode);
 
         return Pet::whereHas(
             'organization',
-            fn ($query) => $query->whereRaw($this->queryHaversineFormula($latitude, $longitude, $distance))
+            fn ($query) => $query->whereRaw($this->queryHaversineFormula($coordinates->lat, $coordinates->lng, $distance))
         )->get();
-
-        // $pets = Pet::whereHas('organization', function ($query) use ($latitude, $longitude, $distance) {
-        //     return $query->whereRaw(
-        //         "acos(
-        //             sin(radians($latitude))
-        //             * sin(radians(latitude))
-        //             + cos(radians($latitude))
-        //             * cos(radians(latitude))
-        //             * cos( radians($longitude)
-        //             - radians(longitude))
-        //         ) * 6371 <= $distance"
-        //     );
-        // })->get();
-
-        // return $pets;
-
-        // $latitude = 26.13765;
-        // $longitude = -80.12302;
-        // $distance = 10;
-
-        // $haversine = "(
-        //     6371 * acos(
-        //         cos(radians(" . $latitude . "))
-        //         * cos(radians(latitude))
-        //         * cos(radians(longitude) - radians(" . $longitude . "))
-        //         + sin(radians(" . $latitude . ")) * sin(radians(latitude))
-        //     )
-        // )";
-
-        // $data = Organization::with('pets')
-        //     ->select("*")
-        //     ->selectRaw("$haversine AS distance")
-        //     ->having("distance", "<=", $distance)
-        //     ->limit(12)
-        //     ->get();
-
-        // return $data->map(fn ($item) => $item->pets)->flatten();
     }
 
     /**
