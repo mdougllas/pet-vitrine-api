@@ -57,6 +57,10 @@ return [
         'secret_key' => env('RECAPTCHA_SECRET_KEY')
     ],
 
+    'geocode' => [
+        'api_key' => env('GOOGLE_GEOCODE_API_KEY'),
+    ],
+
     'paypal' => [
         'account' => env('PAYPAL_ACCOUNT'),
         'url' => env('PAYPAL_ROOT_URL'),
