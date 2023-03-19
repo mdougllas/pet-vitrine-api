@@ -44,7 +44,6 @@ class SpiderDataManager
         $petData = $pet->animal;
 
         $petModel->uuid = Str::uuid();
-        $petModel->ad_id = null;
         $petModel->age = $petData->age;
         $petModel->breed = $petData->primary_breed->name;
         $petModel->description = $petData->description ?? 'No description available.';
@@ -55,6 +54,7 @@ class SpiderDataManager
         $petModel->status = $petData->adoption_status;
         $petModel->petfinder_shelter_id = $pet->organization->display_id;
         $petModel->petfinder_id = $petData->id;
+        $petModel->url = $petData->social_sharing->email_url;
 
         return $petModel;
     }
