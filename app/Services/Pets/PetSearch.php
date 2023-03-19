@@ -2,19 +2,21 @@
 
 namespace App\Services\Pets;
 
-use Illuminate\Support\Facades\DB;
-use App\Models\Pet;
 use App\Models\Organization;
+use App\Models\Pet;
+use App\Traits\GeoSearch\LatLongGeoSearch;
+use Illuminate\Database\Eloquent\Collection;
 
 class PetSearch
 {
+    use LatLongGeoSearch;
     /**
      * Search Pets in the database
      *
      * @param \App\Http\Requests\PetRequest $request
-     * @return \Illuminate\Pagination\LengthAwarePaginator
+     * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function search($request)
+    public function search($request): Collection
     {
         return $request->has('location')
             ? $this->withLocationFilter($request['location'])
@@ -25,13 +27,13 @@ class PetSearch
      * Search without location filter
      *
      * @param int $limit
-     * @return \Illuminate\Pagination\LengthAwarePaginator
+     * @return \Illuminate\Database\Eloquent\Collection
      */
-    private function withoutLocationFilter($limit)
+    private function withoutLocationFilter(): Collection
     {
         return Pet::whereJsonLength('photo_urls', '>', 0)
             ->latest()
-            ->paginate($limit);
+            ->get();
     }
 
     /**
@@ -39,9 +41,9 @@ class PetSearch
      *
      * @param int $limit
      * @param string $location
-     * @return \Illuminate\Pagination\LengthAwarePaginator
+     * @return \Illuminate\Database\Eloquent\Collection
      */
-    private function withLocationFilter($location)
+    private function withLocationFilter($location): Collection
     {
         return is_numeric($location)
             ? $this->zipLocation($location)
@@ -52,28 +54,33 @@ class PetSearch
      * Filter pets using a Zip Number as location
      *
      * @param string $zipNumber
-     * @return \Illuminate\Pagination\LengthAwarePaginator
+     * @return \Illuminate\Database\Eloquent\Collection
      */
-    private function zipLocation($zipNumber)
+    private function zipLocation($zipNumber): Collection
     {
         $latitude = 26.13765;
         $longitude = -80.12302;
         $distance = 10;
 
-        $pets = Pet::whereHas('organization', function ($query) use ($latitude, $longitude, $distance) {
-            return $query->whereRaw(
-                "acos(
-                    sin(radians($latitude))
-                    * sin(radians(latitude))
-                    + cos(radians($latitude))
-                    * cos(radians(latitude))
-                    * cos( radians($longitude)
-                    - radians(longitude))
-                ) * 6371 <= $distance"
-            );
-        })->get();
+        return Pet::whereHas(
+            'organization',
+            fn ($query) => $query->whereRaw($this->queryHaversineFormula($latitude, $longitude, $distance))
+        )->get();
 
-        return $pets;
+        // $pets = Pet::whereHas('organization', function ($query) use ($latitude, $longitude, $distance) {
+        //     return $query->whereRaw(
+        //         "acos(
+        //             sin(radians($latitude))
+        //             * sin(radians(latitude))
+        //             + cos(radians($latitude))
+        //             * cos(radians(latitude))
+        //             * cos( radians($longitude)
+        //             - radians(longitude))
+        //         ) * 6371 <= $distance"
+        //     );
+        // })->get();
+
+        // return $pets;
 
         // $latitude = 26.13765;
         // $longitude = -80.12302;
@@ -102,29 +109,12 @@ class PetSearch
      * Filter pets using City as location
      *
      * @param string $city
-     * @return \Illuminate\Pagination\LengthAwarePaginator
+     * @return \Illuminate\Database\Eloquent\Collection
      */
-    private function cityLocation($city)
+    private function cityLocation($city): Collection
     {
         return Pet::whereHas('organization', fn ($query) => $query->whereCity($city))
             ->latest()
-            ->paginate(12);
-    }
-
-    public function scopedistance($query, $latitude, $longitude, $distance)
-    {
-        $haversine = "(
-            6371 * acos(
-                cos(radians(" . $latitude . "))
-                * cos(radians(`latitude`))
-                * cos(radians(`longitude`) - radians(" . $longitude . "))
-                + sin(radians(" . $latitude . ")) * sin(radians(`latitude`))
-            )
-        )";
-
-        return Organization::select("*")
-            ->selectRaw("$haversine AS distance")
-            ->having("distance", "<=", $distance)
-            ->orderby("distance", "desc");
+            ->get();
     }
 }
