@@ -37,6 +37,16 @@ class Ad extends Model
      */
     public function pet()
     {
-        return $this->hasOne(Pet::class);
+        return $this->belongsToOne(Pet::class);
+    }
+
+    /**
+     * The relationship between Ad and User
+     *
+     * @return void
+     */
+    public function user()
+    {
+        return $this->belongsToOne(User::class);
     }
 }
