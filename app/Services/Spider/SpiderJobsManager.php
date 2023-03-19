@@ -127,8 +127,8 @@ class SpiderJobsManager
             $this->cicle += 1;
 
             if ($page >= $toPage || $this->cicle > 20) {
-                // $this->setLatestParsedPage($page);
-                $this->setLatestParsedPage($page - 5); // Should replace line above after all pages are parsed
+                $this->setLatestParsedPage($page);
+                // $this->setLatestParsedPage($page - 5); // Should replace line above after all pages are parsed
 
                 return false;
             }
