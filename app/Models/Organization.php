@@ -14,7 +14,7 @@ class Organization extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function pet()
+    public function pets()
     {
         return $this->hasMany(Pet::class);
     }

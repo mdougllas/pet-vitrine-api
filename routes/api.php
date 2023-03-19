@@ -11,6 +11,7 @@ use App\Http\Controllers\PetfinderController;
 use App\Http\Controllers\RecaptchaController;
 use App\Http\Controllers\FacebookAdController;
 use App\Http\Controllers\MobileAuthController;
+use App\Http\Controllers\PetController;
 use Laravel\Fortify\Http\Controllers\RegisteredUserController;
 
 /*
@@ -33,6 +34,9 @@ Route::post('ad-preview', [FacebookAdController::class, 'adPreview']);
 Route::post('list-ad-sets', [FacebookAdController::class, 'listAdSets']);
 Route::post('list-ads', [FacebookAdController::class, 'listAds']);
 Route::post('check-city', [FacebookAdController::class, 'checkCityValid']);
+
+// Pet Routes
+Route::get('pets', [PetController::class, 'search']);
 
 // Miscellaneous Routes
 Route::get('petfinder-token', [PetfinderController::class, 'requestToken']);

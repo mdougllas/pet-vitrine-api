@@ -10,6 +10,7 @@ class Pet extends Model
     use HasFactory;
 
     protected $guarded = [];
+
     protected $casts = [
         'petfinder_id' => 'integer',
         'photo_urls' => 'array',
