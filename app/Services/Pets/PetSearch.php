@@ -37,7 +37,7 @@ class PetSearch
     }
 
     /**
-     * Search with ZIP or city location
+     * Search with ZIP or city as location
      *
      * @param int $limit
      * @param string $location
