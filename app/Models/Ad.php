@@ -37,7 +37,7 @@ class Ad extends Model
      */
     public function pet()
     {
-        return $this->belongsToOne(Pet::class);
+        return $this->belongsTo(Pet::class);
     }
 
     /**
@@ -47,6 +47,6 @@ class Ad extends Model
      */
     public function user()
     {
-        return $this->belongsToOne(User::class);
+        return $this->belongsTo(User::class);
     }
 }
