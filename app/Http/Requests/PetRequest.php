@@ -24,7 +24,8 @@ class PetRequest extends FormRequest
         return [
             'distance' => ['required', 'integer', 'min:1', 'max:100'],
             'limit' => ['required', 'integer', 'min:1', 'max:100'],
-            'location' => ['nullable'],
+            'location' => ['string', 'nullable'],
+            'organization' => ['string', 'nullable'],
             'page' => ['required', 'integer', 'min:1'],
         ];
     }
