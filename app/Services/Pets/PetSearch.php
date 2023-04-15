@@ -2,8 +2,9 @@
 
 namespace App\Services\Pets;
 
-use App\Models\Organization;
 use App\Models\Pet;
+use Illuminate\Support\Str;
+use App\Models\Organization;
 use App\Traits\GeoSearch\LatLongGeoSearch;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -20,7 +21,7 @@ class PetSearch
     {
         return $request->has('location')
             ? $this->withLocationFilter($request['location'])
-            : $this->withoutLocationFilter($request['limit']);
+            : $this->withoutLocationFilter($request);
     }
 
     /**
@@ -29,11 +30,12 @@ class PetSearch
      * @param int $limit
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    private function withoutLocationFilter(): Collection
+    private function withoutLocationFilter($request): Collection
     {
-        return Pet::whereJsonLength('photo_urls', '>', 0)
-            ->latest()
-            ->get();
+        return $request['organization']
+            ? $this->withOrganization($request['organization'])
+            : Pet::whereJsonLength('photo_urls', '>', 0)
+            ->latest()->get();
     }
 
     /**
@@ -63,7 +65,11 @@ class PetSearch
 
         return Pet::whereHas(
             'organization',
-            fn ($query) => $query->whereRaw($this->queryHaversineFormula($coordinates->lat, $coordinates->lng, $distance))
+            fn ($query) => $query->whereRaw($this->queryHaversineFormula(
+                $coordinates->lat,
+                $coordinates->lng,
+                $distance
+            ))
         )->get();
     }
 
@@ -75,8 +81,33 @@ class PetSearch
      */
     private function cityLocation($city): Collection
     {
-        return Pet::whereHas('organization', fn ($query) => $query->whereCity($city))
+        return Pet::whereHas('organization', fn ($query) => $query
+            ->whereCity($this->extractCity($city)))
             ->latest()
             ->get();
+    }
+
+    /**
+     * Filter pets by organization_petfinder_id
+     *
+     * @param string $organization
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    private function withOrganization($organization): Collection
+    {
+        return Pet::whereHas('organization', fn ($query) => $query
+            ->wherePetfinderId($organization))
+            ->latest()->get();
+    }
+
+    /**
+     * Extract only the city from the input
+     *
+     * @param string $city
+     * @return string
+     */
+    private function extractCity($city): string
+    {
+        return Str::of($city)->before(',');
     }
 }
