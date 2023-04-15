@@ -17,13 +17,13 @@ class Pet extends Model
     ];
 
     /**
-     * The relationship between Pet and Ad
+     * Get the ads associated to the pet through user
      *
      * @return object
      */
-    public function ad()
+    public function ads()
     {
-        return $this->belongsTo(Ad::class);
+        return $this->hasMany(Ad::class);
     }
 
     /**

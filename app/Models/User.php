@@ -56,6 +56,6 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function pets()
     {
-        return $this->hasManyThrough(Pet::class, Ad::class);
+        return $this->through('ads')->has('pet');
     }
 }
