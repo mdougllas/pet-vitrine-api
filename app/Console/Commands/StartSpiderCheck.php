@@ -2,17 +2,17 @@
 
 namespace App\Console\Commands;
 
-use App\Services\Spider\SpiderCheckStatus;
+use App\Services\Spider\SpiderCheck;
 use Illuminate\Console\Command;
 
-class StartPetStatusCheck extends Command
+class StartSpiderCheck extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'spider:check-status';
+    protected $signature = 'spider:check {status?}';
 
     /**
      * The console command description.
@@ -28,8 +28,12 @@ class StartPetStatusCheck extends Command
      */
     public function handle()
     {
-        $spider = new SpiderCheckStatus($this);
+        $status = $this->argument('status');
 
-        return $spider->startPetStatusCheck();
+        $spider = new SpiderCheck($this);
+
+        return $status
+            ? $spider->startPetStatusCheck()
+            : $spider->startUrlsCheck();
     }
 }

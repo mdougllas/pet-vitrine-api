@@ -3,9 +3,10 @@
 namespace App\Services\Spider;
 
 use App\Models\Pet;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 
-class SpiderCheckStatus
+class SpiderCheck
 {
     /**
      * @property \App\Services\Spider\HttpRequest $spider
@@ -22,6 +23,12 @@ class SpiderCheckStatus
      */
     private $dataManager;
 
+    /**
+     * Blueprint for SpiderCheck.
+     *
+     * @param \App\Services\Spider\HttpRequest $spider
+     * @return void
+     */
     public function __construct($output)
     {
         $this->spider = new HttpRequest;
@@ -30,8 +37,16 @@ class SpiderCheckStatus
 
     public function startPetStatusCheck()
     {
-        $test = $this->spider->getPet(3483368);
+        $response = $this->spider->getPet(3483368);
+        $pet = collect($response->result->animals)
+            ->first()
+            ->animal;
 
-        dd($test);
+        dd($pet->adoption_status);
+    }
+
+    public function startUrlsCheck()
+    {
+        dd('url check started');
     }
 }
