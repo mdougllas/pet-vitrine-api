@@ -12,6 +12,7 @@ use App\Http\Controllers\RecaptchaController;
 use App\Http\Controllers\FacebookAdController;
 use App\Http\Controllers\MobileAuthController;
 use App\Http\Controllers\PetController;
+use App\Http\Controllers\OrganizationController;
 use Laravel\Fortify\Http\Controllers\RegisteredUserController;
 
 /*
@@ -37,6 +38,9 @@ Route::post('check-city', [FacebookAdController::class, 'checkCityValid']);
 
 // Pet Routes
 Route::get('pets', [PetController::class, 'search']);
+
+// Organization Routes
+Route::get('organizations', [OrganizationController::class, 'search']);
 
 // Miscellaneous Routes
 Route::get('petfinder-token', [PetfinderController::class, 'requestToken']);

@@ -11,7 +11,7 @@ class OrganizationRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,8 @@ class OrganizationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'distance' => ['required', 'integer', 'min:1', 'max:100'],
+            'location' => ['required', 'string', 'nullable'],
         ];
     }
 }

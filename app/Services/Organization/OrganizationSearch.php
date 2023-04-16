@@ -3,9 +3,9 @@
 namespace App\Services\Organization;
 
 use App\Models\Organization;
+use App\Traits\StringManipulation;
 use Illuminate\Support\Collection;
 use App\Traits\GeoSearch\LatLongGeoSearch;
-use App\Traits\StringManipulation;
 
 class OrganizationSearch
 {
@@ -19,41 +19,40 @@ class OrganizationSearch
      */
     public function search($request): Collection
     {
-        return $request->has('zip')
-            ? $this->searchByZipCode($request['location'])
-            : $this->searchByCity($request);
+        $location = $request->get('location');
+
+        return is_numeric($location)
+            ? $this->zipLocation($location)
+            : $this->cityLocation($location);
     }
 
     /**
-     * Search by ZipCode
+     * Filter organizations using a Zip Number as location
      *
      * @param string $zipCode
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    private function searchByZipCode($zipCode): Collection
+    private function zipLocation($zipCode): Collection
     {
         $distance = 10;
         $coordinates = $this->getLatLongFromZipCode($zipCode);
 
-        return Organization::whereRaw(
-            $this->queryHaversineFormula(
-                $coordinates->lat,
-                $coordinates->lng,
-                $distance
-            )
-        )->get();
+        return Organization::whereRaw($this->queryHaversineFormula(
+            $coordinates->lat,
+            $coordinates->lng,
+            $distance
+        ))->get();
     }
 
     /**
-     * Search by City
+     * Filter organizations using City as location
      *
      * @param string $city
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    private function searchByCity($city): Collection
+    private function cityLocation($city): Collection
     {
         return Organization::whereCity($this->extractCityFromString($city))
-            ->latest()
-            ->get();
+            ->latest()->get();
     }
 }

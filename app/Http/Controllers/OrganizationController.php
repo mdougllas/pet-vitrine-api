@@ -15,10 +15,10 @@ class OrganizationController extends Controller
      * @param OrganizationSearch $organizations
      * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    public function search(OrganizationRequest $request, OrganizationSearch $pets): \Illuminate\Pagination\LengthAwarePaginator
+    public function search(OrganizationRequest $request, OrganizationSearch $pets): OrganizationResource
     {
         $result = $pets->search(collect($request->validated()));
 
-        return OrganizationResource::collection($result)->paginate(12);
+        return new OrganizationResource($result);
     }
 }
