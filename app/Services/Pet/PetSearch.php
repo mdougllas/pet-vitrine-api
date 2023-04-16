@@ -5,7 +5,7 @@ namespace App\Services\Pet;
 use App\Models\Pet;
 use App\Traits\StringManipulation;
 use App\Traits\GeoSearch\LatLongGeoSearch;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class PetSearch
 {
@@ -15,9 +15,9 @@ class PetSearch
      * Search Pets in the database
      *
      * @param \App\Http\Requests\PetRequest $request
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return \Illuminate\Pagination\LengthAwarePaginator;
      */
-    public function search($request): Collection
+    public function search($request): LengthAwarePaginator
     {
         return $request->has('location')
             ? $this->withLocationFilter($request['location'])
@@ -28,23 +28,23 @@ class PetSearch
      * Search without location filter
      *
      * @param int $limit
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return \Illuminate\Pagination\LengthAwarePaginator;
      */
-    private function withoutLocationFilter($request): Collection
+    private function withoutLocationFilter($request): LengthAwarePaginator
     {
         return $request->has('organization')
             ? $this->withOrganization($request['organization'])
             : Pet::whereJsonLength('photo_urls', '>', 0)
-            ->latest()->get();
+            ->latest()->paginate(12);
     }
 
     /**
      * Search with ZIP or city as location
      *
      * @param string $location
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return \Illuminate\Pagination\LengthAwarePaginator;
      */
-    private function withLocationFilter($location): Collection
+    private function withLocationFilter($location): LengthAwarePaginator
     {
         return is_numeric($location)
             ? $this->zipLocation($location)
@@ -55,9 +55,9 @@ class PetSearch
      * Filter pets using a Zip Number as location
      *
      * @param string $zipCode
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return \Illuminate\Pagination\LengthAwarePaginator;
      */
-    private function zipLocation($zipCode): Collection
+    private function zipLocation($zipCode): LengthAwarePaginator
     {
         $distance = 10;
         $coordinates = $this->getLatLongFromZipCode($zipCode);
@@ -69,33 +69,32 @@ class PetSearch
                 $coordinates->lng,
                 $distance
             ))
-        )->get();
+        )->paginate(12);
     }
 
     /**
      * Filter pets using City as location
      *
      * @param string $city
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return \Illuminate\Pagination\LengthAwarePaginator;
      */
-    private function cityLocation($city): Collection
+    private function cityLocation($city): LengthAwarePaginator
     {
         return Pet::whereHas('organization', fn ($query) => $query
             ->whereCity($this->extractCityFromString($city)))
-            ->latest()
-            ->get();
+            ->latest()->paginate(12);
     }
 
     /**
      * Filter pets by organization_petfinder_id
      *
      * @param string $organization
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return \Illuminate\Pagination\LengthAwarePaginator;
      */
-    private function withOrganization($organization): Collection
+    private function withOrganization($organization): LengthAwarePaginator
     {
         return Pet::whereHas('organization', fn ($query) => $query
             ->wherePetfinderId($organization))
-            ->latest()->get();
+            ->latest()->paginate(12);
     }
 }

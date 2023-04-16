@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\Pet\PetSearch;
 use App\Http\Requests\PetRequest;
 use App\Http\Resources\PetResource;
-use App\Services\Pet\PetSearch;
 
 class PetController extends Controller
 {
@@ -15,10 +15,10 @@ class PetController extends Controller
      * @param PetSearch $pets
      * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    public function search(PetRequest $request, PetSearch $pets): \Illuminate\Pagination\LengthAwarePaginator
+    public function search(PetRequest $request, PetSearch $pets): PetResource
     {
         $result = $pets->search(collect($request->validated()));
 
-        return PetResource::collection($result)->paginate();
+        return new PetResource($result);
     }
 }
