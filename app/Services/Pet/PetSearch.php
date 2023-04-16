@@ -82,8 +82,7 @@ class PetSearch
     private function cityLocation($city): LengthAwarePaginator
     {
         return Pet::whereJsonLength('photo_urls', '>', 0)
-            ->whereHas('organization', fn ($query) => $query
-                ->whereCity($this->extractCityFromString($city)))
+            ->whereRelation('organization', 'city', $this->extractCityFromString($city))
             ->latest()->paginate(12);
     }
 
@@ -96,8 +95,7 @@ class PetSearch
     private function withOrganization($organization): LengthAwarePaginator
     {
         return Pet::whereJsonLength('photo_urls', '>', 0)
-            ->whereHas('organization', fn ($query) => $query
-                ->wherePetfinderId($organization))
+            ->whereRelation('organization', 'id', $organization)
             ->latest()->paginate(12);
     }
 }
