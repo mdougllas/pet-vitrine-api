@@ -62,14 +62,15 @@ class PetSearch
         $distance = 10;
         $coordinates = $this->getLatLongFromZipCode($zipCode);
 
-        return Pet::whereHas(
-            'organization',
-            fn ($query) => $query->whereRaw($this->queryHaversineFormula(
-                $coordinates->lat,
-                $coordinates->lng,
-                $distance
-            ))
-        )->paginate(12);
+        return Pet::whereJsonLength('photo_urls', '>', 0)
+            ->whereHas(
+                'organization',
+                fn ($query) => $query->whereRaw($this->queryHaversineFormula(
+                    $coordinates->lat,
+                    $coordinates->lng,
+                    $distance
+                ))
+            )->paginate(12);
     }
 
     /**
@@ -80,8 +81,9 @@ class PetSearch
      */
     private function cityLocation($city): LengthAwarePaginator
     {
-        return Pet::whereHas('organization', fn ($query) => $query
-            ->whereCity($this->extractCityFromString($city)))
+        return Pet::whereJsonLength('photo_urls', '>', 0)
+            ->whereHas('organization', fn ($query) => $query
+                ->whereCity($this->extractCityFromString($city)))
             ->latest()->paginate(12);
     }
 
@@ -93,8 +95,9 @@ class PetSearch
      */
     private function withOrganization($organization): LengthAwarePaginator
     {
-        return Pet::whereHas('organization', fn ($query) => $query
-            ->wherePetfinderId($organization))
+        return Pet::whereJsonLength('photo_urls', '>', 0)
+            ->whereHas('organization', fn ($query) => $query
+                ->wherePetfinderId($organization))
             ->latest()->paginate(12);
     }
 }
