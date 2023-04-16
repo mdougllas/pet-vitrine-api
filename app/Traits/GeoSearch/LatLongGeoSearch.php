@@ -23,7 +23,7 @@ trait LatLongGeoSearch
      * @param int $zipCode
      * @return object
      */
-    public function getLatLongFromZipCode($zipCode): object
+    protected function getLatLongFromZipCode($zipCode): object
     {
         $apiKey = config('services.geocode.api_key');
         $url = "https://maps.googleapis.com/maps/api/geocode/json?address=$zipCode&key=$apiKey";
@@ -48,7 +48,7 @@ trait LatLongGeoSearch
      * @param int $distance
      * @return string
      */
-    public function queryHaversineFormula($latitude, $longitude, $distance): string
+    protected function queryHaversineFormula($latitude, $longitude, $distance): string
     {
         return $this->haversine = "acos(
             sin(radians($latitude))

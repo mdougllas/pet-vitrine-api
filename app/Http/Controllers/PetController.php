@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\PetRequest;
 use App\Http\Resources\PetResource;
-use App\Services\Pets\PetSearch;
+use App\Services\Pet\PetSearch;
 
 class PetController extends Controller
 {
@@ -19,6 +19,6 @@ class PetController extends Controller
     {
         $result = $pets->search(collect($request->validated()));
 
-        return PetResource::collection($result)->paginate(12);
+        return PetResource::collection($result)->paginate();
     }
 }

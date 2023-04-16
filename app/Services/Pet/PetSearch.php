@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Services\Pets;
+namespace App\Services\Pet;
 
 use App\Models\Pet;
-use Illuminate\Support\Str;
-use App\Models\Organization;
+use App\Traits\StringManipulation;
 use App\Traits\GeoSearch\LatLongGeoSearch;
 use Illuminate\Database\Eloquent\Collection;
 
 class PetSearch
 {
-    use LatLongGeoSearch;
+    use LatLongGeoSearch, StringManipulation;
+
     /**
      * Search Pets in the database
      *
@@ -32,7 +32,7 @@ class PetSearch
      */
     private function withoutLocationFilter($request): Collection
     {
-        return $request['organization']
+        return $request->has('organization')
             ? $this->withOrganization($request['organization'])
             : Pet::whereJsonLength('photo_urls', '>', 0)
             ->latest()->get();
@@ -41,7 +41,6 @@ class PetSearch
     /**
      * Search with ZIP or city as location
      *
-     * @param int $limit
      * @param string $location
      * @return \Illuminate\Database\Eloquent\Collection
      */
@@ -82,7 +81,7 @@ class PetSearch
     private function cityLocation($city): Collection
     {
         return Pet::whereHas('organization', fn ($query) => $query
-            ->whereCity($this->extractCity($city)))
+            ->whereCity($this->extractCityFromString($city)))
             ->latest()
             ->get();
     }
@@ -98,16 +97,5 @@ class PetSearch
         return Pet::whereHas('organization', fn ($query) => $query
             ->wherePetfinderId($organization))
             ->latest()->get();
-    }
-
-    /**
-     * Extract only the city from the input
-     *
-     * @param string $city
-     * @return string
-     */
-    private function extractCity($city): string
-    {
-        return Str::of($city)->before(',');
     }
 }
