@@ -55,6 +55,13 @@ class HttpRequest
         return $this->dispatch($url);
     }
 
+    public function getPet($id)
+    {
+        $url = "https://www.petfinder.com/search/?pet_id[]=57336173";
+
+        return $this->dispatch($url);
+    }
+
     /**
      * Dispatch a CURL request to the server.
      *
