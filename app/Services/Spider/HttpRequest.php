@@ -57,7 +57,7 @@ class HttpRequest
 
     public function getPet($id)
     {
-        $url = "https://www.petfinder.com/search/?pet_id[]=57336173";
+        $url = "https://www.petfinder.com/search/?pet_id[]=$id";
 
         return $this->dispatch($url);
     }
