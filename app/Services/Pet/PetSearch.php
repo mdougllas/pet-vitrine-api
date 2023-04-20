@@ -36,6 +36,7 @@ class PetSearch
             ? $this->withOrganization($request['organization'])
             : Pet::whereJsonLength('photo_urls', '>', 0)
             ->where('status', 'adoptable')
+            ->with('organization')
             ->orderBy('id', 'desc')
             ->paginate(12);
     }
@@ -74,6 +75,7 @@ class PetSearch
                 ))
             )
             ->where('status', 'adoptable')
+            ->with('organization')
             ->paginate(12);
     }
 
@@ -88,6 +90,7 @@ class PetSearch
         return Pet::whereJsonLength('photo_urls', '>', 0)
             ->whereRelation('organization', 'city', $this->extractCityFromString($city))
             ->where('status', 'adoptable')
+            ->with('organization')
             ->paginate(12);
     }
 
@@ -102,6 +105,7 @@ class PetSearch
         return Pet::whereJsonLength('photo_urls', '>', 0)
             ->whereRelation('organization', 'id', $organization)
             ->where('status', 'adoptable')
+            ->with('organization')
             ->paginate(12);
     }
 }
