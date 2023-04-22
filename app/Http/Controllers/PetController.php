@@ -31,6 +31,6 @@ class PetController extends Controller
      */
     public function show(Pet $pet): PetResource
     {
-        return new PetResource($pet);
+        return new PetResource($pet->load('organization'));
     }
 }
