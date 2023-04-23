@@ -89,6 +89,7 @@ class PetSearch
     {
         return Pet::whereJsonLength('photo_urls', '>', 0)
             ->whereRelation('organization', 'city', $this->extractCityFromString($city))
+            ->whereRelation('organization', 'state', $this->extractStateFromString($city))
             ->where('status', 'adoptable')
             ->with('organization')
             ->paginate(12);

@@ -53,6 +53,7 @@ class OrganizationSearch
     private function cityLocation($city): Collection
     {
         return Organization::whereCity($this->extractCityFromString($city))
+            ->whereState($this->extractStateFromString($city))
             ->latest()->get();
     }
 }

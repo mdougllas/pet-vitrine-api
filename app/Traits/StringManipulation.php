@@ -16,4 +16,9 @@ trait StringManipulation
     {
         return Str::of($city)->before(',');
     }
+
+    protected function extractStateFromString($city): string
+    {
+        return Str::of($city)->after(', ');
+    }
 }
