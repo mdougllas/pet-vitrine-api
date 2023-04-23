@@ -21,6 +21,6 @@ class FacebookAdsTargetingSearch
 
         $search = collect(TargetingSearch::search($type, $targeting, $query));
 
-        return $search->firstWhere('name', $query);
+        return $search->firstWhere('type', 'city');
     }
 }
