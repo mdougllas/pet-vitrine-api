@@ -30,36 +30,42 @@ class SpiderCheck
     }
 
     /**
-     * Undocumented function
+     * Starte checking pet for status and URLs
      *
-     * @return void
+     * @return int||null
      */
-    public function startPetStatusCheck()
+    public function startPetCheck($action): ?int
     {
-        $this->output->info('Starting loop from newest registered pet and checking status.');
-        $this->loopThroughPets();
+        $this->output->info('Starting loop from newest registered pet and checking.');
+
+        return $this->loopThroughPets($action);
     }
 
     /**
-     * Undocumented function
+     * Loop through all Pets
      *
-     * @return void
+     * @param string $action
+     * @return int||null
      */
-    private function loopThroughPets()
+    private function loopThroughPets(string $action): ?int
     {
         $range = Collection::range(Pet::max('id'), 1, -1);
 
-        $range->takeWhile(function ($id) {
+        $range->takeWhile(function ($id) use ($action) {
             $this->pauseJob();
 
             $pet = Pet::find($id);
 
             $this->output->info("Pet ID $id.");
 
-            return $this->checkPetStatus($pet, $id);
+            return $action === 'check-urls'
+                ? $this->checkPetUrls()
+                : $this->checkPetStatus($pet, $id);
         });
 
-        $this->startPetStatusCheck();
+        return $action === 'check-urls'
+            ? 1
+            : $this->startPetCheck('status-check');
     }
 
     /**
@@ -78,7 +84,6 @@ class SpiderCheck
         }
 
         $response = $this->spider->getPet($pet->petfinder_id);
-        // $response = $this->spider->getPet(5478);
 
         $exists = collect($response->result->animals)->first();
 
@@ -96,31 +101,32 @@ class SpiderCheck
         $this->output->info("Status $status.");
 
         return $status !== 'adoptable'
-            ? $this->updatePetStatus($pet, $status)
+            ? $this->updatePetStatus($pet)
             : $id != 1;
     }
 
     /**
      * Undocumented function
      *
-     * @param [type] $pet
-     * @param [type] $status
      * @return void
      */
-    private function updatePetStatus($pet, $status = 'adopted')
+    private function checkPetUrls()
+    {
+    }
+
+    /**
+     * Updates the pet status and save.
+     *
+     * @param /App/Models/Pet $pet
+     * @param string $status
+     * @return bool
+     */
+    private function updatePetStatus(Pet $pet, string $status = 'adopted'): bool
     {
         $this->output->info("Saving pet $pet->id new status: $status");
         $pet->status = $status;
 
         return $pet->save();
-    }
-
-    /**
-     *
-     */
-    public function startUrlsCheck()
-    {
-        dd('url check started');
     }
 
 

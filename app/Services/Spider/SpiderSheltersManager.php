@@ -53,6 +53,10 @@ class SpiderSheltersManager
 
             $this->loop += 1;
 
+            if ($shelter->location->address->country !== 'US') {
+                $this->output->info('Outside the US. Skipping saving the shelter.');
+            }
+
             if ($this->shelterExists($shelter->display_id)) {
                 $this->output->warn("Shelter $shelter->display_id already on DB. Skipping saving the shelter.");
 

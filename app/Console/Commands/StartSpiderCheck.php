@@ -33,7 +33,7 @@ class StartSpiderCheck extends Command
         $spider = new SpiderCheck($this);
 
         return $status
-            ? $spider->startPetStatusCheck()
-            : $spider->startUrlsCheck();
+            ? $spider->startPetCheck('status-check')
+            : $spider->startPetCheck('check-urls');
     }
 }
