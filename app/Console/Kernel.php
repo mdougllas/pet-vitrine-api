@@ -53,6 +53,6 @@ class Kernel extends ConsoleKernel
     {
         $fileName = now()->format('m-d-Y_H:i:s');
 
-        return storage_path("app/public/spider/$fileName.log");
+        return storage_path("app/storage/logs/spider/$fileName.log");
     }
 }
