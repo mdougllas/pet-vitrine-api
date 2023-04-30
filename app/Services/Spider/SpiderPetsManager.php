@@ -2,8 +2,9 @@
 
 namespace App\Services\Spider;
 
-use App\Models\Organization;
 use App\Models\Pet;
+use Illuminate\Support\Str;
+use App\Models\Organization;
 
 class SpiderPetsManager
 {
@@ -71,6 +72,10 @@ class SpiderPetsManager
                 return true;
             }
 
+            if ($this->checkNameCharacters($petData->name) > 250) {
+                $this->output->warn("The name of pet $petData->id is too long. Skipping saving the pet.");
+            }
+
             if (!$this->filterSpecies($petData->species->name)) {
                 $this->output->warn("Pet $petData->id is not a cat or a dog. Skipping saving the pet.");
 
@@ -132,6 +137,11 @@ class SpiderPetsManager
         });
 
         return $checkDuplicate->search(true);
+    }
+
+    private function checkNameCharacters($name)
+    {
+        return Str::length($name);
     }
 
 
