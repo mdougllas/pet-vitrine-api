@@ -74,6 +74,8 @@ class SpiderPetsManager
 
             if ($this->checkNameCharacters($petData->name) > 250) {
                 $this->output->warn("The name of pet $petData->id is too long. Skipping saving the pet.");
+
+                return true;
             }
 
             if (!$this->filterSpecies($petData->species->name)) {
