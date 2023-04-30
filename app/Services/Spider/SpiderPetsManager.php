@@ -72,7 +72,7 @@ class SpiderPetsManager
                 return true;
             }
 
-            if ($this->checkNameCharacters($petData->name) > 250) {
+            if ($this->checkNameCharacters($petData->name) > 80) {
                 $this->output->warn("The name of pet $petData->id is too long. Skipping saving the pet.");
 
                 return true;
@@ -143,7 +143,6 @@ class SpiderPetsManager
 
     private function checkNameCharacters($name)
     {
-        var_dump($name, Str::length($name));
         return Str::length($name);
     }
 
