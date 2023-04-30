@@ -143,7 +143,7 @@ class SpiderPetsManager
 
     private function checkNameCharacters($name)
     {
-        dd($name);
+        var_dump($name, Str::length($name));
         return Str::length($name);
     }
 
