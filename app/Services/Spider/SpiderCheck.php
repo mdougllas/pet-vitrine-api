@@ -56,6 +56,12 @@ class SpiderCheck
 
             $pet = Pet::find($id);
 
+            if (!$pet) {
+                $this->output->warn("No available pets yet. Skipping.");
+
+                return true;
+            }
+
             $this->output->info("Pet ID $id.");
 
             return $action === 'check-urls'
