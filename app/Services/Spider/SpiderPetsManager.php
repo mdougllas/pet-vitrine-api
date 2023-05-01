@@ -132,7 +132,7 @@ class SpiderPetsManager
         $checkDuplicate = $nameMatches->map(function ($pet) use ($petData) {
             $sexMatches = $pet->sex == $petData->sex;
             $speciesMatches = $pet->species == $petData->species->name;
-            $breedMatches = $pet->primary_breed->name == $petData->primary_breed->name;
+            $breedMatches = $pet->breed == $petData->primary_breed->name;
 
             return $sexMatches && $speciesMatches && $breedMatches;
         });
