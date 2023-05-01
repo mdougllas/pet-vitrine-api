@@ -110,11 +110,10 @@ class SpiderPetsManager
     private function checkDuplicateByName($pet)
     {
         $petData = $pet->animal;
-        $organizationData = $pet->organization;
         $nameMatches = Pet::where('name', $petData->name)->get();
 
         if (!$nameMatches->isEmpty()) {
-            $duplicate = $this->doubleCheckDuplicate($petData, $organizationData, $nameMatches);
+            $duplicate = $this->doubleCheckDuplicate($petData, $nameMatches);
 
             return $duplicate;
         }
@@ -128,14 +127,14 @@ class SpiderPetsManager
      * @return Illuminate\Database\Eloquent\Collection
      * @return Illuminate\Database\Eloquent\Collection
      */
-    private function doubleCheckDuplicate($petData, $organizationData, $nameMatches)
+    private function doubleCheckDuplicate($petData, $nameMatches)
     {
-        $checkDuplicate = $nameMatches->map(function ($pet) use ($petData, $organizationData) {
+        $checkDuplicate = $nameMatches->map(function ($pet) use ($petData) {
             $sexMatches = $pet->sex == $petData->sex;
             $speciesMatches = $pet->species == $petData->species->name;
-            $organizationMatches = $pet->organization_id == $organizationData->display_id;
+            $breedMatches = $pet->primary_breed->name == $petData->primary_breed->name;
 
-            return $sexMatches && $speciesMatches && $organizationMatches;
+            return $sexMatches && $speciesMatches && $breedMatches;
         });
 
         return $checkDuplicate->search(true);
