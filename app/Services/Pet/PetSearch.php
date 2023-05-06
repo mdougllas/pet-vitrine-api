@@ -12,6 +12,13 @@ class PetSearch
     use LatLongGeoSearch, StringManipulation;
 
     /**
+     * The payload from the request
+     *
+     * @var Illuminate\Support\Collection $payload
+     */
+    private $payload;
+
+    /**
      * Search Pets in the database
      *
      * @param \App\Http\Requests\PetRequest $request
@@ -19,9 +26,11 @@ class PetSearch
      */
     public function search($request): LengthAwarePaginator
     {
-        return $request->has('location')
-            ? $this->withLocationFilter($request['location'])
-            : $this->withoutLocationFilter($request);
+        $this->payload = collect($request);
+
+        return $this->payload->has('location')
+            ? $this->withLocationFilter($this->payload->get('location'))
+            : $this->withoutLocationFilter();
     }
 
     /**
@@ -30,15 +39,15 @@ class PetSearch
      * @param int $limit
      * @return \Illuminate\Pagination\LengthAwarePaginator;
      */
-    private function withoutLocationFilter($request): LengthAwarePaginator
+    private function withoutLocationFilter(): LengthAwarePaginator
     {
-        return $request->has('organization')
-            ? $this->withOrganization($request['organization'])
+        return $this->payload->has('organization')
+            ? $this->withOrganization($this->payload->get('organization'))
             : Pet::whereJsonLength('photo_urls', '>', 0)
             ->where('status', 'adoptable')
             ->with('organization')
             ->orderBy('id', 'desc')
-            ->paginate(12);
+            ->paginate($this->payload->get('limit'));
     }
 
     /**
@@ -49,7 +58,7 @@ class PetSearch
      */
     private function withLocationFilter($location): LengthAwarePaginator
     {
-        return is_numeric($location)
+        return is_numeric($this->payload->get('location'))
             ? $this->zipLocation($location)
             : $this->cityLocation($location);
     }
@@ -76,7 +85,7 @@ class PetSearch
             )
             ->where('status', 'adoptable')
             ->with('organization')
-            ->paginate(12);
+            ->paginate($this->payload->get('limit'));
     }
 
     /**
