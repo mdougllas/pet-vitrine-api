@@ -41,6 +41,7 @@ Route::resource('pet', PetController::class)->only('show');
 
 // Organization Routes
 Route::get('organizations', [OrganizationController::class, 'search']);
+Route::resource('organizations', OrganizationController::class)->only('show');
 
 // Miscellaneous Routes
 Route::get('petfinder-token', [PetfinderController::class, 'requestToken']);

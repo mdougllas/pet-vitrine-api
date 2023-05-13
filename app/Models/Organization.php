@@ -9,6 +9,8 @@ class Organization extends Model
 {
     use HasFactory;
 
+    protected $guarded = [];
+
     /**
      * The relationship between Organization and Pets
      *
