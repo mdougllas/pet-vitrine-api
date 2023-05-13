@@ -53,6 +53,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // User
     Route::post('mobile/logout', [MobileAuthController::class, 'destroyToken']);
     Route::get('user', [UserController::class, 'getUser']);
+    Route::resource('user', UserController::class)->only('update');
     Route::post('add-to-favorites', [UserController::class, 'addToFavorites'])->middleware('verified');
     Route::get('remove-from-favorites/{id}', [UserController::class, 'removeFromFavorites'])->middleware('verified');
 

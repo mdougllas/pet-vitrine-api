@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\DuplicateEntryException;
-use App\Helpers\CamelCaseResponse;
+use App\Models\User;
 use Illuminate\Http\Request;
+use App\Helpers\CamelCaseResponse;
+use App\Http\Requests\UserRequest;
+use App\Http\Resources\UserResource;
+use App\Exceptions\DuplicateEntryException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class UserController extends Controller
@@ -78,6 +81,26 @@ class UserController extends Controller
         return response()->json([
             'user' => $userCamelCase
         ]);
+    }
+
+    public function getSearch(User $user)
+    {
+        return response()->json([
+            'data' => $user->search,
+        ]);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(UserRequest $request, User $user)
+    {
+        $valid = collect($request->validated());
+
+        $user->search = $valid;
+        $user->save();
+
+        return new UserResource($user);
     }
 
     /**
