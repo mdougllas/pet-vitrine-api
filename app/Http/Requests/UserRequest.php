@@ -24,7 +24,7 @@ class UserRequest extends FormRequest
     {
         return [
             'location' => ['required', 'string'],
-            'shelter' => ['sometimes', 'numeric']
+            'shelter' => ['sometimes', 'required', 'numeric']
         ];
     }
 }
