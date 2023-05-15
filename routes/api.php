@@ -12,6 +12,7 @@ use App\Http\Controllers\FacebookAdController;
 use App\Http\Controllers\MobileAuthController;
 use App\Http\Controllers\PetController;
 use App\Http\Controllers\OrganizationController;
+use App\Http\Controllers\PostController;
 use Laravel\Fortify\Http\Controllers\RegisteredUserController;
 
 /*
@@ -69,6 +70,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Facebook
     Route::post('create-ad', [FacebookAdController::class, 'createAd']);
     Route::get('ad-results/{id}', [FacebookAdController::class, 'adResults']);
+
+    // Post
+    Route::resource('post', PostController::class)->except(['create', 'edit']);
 
     // Miscellaneous
     Route::resource('ad', AdController::class)->except(['create', 'edit']);
