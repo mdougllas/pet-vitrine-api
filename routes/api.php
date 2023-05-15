@@ -49,6 +49,9 @@ Route::get('petfinder-token', [PetfinderController::class, 'requestToken']);
 Route::post('recaptcha-token', [RecaptchaController::class, 'checkToken']);
 Route::post('send-contact-message', [ContactController::class, 'sendContactMessage']);
 
+// Post Routes
+Route::resource('post', PostController::class)->except(['create', 'edit', 'update', 'delete']);
+
 // Auth Protected Routes
 Route::middleware(['auth:sanctum'])->group(function () {
     // User
@@ -72,7 +75,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('ad-results/{id}', [FacebookAdController::class, 'adResults']);
 
     // Post
-    Route::resource('post', PostController::class)->except(['create', 'edit']);
+    Route::resource('post', PostController::class)->except(['create', 'edit', 'show', 'index']);
 
     // Miscellaneous
     Route::resource('ad', AdController::class)->except(['create', 'edit']);
