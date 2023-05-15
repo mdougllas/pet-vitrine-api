@@ -39,7 +39,7 @@ class PostController extends Controller
      */
     public function show(Post $post): PostResource
     {
-        //
+        return new PostResource($post);
     }
 
     /**
