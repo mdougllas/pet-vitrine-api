@@ -23,7 +23,7 @@ class UserRequest extends FormRequest
     public function rules()
     {
         return [
-            'location' => ['required', 'string'],
+            'location' => ['nullable', 'string'],
             'shelter' => ['sometimes', 'required', 'numeric']
         ];
     }
