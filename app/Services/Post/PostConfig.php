@@ -14,7 +14,7 @@ class PostConfig
         return [
             'body' => ['required', 'string'],
             'category' => ['required', 'exists:App\Models\PostCategory,title'],
-            'sub_category' => ['sometimes', 'nullable', 'exists:App\Models\PostSubCategory,title'],
+            'sub_category' => ['required', 'exists:App\Models\PostSubCategory,title'],
             'title' => ['required', 'string'],
             'image_url' => ['required', 'url'],
         ];

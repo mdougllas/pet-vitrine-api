@@ -21,7 +21,6 @@ return new class extends Migration
                 ->cascadeOnDelete();
 
             $table->foreignId('post_sub_category_id')
-                ->nullable()
                 ->constrained()
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
