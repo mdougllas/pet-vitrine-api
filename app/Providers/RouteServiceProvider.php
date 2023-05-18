@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Post;
+use App\Models\PostCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -49,6 +50,7 @@ class RouteServiceProvider extends ServiceProvider
                 ->group(base_path('routes/web.php'));
 
             Route::bind('post', fn ($slug) => Post::where('slug', $slug)->firstOrFail());
+            Route::bind('postCategory', fn ($slug) => PostCategory::where('slug', $slug)->firstOrFail());
         });
     }
 

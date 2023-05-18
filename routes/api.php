@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdController;
+use App\Http\Controllers\PetController;
+use App\Http\Controllers\PostController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PaypalController;
 use App\Http\Controllers\StripeController;
@@ -10,9 +12,8 @@ use App\Http\Controllers\PetfinderController;
 use App\Http\Controllers\RecaptchaController;
 use App\Http\Controllers\FacebookAdController;
 use App\Http\Controllers\MobileAuthController;
-use App\Http\Controllers\PetController;
 use App\Http\Controllers\OrganizationController;
-use App\Http\Controllers\PostController;
+use App\Http\Controllers\PostCategoryController;
 use Laravel\Fortify\Http\Controllers\RegisteredUserController;
 
 /*
@@ -51,6 +52,9 @@ Route::post('send-contact-message', [ContactController::class, 'sendContactMessa
 
 // Post Routes
 Route::resource('post', PostController::class)->except(['create', 'edit', 'update', 'delete']);
+
+// Category Routes
+Route::get('post-category-related/{postCategory}', [PostCategoryController::class, 'relatedPosts']);
 
 // Auth Protected Routes
 Route::middleware(['auth:sanctum'])->group(function () {
