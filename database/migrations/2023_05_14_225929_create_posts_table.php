@@ -27,6 +27,7 @@ return new class extends Migration
 
             $table->string('slug');
             $table->string('title');
+            $table->string('image_alt_text');
             $table->string('image_url');
 
             $table->foreignId('user_id')

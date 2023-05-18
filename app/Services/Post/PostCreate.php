@@ -25,17 +25,18 @@ class PostCreate
 
     public function createPost(Collection $request): Post
     {
-        $title = $request->get('title');
         $category = PostCategory::where('title', $request->get('category'))->first();
         $subCategory = PostSubCategory::where('title', $request->get('sub_category'))->first();
 
         $this->post->body = $request->get('body');
+        $this->post->image_alt_text = $request->get('image_alt_text');
         $this->post->image_url = $request->get('image_url');
+        $this->post->slug = Str::kebab($request->get('title'));
+        $this->post->title = $request->get('title');
+
+        $this->post->user()->associate(Auth::user());
         $this->post->postCategory()->associate($category);
         $this->post->postSubCategory()->associate($subCategory);
-        $this->post->slug = Str::kebab($request->get('title'));
-        $this->post->title = $title;
-        $this->post->user()->associate(Auth::user());
 
         $this->post->save();
 

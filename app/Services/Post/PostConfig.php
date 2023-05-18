@@ -16,6 +16,7 @@ class PostConfig
             'category' => ['required', 'exists:App\Models\PostCategory,title'],
             'sub_category' => ['required', 'exists:App\Models\PostSubCategory,title'],
             'title' => ['required', 'string'],
+            'image_alt_text' => ['required', 'string'],
             'image_url' => ['required', 'url'],
         ];
     }

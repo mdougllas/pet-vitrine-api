@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('post_sub_categories', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('category_id')
+            $table->foreignId('post_category_id')
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
 

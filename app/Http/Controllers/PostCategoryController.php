@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePostCategoryRequest;
 use App\Http\Requests\UpdatePostCategoryRequest;
+use App\Http\Resources\PostCategoryResource;
 use App\Models\PostCategory;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
@@ -21,7 +22,7 @@ class PostCategoryController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(): Response
+    public function create(StorePostCategoryRequest $request): PostCategoryResource
     {
         //
     }

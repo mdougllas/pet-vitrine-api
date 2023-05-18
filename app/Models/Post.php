@@ -10,9 +10,9 @@ class Post extends Model
 {
     use HasFactory;
 
-    protected $casts = [
-        'body' => CleanHtmlInput::class
-    ];
+    // protected $casts = [
+    //     'body' => CleanHtmlInput::class
+    // ];
 
     /**
      * The attributes that aren't mass assignable.
