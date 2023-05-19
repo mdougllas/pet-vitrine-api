@@ -19,6 +19,8 @@ class PostResource extends JsonResource
             'id' => $this->id,
             'body' => $this->body,
             'category' => new PostCategoryResource($this->postCategory),
+            'cta' => $this->cta,
+            'cta_link' => $this->cta_link,
             'sub_category' => new PostSubCategoryResource($this->postSubCategory),
             'slug' => $this->slug,
             'title' => $this->title,

@@ -14,6 +14,8 @@ class PostConfig
         return [
             'body' => ['required', 'string'],
             'category' => ['required', 'exists:App\Models\PostCategory,title'],
+            'cta' => ['required', 'string'],
+            'cta_link' => ['required', 'string'],
             'sub_category' => ['required', 'exists:App\Models\PostSubCategory,title'],
             'title' => ['required', 'string'],
             'image_alt_text' => ['required', 'string'],

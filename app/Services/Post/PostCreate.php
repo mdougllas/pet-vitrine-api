@@ -29,6 +29,8 @@ class PostCreate
         $subCategory = PostSubCategory::where('title', $request->get('sub_category'))->first();
 
         $this->post->body = $request->get('body');
+        $this->post->cta = $request->get('cta');
+        $this->post->cta_link = $request->get('cta_link');
         $this->post->image_alt_text = $request->get('image_alt_text');
         $this->post->image_url = $request->get('image_url');
         $this->post->slug = Str::kebab($request->get('title'));

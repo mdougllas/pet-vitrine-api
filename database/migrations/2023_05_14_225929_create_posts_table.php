@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
             $table->longText('body');
+            $table->text('cta');
+            $table->text('cta_link');
 
             $table->foreignId('post_category_id')
                 ->constrained()
