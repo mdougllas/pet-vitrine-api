@@ -16,9 +16,9 @@ class PostController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): PostResource
+    public function index(): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
-        //
+        return PostResource::collection(Post::with(['postCategory', 'postSubCategory'])->paginate(6));
     }
 
     /**
