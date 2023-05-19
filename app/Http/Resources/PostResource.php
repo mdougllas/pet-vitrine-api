@@ -22,6 +22,7 @@ class PostResource extends JsonResource
             'sub_category' => new PostSubCategoryResource($this->postSubCategory),
             'slug' => $this->slug,
             'title' => $this->title,
+            'image_alt_text' => $this->image_alt_text,
             'image_url' => $this->image_url,
         ];
     }

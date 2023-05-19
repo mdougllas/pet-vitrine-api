@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PostCategory;
+use Illuminate\Http\Response;
+use App\Http\Resources\PostResource;
+use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\RelatedPostsRequest;
+use App\Http\Resources\PostCategoryResource;
 use App\Http\Requests\StorePostCategoryRequest;
 use App\Http\Requests\UpdatePostCategoryRequest;
-use App\Http\Resources\PostCategoryResource;
-use App\Models\PostCategory;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Response;
 
 class PostCategoryController extends Controller
 {
@@ -71,15 +72,12 @@ class PostCategoryController extends Controller
     public function relatedPosts(RelatedPostsRequest $request, PostCategory $category)
     {
         $valid = $request->validated();
-
         $subCategories = $category->postSubCategories()->get();
 
         $articles = $subCategories->map(function ($subCategory) use ($valid) {
-            return $subCategory->posts()->where('slug', '!=', 'getting-involved-with-shelters-and-rescues:-make-a-difference-and-help-pets-in-need')->first();
+            return $subCategory->posts()->where('slug', '!=', $valid['slug'])->first();
         });
 
-        return response()->json([
-            'data' => $articles,
-        ], 200);
+        return PostResource::collection($articles);
     }
 }
