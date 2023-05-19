@@ -51,7 +51,8 @@ Route::post('recaptcha-token', [RecaptchaController::class, 'checkToken']);
 Route::post('send-contact-message', [ContactController::class, 'sendContactMessage']);
 
 // Post Routes
-Route::resource('post', PostController::class)->except(['create', 'edit', 'update', 'delete']);
+Route::get('post', [PostController::class, 'index']);
+Route::get('post/{slug}', [PostController::class, 'show']);
 
 // Category Routes
 Route::get('post-category-related/{postCategory}', [PostCategoryController::class, 'relatedPosts']);
