@@ -55,6 +55,7 @@ Route::resource('post', PostController::class)->except(['create', 'edit', 'updat
 
 // Category Routes
 Route::get('post-category-related/{postCategory}', [PostCategoryController::class, 'relatedPosts']);
+Route::get('search/post', [PostController::class, 'search']);
 
 // Auth Protected Routes
 Route::middleware(['auth:sanctum'])->group(function () {

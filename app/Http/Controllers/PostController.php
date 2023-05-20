@@ -3,16 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
-use Illuminate\Http\Response;
 use App\Services\Post\PostCreate;
 use App\Services\Post\PostUpdate;
 use App\Http\Resources\PostResource;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\StorePostRequest;
+use App\Http\Requests\SearchPostRequest;
 use App\Http\Requests\UpdatePostRequest;
 
 class PostController extends Controller
 {
+    public function search(SearchPostRequest $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    {
+        $slug = collect($request->validated())->get('slug');
+        $posts = Post::whereHas('postSubCategory', fn ($query) => $query->where('slug', $slug))->paginate(12);
+
+        return PostResource::collection($posts);
+    }
+
     /**
      * Display a listing of the resource.
      */
