@@ -19,13 +19,15 @@ class PostResource extends JsonResource
             'id' => $this->id,
             'body' => $this->body,
             'category' => new PostCategoryResource($this->postCategory),
+            'created_at' => $this->created_at,
             'cta' => $this->cta,
             'cta_link' => $this->cta_link,
+            'image_alt_text' => $this->image_alt_text,
+            'image_url' => $this->image_url,
             'sub_category' => new PostSubCategoryResource($this->postSubCategory),
             'slug' => $this->slug,
             'title' => $this->title,
-            'image_alt_text' => $this->image_alt_text,
-            'image_url' => $this->image_url,
+            'updated_at' => $this->updated_at,
         ];
     }
 }
