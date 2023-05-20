@@ -69,10 +69,10 @@ class PostCategoryController extends Controller
         //
     }
 
-    public function relatedPosts(RelatedPostsRequest $request, PostCategory $category)
+    public function relatedPosts(RelatedPostsRequest $request, PostCategory $postCategory)
     {
         $valid = $request->validated();
-        $subCategories = $category->postSubCategories()->get();
+        $subCategories = $postCategory->postSubCategories()->get();
 
         $articles = $subCategories->map(function ($subCategory) use ($valid) {
             return $subCategory->posts()->where('slug', '!=', $valid['slug'])->first();
