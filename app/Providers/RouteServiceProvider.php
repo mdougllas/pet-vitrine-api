@@ -48,9 +48,6 @@ class RouteServiceProvider extends ServiceProvider
             Route::middleware('web')
                 ->namespace($this->namespace)
                 ->group(base_path('routes/web.php'));
-
-            Route::bind('post', fn ($post) => Post::where('slug', $post)->firstOrFail());
-            Route::bind('postCategory', fn ($postCategory) => PostCategory::where('slug', $postCategory)->firstOrFail());
         });
     }
 
