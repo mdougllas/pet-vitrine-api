@@ -24,6 +24,23 @@ class PetController extends Controller
     }
 
     /**
+     * Get 3 random pets for featured pets section.
+     *
+     * @param PetRequest $request
+     * @param PetSearch $pets
+     * @return \Illuminate\Pagination\LengthAwarePaginator
+     */
+    public function featured(): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    {
+        return PetResource::collection(Pet::with('organization')
+            ->where('status', 'adoptable')
+            ->whereJsonLength('photo_urls', '>', 0)
+            ->inRandomOrder()
+            ->take(3)
+            ->get());
+    }
+
+    /**
      * Display the specified resource.
      *
      * @param \App\Models\Pet $pet

@@ -27,6 +27,7 @@ class PetRequest extends FormRequest
             'location' => ['string', 'nullable'],
             'organization' => ['string', 'nullable'],
             'page' => ['required', 'integer', 'min:1'],
+            'random' => ['sometimes', 'boolean'],
         ];
     }
 }

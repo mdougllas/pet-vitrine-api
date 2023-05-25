@@ -16,7 +16,7 @@ class PostController extends Controller
     public function search(SearchPostRequest $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
         $slug = collect($request->validated())->get('slug');
-        $posts = Post::whereHas('postSubCategory', fn ($query) => $query->where('slug', $slug))->paginate(12);
+        $posts = Post::whereHas('postSubCategory', fn ($query) => $query->where('slug', $slug))->latest()->paginate(12);
 
         return PostResource::collection($posts);
     }
@@ -26,7 +26,7 @@ class PostController extends Controller
      */
     public function index(): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
-        return PostResource::collection(Post::with(['postCategory', 'postSubCategory'])->paginate(6));
+        return PostResource::collection(Post::with(['postCategory', 'postSubCategory'])->latest()->paginate(6));
     }
 
     /**

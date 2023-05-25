@@ -39,6 +39,7 @@ Route::post('check-city', [FacebookAdController::class, 'checkCityValid']);
 
 // Pet Routes
 Route::get('pets', [PetController::class, 'search']);
+Route::get('featured-pets', [PetController::class, 'featured']);
 Route::resource('pet', PetController::class)->only('show');
 
 // Organization Routes
