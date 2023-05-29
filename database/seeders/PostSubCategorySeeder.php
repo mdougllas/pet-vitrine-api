@@ -35,8 +35,8 @@ class PostSubCategorySeeder extends Seeder
 
         $cat3->description = 'Articles about tips and tricks for cats.';
         $cat3->post_category_id = 2;
-        $cat3->slug = 'cats-tips-and-tricks';
-        $cat3->title = 'Cats Tips and Tricks';
+        $cat3->slug = 'cat-tips-and-tricks';
+        $cat3->title = 'Cat Tips and Tricks';
 
         $cat3->save();
 
@@ -44,8 +44,8 @@ class PostSubCategorySeeder extends Seeder
 
         $cat4->description = 'Articles about tips and tricks for dogs.';
         $cat4->post_category_id = 2;
-        $cat4->slug = 'dogs-tips-and-tricks';
-        $cat4->title = 'Dogs Tips and Tricks';
+        $cat4->slug = 'dog-tips-and-tricks';
+        $cat4->title = 'Dog Tips and Tricks';
 
         $cat4->save();
     }
