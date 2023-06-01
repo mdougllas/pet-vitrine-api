@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePostSubCategoryRequest;
 use App\Http\Requests\UpdatePostSubCategoryRequest;
+use App\Http\Resources\PostSubCategoryResource;
 use App\Models\PostSubCategory;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
@@ -13,9 +14,9 @@ class PostSubCategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): Response
+    public function index(): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
-        //
+        return PostSubCategoryResource::collection(PostSubCategory::all());
     }
 
     /**

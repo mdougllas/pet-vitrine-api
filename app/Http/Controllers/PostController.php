@@ -21,6 +21,23 @@ class PostController extends Controller
         return PostResource::collection($posts);
     }
 
+    public function slugs(): \Illuminate\Http\JsonResponse
+    {
+        $posts = Post::with(['postCategory', 'postSubCategory'])->get();
+
+        $postSlugs = $posts->map(function ($post) {
+            $categorySlug = $post->postCategory->slug;
+            $subCategorySlug = $post->postSubCategory->slug;
+            $postSlug = $post->slug;
+
+            return "/$categorySlug/$subCategorySlug/$postSlug";
+        });
+
+        return response()->json([
+            'data' => $postSlugs
+        ]);
+    }
+
     /**
      * Display a listing of the resource.
      */

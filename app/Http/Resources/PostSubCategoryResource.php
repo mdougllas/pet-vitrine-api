@@ -14,6 +14,14 @@ class PostSubCategoryResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'category' => new PostCategoryResource($this->postCategory),
+            'description' => $this->description,
+            'title' => $this->title,
+            'slug' => $this->slug,
+            'created' => $this->created_at,
+            'updated' => $this->updated_at,
+        ];
     }
 }
