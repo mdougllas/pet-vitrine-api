@@ -2,6 +2,7 @@
 
 namespace App\Services\Spider;
 
+use App\Models\Organization;
 use App\Models\SpiderJob;
 
 class SpiderJobsManager
@@ -60,13 +61,30 @@ class SpiderJobsManager
             return 0;
         }
 
-        $this->setJobRunning(true);
-
         $organizations = $this->spider->getOrganizations();
-        $pets = $this->spider->getPets();
 
-        $this->parseSheltersInfo($organizations);
-        $this->parsePetsInfo($pets->result);
+        $this->parseOrganizations($organizations);
+
+        $lastOrganizationId = $this->getLatestParsedPage();
+        $organizationId = $lastOrganizationId + 1;
+        $organization = Organization::find($lastOrganizationId + 1);
+        $pets = $this->spider->getPetsByOrganization($organization->petfinder_id);
+
+        if (!$pets || !$pets->result) {
+            $this->output->warn("No pets received from this request. Skipping parsing pets.");
+
+            return 0;
+        }
+
+        $this->parsePetsInfo($pets, $organization->petfinder_id);
+
+        if ($organizationId >= $organizations->pagination->total_count) {
+            $this->setLatestParsedPage(0);
+
+            return 0;
+        }
+
+        $this->setLatestParsedPage($organizationId);
         $this->setJobRunning(false);
 
         $this->output->info("Spider jobs finished.");
@@ -80,7 +98,7 @@ class SpiderJobsManager
      * @param  json  $result
      * @return mixed int
      */
-    private function parseSheltersInfo($result)
+    private function parseOrganizations($result)
     {
         $totalShelters = $result->pagination->total_count;
         $totalPages = $result->pagination->total_pages;
@@ -111,25 +129,22 @@ class SpiderJobsManager
      * @param  json  $result
      * @return mixed int
      */
-    private function parsePetsInfo($result)
+    private function parsePetsInfo($pets, $organizationId)
     {
-        $fromPage = $this->getLatestParsedPage();
-        $toPage = $result->pagination->total_pages;
+        $fromPage = 1;
+        $toPage = $pets->result->pagination->total_pages;
 
         $pages = collect()
             ->range($fromPage, $toPage);
 
-        $pages->each(function ($page) use ($toPage) {
+        $pages->each(function ($page) use ($toPage, $organizationId) {
             $this->output->info("Parsing Page $page");
             $this->output->info("Cicle $this->cicle");
 
-            $this->pets->parsePets($page);
+            $this->pets->parsePets($page, $organizationId);
             $this->cicle += 1;
 
-            if ($page >= $toPage || $this->cicle > 20) {
-                $this->setLatestParsedPage($page);
-                // $this->setLatestParsedPage($page - 5); // Should replace line above after all pages are parsed
-
+            if ($page >= $toPage) {
                 return false;
             }
 
@@ -179,10 +194,9 @@ class SpiderJobsManager
     /**
      * Retrieve the id for the latest parsed pet.
      *
-     * @return Illuminate\Database\Eloquent\Collection
-     * @return Illuminate\Database\Eloquent\Collection
+     * @return int
      */
-    private function getLatestParsedPage()
+    private function getLatestParsedPage(): int
     {
         return SpiderJob::first()->last_page_processed;
     }
