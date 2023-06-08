@@ -28,7 +28,7 @@ class HttpRequest
     ];
 
     /**
-     * Blueprint for SpiderPetsManager.
+     * Get latests pets posted.
      *
      * @param \App\Services\Spider\HttpRequest $spider
      * @return object|null
@@ -43,7 +43,7 @@ class HttpRequest
     }
 
     /**
-     * Blueprint for SpiderPetsManager.
+     * Get all organizations.
      *
      * @param \App\Services\Spider\HttpRequest $spider
      * @return object|null
@@ -55,9 +55,30 @@ class HttpRequest
         return $this->dispatch($url);
     }
 
-    public function getPet($id)
+    /**
+     * Get pet by id.
+     *
+     * @param sting $id
+     * @return object|null
+     */
+    public function getPet($id): object|null
     {
         $url = "https://www.petfinder.com/search/?pet_id[]=$id";
+
+        return $this->dispatch($url);
+    }
+
+    /**
+     * Get pets by organization.
+     *
+     * @param \App\Services\Spider\HttpRequest $spider
+     * @return object|null
+     */
+    public function getPetsByOrganization($id, $page = 1): object|null
+    {
+        $perPage = $this->perPage;
+        $token = config('spider.token',);
+        $url = "https://www.petfinder.com/search/?token=$token&page=$page&limit[]=$perPage&status=adoptable&shelter_id[]=$id&sort[]=available_longest&distance[]=Anywhere&include_transportable=true";
 
         return $this->dispatch($url);
     }
