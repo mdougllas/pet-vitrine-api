@@ -41,9 +41,9 @@ class SpiderPetsManager
      * @return Illuminate\Database\Eloquent\Collection;
      * @return Illuminate\Database\Eloquent\Collection;
      */
-    public function parsePets($page)
+    public function parsePets($page, $id)
     {
-        $response = $this->spider->getPets($page);
+        $response = $this->spider->getPetsByOrganization($id, $page);
 
         if (!$response || !$response->result) {
             $this->output->warn("No pets received from this request. Skipping parsing pets.");
