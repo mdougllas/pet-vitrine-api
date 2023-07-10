@@ -68,6 +68,11 @@ class SpiderJobsManager
         $lastOrganizationId = $this->getLatestParsedPage();
         $organizationId = $lastOrganizationId + 1;
         $organization = Organization::find($lastOrganizationId + 1);
+
+        if (empty($organization)) {
+            return 0;
+        }
+
         $pets = $this->spider->getPetsByOrganization($organization->petfinder_id);
 
         if (!$pets || !$pets->result) {
