@@ -70,6 +70,8 @@ class SpiderJobsManager
         $organization = Organization::find($lastOrganizationId + 1);
 
         if (empty($organization)) {
+            $this->setLatestParsedPage($lastOrganizationId + 1);
+
             return 0;
         }
 
