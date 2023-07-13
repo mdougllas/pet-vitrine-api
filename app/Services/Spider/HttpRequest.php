@@ -69,6 +69,19 @@ class HttpRequest
     }
 
     /**
+     * Get organization by name.
+     *
+     * @param sting $name
+     * @return object|null
+     */
+    public function getOrganization($name): object|null
+    {
+        $url = "https://www.petfinder.com/v2/search/organizations?name_substring=$name";
+
+        return $this->dispatch($url);
+    }
+
+    /**
      * Get pets by organization.
      *
      * @param \App\Services\Spider\HttpRequest $spider

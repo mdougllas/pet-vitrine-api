@@ -2,6 +2,7 @@
 
 namespace App\Services\Spider;
 
+use App\Models\Organization;
 use App\Models\Pet;
 use Illuminate\Support\Collection;
 
@@ -37,6 +38,7 @@ class SpiderCheck
     public function startPetCheck($action): ?int
     {
         $this->output->info('Starting loop from newest registered pet and checking.');
+        $this->loopThroughShelters();
 
         return $this->loopThroughPets($action);
     }
@@ -109,6 +111,52 @@ class SpiderCheck
         return $status !== 'adoptable'
             ? $this->updatePetStatus($pet)
             : $id != 1;
+    }
+
+    private function loopThroughShelters()
+    {
+        $range = Collection::range(Organization::max('id'), 1, -1);
+
+        $range->takeWhile(function ($id) {
+            $this->pauseJob();
+
+            $shelter = Organization::find($id);
+
+            if (!$shelter) {
+                $this->output->warn("Shelter not found. Skipping.");
+
+                return true;
+            }
+
+            $this->output->info("Checking shelter ID $id.");
+
+            return $this->checkShelterExists($shelter);
+        });
+    }
+
+    private function checkShelterExists($shelter)
+    {
+        $response = $this->spider->getOrganization(urlencode($shelter->name));
+        $organizations = collect($response->organizations);
+
+        $organization = $organizations->filter(function ($item) use ($shelter) {
+            return $item->display_id === $shelter->petfinder_id;
+        });
+
+        return $organization->value('display_id')
+            ? true
+            : $this->deleteShelter($shelter);
+    }
+
+    private function deleteShelter($shelter)
+    {
+        $this->output->info("Shelter $shelter->id not found. Deleting from database.");
+
+        $test = $shelter->delete();
+
+        $this->output->info("Delete action returned $test");
+
+        return $test;
     }
 
     /**
