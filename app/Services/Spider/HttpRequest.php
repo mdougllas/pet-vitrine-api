@@ -30,7 +30,7 @@ class HttpRequest
     /**
      * Get latests pets posted.
      *
-     * @param \App\Services\Spider\HttpRequest $spider
+     * @param integer $page
      * @return object|null
      */
     public function getPets($page = 1): object|null
