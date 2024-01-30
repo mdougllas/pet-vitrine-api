@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e8abfe5d52bae1c849e005549e487535",
+    "content-hash": "00fc5c2e3867e38e3ce7e4808e2d4749",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -536,16 +536,16 @@
         },
         {
             "name": "facebook/php-business-sdk",
-            "version": "16.0.2",
+            "version": "19.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/facebook/facebook-php-business-sdk.git",
-                "reference": "18886362b93ce6afdfb298d4654461b32e9371ea"
+                "reference": "4b976a8c7b4ebf0034a0e327f4e03462d944e75d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/facebook/facebook-php-business-sdk/zipball/18886362b93ce6afdfb298d4654461b32e9371ea",
-                "reference": "18886362b93ce6afdfb298d4654461b32e9371ea",
+                "url": "https://api.github.com/repos/facebook/facebook-php-business-sdk/zipball/4b976a8c7b4ebf0034a0e327f4e03462d944e75d",
+                "reference": "4b976a8c7b4ebf0034a0e327f4e03462d944e75d",
                 "shasum": ""
             },
             "require": {
@@ -576,9 +576,9 @@
             ],
             "support": {
                 "issues": "https://github.com/facebook/facebook-php-business-sdk/issues",
-                "source": "https://github.com/facebook/facebook-php-business-sdk/tree/16.0.2"
+                "source": "https://github.com/facebook/facebook-php-business-sdk/tree/19.0.0"
             },
-            "time": "2023-03-28T20:50:54+00:00"
+            "time": "2024-01-23T23:34:35+00:00"
         },
         {
             "name": "fruitcake/php-cors",
