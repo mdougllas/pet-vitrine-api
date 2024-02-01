@@ -18,12 +18,12 @@ class CreateAdsTable extends Migration
             $table->uuid('uuid')->unique();
 
             $table->bigInteger('ad_id')->unique();
-            $table->bigInteger('ad_set_id');
+            $table->string('ad_set_id');
             $table->float('amount_spent', 8, 2)->nullable();
             $table->float('budget', 8, 2);
-            $table->bigInteger('campaign_id');
+            $table->string('campaign_id');
             $table->float('cost_per_result', 8, 2)->nullable();
-            $table->bigInteger('creative_id');
+            $table->string('creative_id');
             $table->timestamp('end_time');
             $table->integer('impressions')->nullable();
             $table->string('payment_id')->unique()->nullable();
