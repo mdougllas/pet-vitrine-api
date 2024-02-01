@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Resources\AdResource;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Ad;
 
 class AdController extends Controller
 {
@@ -16,8 +15,7 @@ class AdController extends Controller
      */
     public function index()
     {
-        $ads = Ad::where('user_id', auth()->user()->id)->get();
-        // $ads = Auth::user()->ads->reverse();
+        $ads = Auth::user()->ads->reverse();
         return new AdResource($ads->paginate(12));
     }
 
