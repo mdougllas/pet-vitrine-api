@@ -8,6 +8,9 @@ use FacebookAds\Object\Ad;
 
 class FacebookAdsAd
 {
+    private $account;
+    private FacebookAdsAdCreative $creative;
+
     /**
      * Instantiates / set up the class.
      *

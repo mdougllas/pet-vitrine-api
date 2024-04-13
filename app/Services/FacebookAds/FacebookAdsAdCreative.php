@@ -11,6 +11,11 @@ use Illuminate\Support\Facades\Storage;
 
 class FacebookAdsAdCreative
 {
+    private $account;
+    private string $pageId;
+    private AdcreativeObjectStorySpec $objectStory;
+    private AdCreativeLinkData $linkData;
+
     /**
      * Instantiates / set up the class.
      *
