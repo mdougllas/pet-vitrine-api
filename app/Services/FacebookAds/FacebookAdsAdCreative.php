@@ -70,7 +70,14 @@ class FacebookAdsAdCreative
         $params = [
             'name' => "Ad Creative for $name",
             'body' => "Pet Vitrine generated ad creative for $name",
-            'object_story_spec' => $this->createObjectStorySpec($url, $link, $name)
+            'object_story_spec' => $this->createObjectStorySpec($url, $link, $name),
+            'degrees_of_freedom_spec' => [
+                'creative_features_spec' => [
+                    'standard_enhancements' => [
+                        'enroll_status' => 'OPT_IN'
+                    ]
+                ]
+            ]
         ];
 
         $creative = $this->account->createAdCreative($fields, $params);
