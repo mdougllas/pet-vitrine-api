@@ -6,6 +6,13 @@ use FacebookAds\Api;
 
 class FacebookAds
 {
+    public string $accessToken;
+    public string $adAccountId;
+    public string $appSecret;
+    public string $appId;
+    public string $pageId;
+    public Api $api;
+
     /**
      * Instantiates SDK API and Ad Account.
      *
