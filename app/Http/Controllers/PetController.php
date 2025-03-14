@@ -35,7 +35,7 @@ class PetController extends Controller
         return PetResource::collection(Pet::with('organization')
             ->where('status', 'adoptable')
             ->whereJsonLength('photo_urls', '>', 0)
-            // ->inRandomOrder()
+            ->inRandomOrder()
             ->take(3)
             ->get());
     }
