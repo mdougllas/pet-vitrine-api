@@ -50,12 +50,14 @@ class SpiderJobsManager
      */
     public function startJobs()
     {
-        $this->output->info("Spider jobs initiated.");
-
         if ($this->getJobRunning()) {
             $this->output->warn("Spider is already running.");
             return 0;
         }
+
+        $this->output->info("Spider jobs initiated.");
+        $this->shelters->setOutput($this->output);
+        $this->pets->setOutput($this->output);
 
         $organizations = $this->spider->getOrganizations();
 
@@ -73,7 +75,7 @@ class SpiderJobsManager
 
         $pets = $this->spider->getPetsByOrganization($organization->petfinder_id);
 
-        if (!$pets || !$pets->result) {
+        if (!$pets) {
             $this->output->warn("No pets received from this request. Skipping parsing pets.");
 
             return 0;
@@ -98,20 +100,14 @@ class SpiderJobsManager
     /**
      * Parse meta-data to collect number of pages.
      *
-     * @param  json  $result
+     * @param  Collection $result
      * @return mixed int
      */
     private function parseOrganizations($result)
     {
-        $totalShelters = $result->pagination->total_count;
-        $totalPages = $result->pagination->total_pages;
-        $numberOfShelters = $this->getNumberOfShelters();
-
-        if ($numberOfShelters == $totalShelters) {
-            $this->output->warn("No new shelters where created.");
-
-            return;
-        }
+        $pagination = collect($result->get('pagination'));
+        $totalShelters = $pagination->get('total_count');
+        $totalPages = $pagination->get('total_pages');
 
         $pages = collect()->range(1, $totalPages);
 
@@ -212,6 +208,7 @@ class SpiderJobsManager
      */
     private function setNumberOfShelters($qty)
     {
+        dd($qty);
         $spiderJob = SpiderJob::first();
         $spiderJob->number_of_shelters = $qty;
 
