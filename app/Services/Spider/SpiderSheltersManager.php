@@ -22,7 +22,7 @@ class SpiderSheltersManager
     private $loop = 1;
 
     /**
-     * Blueprint for SpiderPetsManager.
+     * Blueprint for SpiderShelterManager.
      *
      * @param object $output
      * @return void
@@ -41,19 +41,22 @@ class SpiderSheltersManager
     public function parseShelters($page): bool
     {
         $response = $this->spider->getOrganizations($page);
-        $shelters = collect($response->organizations);
+        $shelters = collect($response->get('organizations'));
 
         $shelters->each(function ($shelter) {
+            $shelter = collect($shelter);
+
             $this->output->info("This is shelter loop # $this->loop");
 
             $this->loop += 1;
 
-            if ($shelter->location->address->country !== 'US') {
+            if ($shelter->get('address')['country'] !== 'US') {
                 $this->output->info('Outside the US. Skipping saving the shelter.');
             }
 
-            if ($this->shelterExists($shelter->display_id)) {
-                $this->output->warn("Shelter $shelter->display_id already on DB. Skipping saving the shelter.");
+            if ($this->shelterExists($shelter->get('id'))) {
+                $id = $shelter->get('id');
+                $this->output->warn("Shelter $id already on DB. Skipping saving the shelter.");
 
                 return true;
             }
@@ -89,8 +92,8 @@ class SpiderSheltersManager
      */
     private function checkDuplicatedByName($shelter): int | false
     {
-        $location = $shelter->location->address;
-        $nameMatches = Organization::where('name', $shelter->name)->get();
+        $location = $shelter->get('address');
+        $nameMatches = Organization::where('name', $shelter->get('name'))->get();
 
         if (!$nameMatches->isEmpty()) {
             $duplicate = $this->doubleCheckDuplicate($location, $nameMatches);
@@ -104,11 +107,11 @@ class SpiderSheltersManager
     private function doubleCheckDuplicate($location, $nameMatches)
     {
         $checkDuplicate = $nameMatches->map(function ($match) use ($location) {
-            $address1Matches = $match->address_1 == $location->address1;
-            $address2Matches = $match->address_2 == $location->address2;
-            $cityMatches = $match->city == $location->city;
-            $stateMatches = $match->state == $location->state;
-            $postalCodeMatches = $match->postal_code == $location->postal_code;
+            $address1Matches = $match->address_1 == $location->get('address1');
+            $address2Matches = $match->address_2 == $location->get('address2');
+            $cityMatches = $match->city == $location->get('city');
+            $stateMatches = $match->state == $location->get('state');
+            $postalCodeMatches = $match->postal_code == $location->get('postal_code');
 
             return $address1Matches &&
                 $address2Matches &&
