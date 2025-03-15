@@ -2,7 +2,9 @@
 
 namespace App\Services\Spider;
 
+use App\Helpers\HandleHttpException;
 use App\Services\PetFinder\PetFinderConfig;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 
 class HttpRequest
@@ -31,13 +33,8 @@ class HttpRequest
      *
      * @var string
      */
-    private $rootUrl = 'https://api.petfinder.com/v2';
+    private $rootUrl;
 
-    /**
-     * Undocumented variable
-     *
-     * @var string
-     */
     private $url;
 
     /**
@@ -50,19 +47,21 @@ class HttpRequest
     public function __construct(PetFinderConfig $petFinder)
     {
         $this->petFinder = $petFinder;
+        $this->rootUrl = $this->petFinder->petFinderApiRootUrl;
     }
 
     /**
      * Get latests pets posted.
      *
      * @param integer $page
-     * @return object|null
+     * @return Collection
      */
-    public function getPets($page = 1): object|null
+    public function getPets($page = 1): Collection
     {
+        dd('getPets');
         $perPage = $this->perPage;
         $token = config('spider.token',);
-        $url = "https://www.petfinder.com/search/?token=$token&page=$page&limit[]=$perPage&status=adoptable&sort[]=available_longest&distance[]=Anywhere&include_transportable=true";
+        $url = "$this->rootUrl/?token=$token&page=$page&limit[]=$perPage&status=adoptable&sort[]=available_longest&distance[]=Anywhere&include_transportable=true";
 
         return $this->dispatch($url);
     }
@@ -71,9 +70,9 @@ class HttpRequest
      * Get all organizations.
      *
      * @param \App\Services\Spider\HttpRequest $spider
-     * @return object|null
+     * @return Collection
      */
-    public function getOrganizations($page = 1): object|null
+    public function getOrganizations($page = 1): Collection
     {
         $this->url = "$this->rootUrl/organizations";
 
@@ -90,56 +89,63 @@ class HttpRequest
      * Get pet by id.
      *
      * @param sting $id
-     * @return object|null
+     * @return Collection
      */
-    public function getPet($id): object|null
+    public function getPet($id): Collection
     {
-        $url = "https://www.petfinder.com/search/?pet_id[]=$id";
+        dd('getPet');
+        $this->url = "https://www.petfinder.com/search/?pet_id[]=$id";
 
-        return $this->dispatch($url);
+        return $this->dispatch();
     }
 
     /**
-     * Get organization by name.
+     * Get organization by id.
      *
-     * @param sting $name
-     * @return object|null
+     * @param sting $id
+     * @return Collection
      */
-    public function getOrganization($name): object|null
+    public function getOrganization($id): Collection
     {
-        $url = "https://www.petfinder.com/v2/search/organizations?name_substring=$name";
+        $this->url = "$this->rootUrl/v2/organizations/$id";
 
-        return $this->dispatch($url);
+        return $this->dispatch();
     }
 
     /**
      * Get pets by organization.
      *
      * @param \App\Services\Spider\HttpRequest $spider
-     * @return object|null
+     * @return Collection
      */
-    public function getPetsByOrganization($id, $page = 1): object|null
+    public function getPetsByOrganization($id, $page = 1): Collection
     {
-        $perPage = $this->perPage;
-        $token = config('spider.token',);
-        $url = "https://www.petfinder.com/search/?token=$token&page=$page&limit[]=$perPage&status=adoptable&shelter_id[]=$id&sort[]=available_longest&distance[]=Anywhere&include_transportable=true";
 
-        return $this->dispatch($url);
+        $this->url = "$this->rootUrl/animals";
+
+        $this->queryParameters = [
+            'page' => $page,
+            'limit' => $this->perPage,
+            'organization' => $id,
+            'sort' => 'name'
+        ];
+
+        return $this->dispatch();
     }
 
     /**
      * Dispatch a CURL request to the server.
      *
-     * @return object|null
+     * @return Collection
      */
-    private function dispatch(): object|null
+    private function dispatch(): Collection
     {
         $response = Http::withToken($this->petFinder->accessToken)
             ->withQueryParameters($this->queryParameters)
             ->get($this->url);
 
-            dd($response->json());
+        // $response->onError(fn ($err) => HandleHttpException::throw($err));
 
-        return $response->body();
+        return collect($response->json());
     }
 }
