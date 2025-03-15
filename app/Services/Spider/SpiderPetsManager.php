@@ -186,8 +186,6 @@ class SpiderPetsManager
             return;
         }
 
-
-
         $this->output->info("Pet $petId was associated to shelter $shelterId.");
 
         $petData->save();
