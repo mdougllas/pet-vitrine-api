@@ -14,15 +14,20 @@ class PetFinderConfig
      *
      * @var string
      */
-    protected string $petFinderApiRootUrl = 'https://api.petfinder.com/v2';
+    public string $petFinderApiRootUrl = 'https://api.petfinder.com/v2';
 
     /**
      * Undocumented variable
      *
      * @var string
      */
-    private string $petFinderApiTokenUrlPath = '/oauth2/token';
+    public string $petFinderApiTokenUrlPath = '/oauth2/token';
 
+    /**
+     * Undocumented variable
+     *
+     * @var integer
+     */
     private int $tokenExpiration;
 
     /**
@@ -30,7 +35,7 @@ class PetFinderConfig
      *
      * @var string|null
      */
-    public string|null $accessToken = null;
+    public string|null $accessToken;
 
     /**
      * Instantiates the class.
@@ -71,6 +76,6 @@ class PetFinderConfig
         $tokenObject = $response->json();
         $this->tokenExpiration = $tokenObject['expires_in'];
 
-        return $tokenObject['access_token'] ?? throw new \Exception('Failed to retrieve access token');
+        return $tokenObject['access_token'];
     }
 }
