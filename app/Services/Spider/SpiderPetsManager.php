@@ -12,6 +12,13 @@ class SpiderPetsManager
     use UseSetOutput;
 
     /**
+     * Undocumented variable
+     *
+     * @var SpiderDataManager
+     */
+    private SpiderDataManager $manager;
+
+    /**
      * @property integer $cicle
      */
     private $loop = 1;
@@ -21,9 +28,16 @@ class SpiderPetsManager
      */
     private $spider;
 
-    public function __construct(HttpRequest $spider)
+    /**
+     * Undocumented function
+     *
+     * @param HttpRequest $spider
+     * @param SpiderDataManager $manager
+     */
+    public function __construct(HttpRequest $spider, SpiderDataManager $manager)
     {
         $this->spider = $spider;
+        $this->manager = $manager;
     }
 
     /**
@@ -176,7 +190,7 @@ class SpiderPetsManager
      */
     private function savePet($pet)
     {
-        $petData = SpiderDataManager::getPetData($pet);
+        $petData = $this->manager->getPetData($pet);
         $petId = $petData->petfinder_id;
         $shelterId = $petData->petfinder_shelter_id;
 
