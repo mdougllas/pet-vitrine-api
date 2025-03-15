@@ -21,9 +21,9 @@ trait LatLongGeoSearch
      * from zip code
      *
      * @param int $zipCode
-     * @return object
+     * @return object|null
      */
-    protected function getLatLongFromZipCode($zipCode): object
+    protected function getLatLongFromZipCode($zipCode): object|null
     {
         $apiKey = config('services.geocode.api_key');
         $url = "https://maps.googleapis.com/maps/api/geocode/json?address=$zipCode&key=$apiKey";
