@@ -5,30 +5,37 @@ namespace App\Services\Spider;
 use App\Models\Pet;
 use Illuminate\Support\Str;
 use App\Models\Organization;
+use App\Traits\GeoSearch\LatLongGeoSearch;
 
 class SpiderDataManager
 {
+    use LatLongGeoSearch;
+
     /**
      * Get the sehlter data to be persisted.
-     * @return /App/Models/Organization;
+     * @return Organization|null;
      */
-    public static function getShelterData($shelter)
+    public function getShelterData($shelter): Organization|null
     {
         $shelterModel = new Organization;
-        $location = $shelter->location->address;
-        $geo = $shelter->location->geo;
+        $location = collect($shelter->get('address'));
+        $coordinates = $this->getLatLongFromZipCode($location->get('postcode'));
+
+        if (is_null($coordinates)) {
+            return null;
+        }
 
         $shelterModel->uuid = Str::uuid();
-        $shelterModel->address_1 = $location->address1;
-        $shelterModel->address_2 = $location->address2;
-        $shelterModel->city = $location->city;
-        $shelterModel->country = $location->country;
-        $shelterModel->latitude = $geo->latitude;
-        $shelterModel->longitude = $geo->longitude;
-        $shelterModel->name = $shelter->name;
-        $shelterModel->postal_code = $location->postal_code;
-        $shelterModel->petfinder_id = $shelter->display_id;
-        $shelterModel->state = $location->state;
+        $shelterModel->address_1 = $location->get('address1');
+        $shelterModel->address_2 = $location->get('address2');
+        $shelterModel->city = $location->get('city');
+        $shelterModel->country = $location->get('country');
+        $shelterModel->latitude = $coordinates->lat;
+        $shelterModel->longitude = $coordinates->lng;
+        $shelterModel->name = $shelter->get('name');
+        $shelterModel->postal_code = $location->get('postcode');
+        $shelterModel->petfinder_id = $shelter->get('id');
+        $shelterModel->state = $location->get('state');
 
         return $shelterModel;
     }
@@ -38,8 +45,9 @@ class SpiderDataManager
      *
      * @return void;
      */
-    public static function getPetData($pet)
+    public function getPetData($pet)
     {
+        dd($pet);
         $petModel = new Pet;
         $petData = $pet->animal;
 
