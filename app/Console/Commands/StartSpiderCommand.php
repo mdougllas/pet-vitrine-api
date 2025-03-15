@@ -26,9 +26,9 @@ class StartSpiderCommand extends Command
      *
      * @return int
      */
-    public function handle()
+    public function handle(SpiderJobsManager $spider)
     {
-        $spider = new SpiderJobsManager($this);
+        $spider->setOutput($this);
 
         return $spider->startJobs();
     }
