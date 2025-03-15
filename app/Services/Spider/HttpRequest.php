@@ -2,30 +2,55 @@
 
 namespace App\Services\Spider;
 
+use App\Services\PetFinder\PetFinderConfig;
+use Illuminate\Support\Facades\Http;
+
 class HttpRequest
 {
     /**
-     * @property integer $perPage
+     * Undocumented variable
+     *
+     * @var PetFinderConfig
      */
-    private $perPage = 300;
+    private PetFinderConfig $petFinder;
 
     /**
-     * @property array $headers
+     * Undocumented variable
+     *
+     * @var string
      */
-    private $headers = [
-        'Authority: www.petfinder.com',
-        'Accept: application/json, text/plain, */*',
-        'Accept-Language: en-US,en;q=0.9,pt-BR;q=0.8,pt;q=0.7,es;q=0.6',
-        'Referer: https://www.petfinder.com',
-        'Sec-Ch-Ua: \"Google Chrome\";v=\"107\", \"Chromium\";v=\"107\", \"Not=A?Brand\";v=\"24\"',
-        'Sec-Ch-Ua-Mobile: ?0',
-        'Sec-Ch-Ua-Platform: \"macOS\"',
-        'Sec-Fetch-Dest: empty',
-        'Sec-Fetch-Mode: cors',
-        'Sec-Fetch-Site: same-origin',
-        'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36',
-        'X-Requested-With: XMLHttpRequest',
-    ];
+    private string $accessToken;
+
+    /**
+     * @property integer $perPage
+     */
+    private $perPage = 100;
+
+    /**
+     * Undocumented variable
+     *
+     * @var string
+     */
+    private $rootUrl = 'https://api.petfinder.com/v2';
+
+    /**
+     * Undocumented variable
+     *
+     * @var string
+     */
+    private $url;
+
+    /**
+     * Undocumented variable
+     *
+     * @var array
+     */
+    private $queryParameters;
+
+    public function __construct(PetFinderConfig $petFinder)
+    {
+        $this->petFinder = $petFinder;
+    }
 
     /**
      * Get latests pets posted.
@@ -50,9 +75,15 @@ class HttpRequest
      */
     public function getOrganizations($page = 1): object|null
     {
-        $url = "https://www.petfinder.com/v2/search/organizations?&page=$page&limit=300&sort=name";
+        $this->url = "$this->rootUrl/organizations";
 
-        return $this->dispatch($url);
+        $this->queryParameters = [
+            'page' => $page,
+            'limit' => $this->perPage,
+            'sort' => 'name'
+        ];
+
+        return $this->dispatch();
     }
 
     /**
@@ -99,27 +130,16 @@ class HttpRequest
     /**
      * Dispatch a CURL request to the server.
      *
-     * @param string $url
      * @return object|null
      */
-    private function dispatch($url): object|null
+    private function dispatch(): object|null
     {
-        $ch = curl_init();
+        $response = Http::withToken($this->petFinder->accessToken)
+            ->withQueryParameters($this->queryParameters)
+            ->get($this->url);
 
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
-        curl_setopt($ch, CURLOPT_ENCODING, 'gzip, deflate');
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
+            dd($response->json());
 
-        $result = curl_exec($ch);
-
-        if (curl_errno($ch)) {
-            $result = 'Error:' . curl_error($ch);
-        }
-
-        curl_close($ch);
-
-        return json_decode($result);
+        return $response->body();
     }
 }
