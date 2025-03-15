@@ -5,9 +5,12 @@ namespace App\Services\Spider;
 use App\Models\Pet;
 use Illuminate\Support\Str;
 use App\Models\Organization;
+use App\Traits\Spider\UseSetOutput;
 
 class SpiderPetsManager
 {
+    use UseSetOutput;
+
     /**
      * @property integer $cicle
      */
@@ -18,22 +21,10 @@ class SpiderPetsManager
      */
     private $spider;
 
-    /**
-     * @property object $output
-     */
-    private $output;
-
-    /**
-     * @property object $output
-     */
-    private $dataManager;
-
-    public function __construct($output)
+    public function __construct(HttpRequest $spider)
     {
-        $this->spider = new HttpRequest;
-        $this->output = $output;
+        $this->spider = $spider;
     }
-
 
     /**
      * Start the jobs to scrape and store data.

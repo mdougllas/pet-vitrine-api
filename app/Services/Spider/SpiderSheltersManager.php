@@ -5,10 +5,12 @@ namespace App\Services\Spider;
 use App\Models\Organization;
 use App\Services\Spider\HttpRequest;
 use App\Services\Spider\SpiderDataManager;
-use Illuminate\Support\Collection;
+use App\Traits\Spider\UseSetOutput;
 
 class SpiderSheltersManager
 {
+    use UseSetOutput;
+
     /**
      * @property \App\Services\Spider\HttpRequest $spider
      */
@@ -20,21 +22,14 @@ class SpiderSheltersManager
     private $loop = 1;
 
     /**
-     * @property object $output
-     */
-    private $output;
-
-    /**
      * Blueprint for SpiderPetsManager.
      *
      * @param object $output
      * @return void
      */
-    public function __construct($output)
+    public function __construct(HttpRequest $spider)
     {
-        $this->spider = new HttpRequest;
-        $this->loop = 1;
-        $this->output = $output;
+        $this->spider = $spider;
     }
 
     /**

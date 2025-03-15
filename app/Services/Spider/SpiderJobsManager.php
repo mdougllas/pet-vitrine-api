@@ -4,9 +4,12 @@ namespace App\Services\Spider;
 
 use App\Models\Organization;
 use App\Models\SpiderJob;
+use App\Traits\Spider\UseSetOutput;
 
 class SpiderJobsManager
 {
+    use UseSetOutput;
+
     /**
      * @property \App\Services\Spider\HttpRequest $spider
      */
@@ -28,23 +31,16 @@ class SpiderJobsManager
     private $cicle = 1;
 
     /**
-     * @property object $output
-     */
-    protected $output;
-
-    /**
      * Blueprint for SpiderJobsManager.
      *
      * @param \App\Services\Spider\HttpRequest $spider
      * @return void
      */
-    public function __construct($output)
+    public function __construct(HttpRequest $spider, SpiderSheltersManager $shelters, SpiderPetsManager $pets)
     {
-        $this->spider = new HttpRequest;
-        $this->shelters = new SpiderSheltersManager($output);
-        $this->pets = new SpiderPetsManager($output);
-        $this->cicle = 1;
-        $this->output = $output;
+        $this->spider = $spider;
+        $this->shelters = $shelters;
+        $this->pets = $pets;
     }
 
     /**
