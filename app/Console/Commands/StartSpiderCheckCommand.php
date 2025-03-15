@@ -5,7 +5,7 @@ namespace App\Console\Commands;
 use App\Services\Spider\SpiderCheck;
 use Illuminate\Console\Command;
 
-class StartSpiderCheck extends Command
+class StartSpiderCheckCommand extends Command
 {
     /**
      * The name and signature of the console command.
