@@ -113,8 +113,6 @@ class SpiderJobsManager
 
         $pages->each(function ($page) {
             $this->shelters->parseShelters($page);
-
-            $this->pauseJob();
         });
 
         $this->setNumberOfShelters($totalShelters);
@@ -146,8 +144,6 @@ class SpiderJobsManager
             if ($page >= $toPage) {
                 return false;
             }
-
-            $this->pauseJob();
         });
 
         return;
@@ -224,22 +220,5 @@ class SpiderJobsManager
     private function getNumberOfShelters()
     {
         return SpiderJob::first()->number_of_shelters;
-    }
-
-    /**
-     * Pause the job for a random
-     * number of seconds
-     * from 5 to 15.
-     *
-     * @return void
-     */
-    private function pauseJob()
-    {
-        // $randomNumber = collect([5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15])->random();
-        $randomNumber = collect([2, 3])->random();
-
-        $this->output->info("Pause for $randomNumber seconds.");
-
-        sleep($randomNumber);
     }
 }

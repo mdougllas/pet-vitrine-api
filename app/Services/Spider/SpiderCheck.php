@@ -54,8 +54,6 @@ class SpiderCheck
         $range = Collection::range(Pet::max('id'), 1, -1);
 
         $range->takeWhile(function ($id) use ($action) {
-            $this->pauseJob();
-
             $pet = Pet::find($id);
 
             if (!$pet) {
@@ -118,8 +116,6 @@ class SpiderCheck
         $range = Collection::range(Organization::max('id'), 1, -1);
 
         $range->takeWhile(function ($id) {
-            $this->pauseJob();
-
             $shelter = Organization::find($id);
 
             if (!$shelter) {
@@ -136,6 +132,7 @@ class SpiderCheck
 
     private function checkShelterExists($shelter)
     {
+        dd($shelter);
         $response = $this->spider->getOrganization(urlencode($shelter->name));
         $organizations = collect($response->organizations);
 
@@ -181,24 +178,5 @@ class SpiderCheck
         $pet->status = $status;
 
         return $pet->save();
-    }
-
-
-    /**
-     * Pause the job for a random
-     * number of seconds
-     * from 1 to 2.
-     *
-     * @return void
-     */
-    private function pauseJob()
-    {
-        // $randomNumber = collect([5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15])->random();
-        $randomNumber = collect([1, 2])->random();
-
-        $this->output->info("Pause for $randomNumber seconds.");
-
-        sleep($randomNumber);
-        // sleep(1);
     }
 }
