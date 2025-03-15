@@ -71,7 +71,6 @@ class PetFinderConfig
 
         $url = $this->petFinderApiRootUrl . $this->petFinderApiTokenUrlPath;
         $response = Http::post($url, $data);
-        $response->onError(fn ($err) => HandleHttpException::throw($err));
 
         $tokenObject = $response->json();
         $this->tokenExpiration = $tokenObject['expires_in'];
