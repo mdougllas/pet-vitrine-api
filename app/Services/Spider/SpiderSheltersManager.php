@@ -4,12 +4,13 @@ namespace App\Services\Spider;
 
 use App\Models\Organization;
 use App\Services\Spider\HttpRequest;
-use App\Services\Spider\SpiderDataManager;
 use App\Traits\Spider\UseSetOutput;
 
 class SpiderSheltersManager
 {
     use UseSetOutput;
+
+    private $manager;
 
     /**
      * @property \App\Services\Spider\HttpRequest $spider
@@ -24,12 +25,14 @@ class SpiderSheltersManager
     /**
      * Blueprint for SpiderShelterManager.
      *
-     * @param object $output
+     * @param HttpRequest $spider
+     * @param SpiderDataManager $manager
      * @return void
      */
-    public function __construct(HttpRequest $spider)
+    public function __construct(HttpRequest $spider, SpiderDataManager $manager)
     {
         $this->spider = $spider;
+        $this->manager = $manager;
     }
 
     /**
@@ -92,7 +95,7 @@ class SpiderSheltersManager
      */
     private function checkDuplicatedByName($shelter): int | false
     {
-        $location = $shelter->get('address');
+        $location = collect($shelter->get('address'));
         $nameMatches = Organization::where('name', $shelter->get('name'))->get();
 
         if (!$nameMatches->isEmpty()) {
@@ -126,14 +129,23 @@ class SpiderSheltersManager
     /**
      * Retrieve the id for the latest parsed pet.
      *
-     * @return Illuminate\Database\Eloquent\Collection
-     * @return Illuminate\Database\Eloquent\Collection
+     * @return void
      */
-    private function saveShelter($shelter)
+    private function saveShelter($shelter): void
     {
         $this->output->info("SAVE SHELTER CALLED");
 
-        $shelterData = SpiderDataManager::getShelterData($shelter);
+        $shelterData = $this->manager->getShelterData($shelter);
+
+        if (! $shelterData) {
+            $name = $shelter->get('name');
+            $id = $shelter->get('id');
+
+            $this->output->info("The zipcode for shelter ($name) with id $id is missing or wrong. Skipping saving the shelter.");
+
+            return;
+        }
+
         $shelterData->save();
     }
 }
