@@ -15,6 +15,13 @@ class HttpRequest
     /**
      * Undocumented variable
      *
+     * @var integer
+     */
+    public int $requestCount = 0;
+
+    /**
+     * Undocumented variable
+     *
      * @var PetFinderConfig
      */
     private PetFinderConfig $petFinder;
@@ -52,12 +59,7 @@ class HttpRequest
      */
     private $queryParameters;
 
-    /**
-     * Undocumented variable
-     *
-     * @var integer
-     */
-    public int $requestCount = 0;
+    private $httpOutput;
 
     /**
      * Undocumented function
@@ -127,6 +129,11 @@ class HttpRequest
         return $this->dispatch();
     }
 
+    private function setHttpOutput()
+    {
+        $this->httpOutput = $this->spiderOutput ?? $this->spiderCheckOutput;
+    }
+
     /**
      * Dispatch a request to the server.
      *
@@ -134,9 +141,9 @@ class HttpRequest
      */
     private function dispatch(): Collection
     {
+        $this->setHttpOutput();
         $this->requestCount++;
-
-        $this->spiderOutput->info("This is request # $this->requestCount for URL $this->url");
+        $this->httpOutput->info("This is request # $this->requestCount for URL $this->url");
 
         $response = Http::withToken($this->petFinder->accessToken)
             ->withQueryParameters($this->queryParameters)
