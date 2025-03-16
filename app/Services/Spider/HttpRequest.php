@@ -51,7 +51,7 @@ class HttpRequest
      *
      * @var integer
      */
-    private int $requestCount = 0;
+    public int $requestCount = 0;
 
     /**
      * Undocumented function
