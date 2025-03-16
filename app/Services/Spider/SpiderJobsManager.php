@@ -44,11 +44,11 @@ class SpiderJobsManager
      */
     public function startJobs()
     {
-        if ($this->getJobRunning()) {
-            $this->output->warn("Spider is already running.");
+        // if ($this->getJobRunning()) {
+        //     $this->output->warn("Spider is already running.");
 
-            return 0;
-        }
+        //     return 0;
+        // }
 
         $this->output->info("Spider jobs initiated.");
 
