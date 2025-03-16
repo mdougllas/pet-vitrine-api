@@ -3,8 +3,10 @@
 namespace App\Services\Spider;
 
 use App\Models\Organization;
+use App\Models\SpiderJob;
 use App\Services\Spider\HttpRequest;
 use App\Traits\Spider\UseSetOutput;
+use Illuminate\Support\Collection;
 
 class SpiderSheltersManager
 {
@@ -16,11 +18,6 @@ class SpiderSheltersManager
      * @property \App\Services\Spider\HttpRequest $spider
      */
     private $spider;
-
-    /**
-     * @property integer $loop
-     */
-    private $loop = 1;
 
     /**
      * Blueprint for SpiderShelterManager.
@@ -38,51 +35,88 @@ class SpiderSheltersManager
     /**
      * Start the jobs to scrape and store data.
      *
-     * @return bool;
-     * @return Illuminate\Database\Eloquent\Collection;
+     * @return void;
      */
-    public function parseShelters($page): bool
+    public function parseShelters(): void
     {
+        $organizations = $this->spider->getOrganizations();
+        $organizationCount = $this->getNumberOfShelters();
+
+        $pagination = collect($organizations->get('pagination'));
+        $totalShelters = $pagination->get('total_count');
+        $totalPages = $pagination->get('total_pages');
+
+        if ($organizationCount === $totalShelters) {
+            $this->output->info("No new organizations registered.");
+
+            return;
+        }
+
+        $page = 0;
+
+        while ($totalPages > 0) {
+            $totalPages--;
+            $page++;
+
+            $this->collectShelters($page);
+
+            sleep(1);
+        }
+
+        $this->setNumberOfShelters($totalShelters);
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @param integer $page
+     * @return void
+     */
+    private function collectShelters(int $page): void
+    {
+        $this->output->info("Parsing page # $page.");
+
         $response = $this->spider->getOrganizations($page);
         $shelters = collect($response->get('organizations'));
 
-        $shelters->each(function ($shelter) {
-            $shelter = collect($shelter);
+        $shelters->each(fn ($shelter) => $this->persistShelter(collect($shelter)));
+    }
 
-            $this->output->info("This is shelter loop # $this->loop");
+    private function persistShelter(Collection $shelter): bool
+    {
+        $name = $shelter->get('name');
+        $id = $shelter->get('id');
 
-            $this->loop += 1;
+        $this->output->info("Analizing shelter $name");
 
-            if ($shelter->get('address')['country'] !== 'US') {
-                $this->output->info('Outside the US. Skipping saving the shelter.');
-            }
+        if ($shelter->get('address')['country'] !== 'US') {
+            $this->output->info('Outside the US. Skipping saving the shelter.');
+        }
 
-            if ($this->shelterExists($shelter->get('id'))) {
-                $id = $shelter->get('id');
-                $this->output->warn("Shelter $id already on DB. Skipping saving the shelter.");
+        if ($this->shelterExists($id)) {
+            $this->output->warn("Shelter $id already on DB. Skipping saving the shelter.");
 
-                return true;
-            }
+            return true;
+        }
 
-            if ($this->checkDuplicatedByName($shelter) !== false) {
-                $this->output->warn("This is a duplicate. Skipping saving the shelter.");
+        if ($this->checkDuplicatedByName($shelter) !== false) {
+            $this->output->warn("This is a duplicate. Skipping saving the shelter.");
 
-                return true;
-            }
+            return true;
+        }
 
-            $this->saveShelter($shelter);
-        });
+        $this->saveShelter($shelter);
 
-        return false;
+        return true;
     }
 
     /**
      * Retrieve the id for the latest parsed pet.
      *
-     * @return Illuminate\Database\Eloquent\Collection
-     * @return Illuminate\Database\Eloquent\Collection
+     * @param string $id
+     * @return bool
      */
-    private function shelterExists($id)
+    private function shelterExists(string $id): bool
     {
         return Organization::where('petfinder_id', $id)->exists();
     }
@@ -129,23 +163,46 @@ class SpiderSheltersManager
     /**
      * Retrieve the id for the latest parsed pet.
      *
-     * @return void
+     * @return bool
      */
-    private function saveShelter($shelter): void
+    private function saveShelter($shelter): bool
     {
-        $this->output->info("SAVE SHELTER CALLED");
+        $name = $shelter->get('name');
+        $id = $shelter->get('id');
+
+        $this->output->info("Saving shelter $name");
 
         $shelterData = $this->manager->getShelterData($shelter);
 
         if (! $shelterData) {
-            $name = $shelter->get('name');
-            $id = $shelter->get('id');
-
             $this->output->info("The zipcode for shelter ($name) with id $id is missing or wrong. Skipping saving the shelter.");
 
-            return;
+            return true;
         }
 
-        $shelterData->save();
+        return $shelterData->save();
+    }
+
+    /**
+     * Store the id for the latest parsed pet.
+     *
+     * @return void
+     */
+    private function setNumberOfShelters($qty): void
+    {
+        $spiderJob = SpiderJob::first();
+        $spiderJob->number_of_shelters = $qty;
+
+        $spiderJob->save();
+    }
+
+    /**
+     * Retrieve the id for the latest parsed pet.
+     *
+     * @return int
+     */
+    private function getNumberOfShelters(): int
+    {
+        return SpiderJob::first()->number_of_shelters;
     }
 }
