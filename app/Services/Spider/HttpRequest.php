@@ -72,6 +72,7 @@ class HttpRequest
         $this->queryParameters = [
             'page' => $page,
             'limit' => $this->perPage,
+            'sort' => 'recent',
         ];
 
         return $this->dispatch();
@@ -90,7 +91,7 @@ class HttpRequest
         $this->queryParameters = [
             'page' => $page,
             'limit' => $this->perPage,
-            'sort' => 'name'
+            'sort' => 'name',
         ];
 
         return $this->dispatch();
