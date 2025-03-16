@@ -53,6 +53,11 @@ class HttpRequest
      */
     private int $requestCount = 0;
 
+    /**
+     * Undocumented function
+     *
+     * @param PetFinderConfig $petFinder
+     */
     public function __construct(PetFinderConfig $petFinder)
     {
         $this->petFinder = $petFinder;
