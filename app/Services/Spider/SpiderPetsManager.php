@@ -68,7 +68,7 @@ class SpiderPetsManager
         $totalPages = $pagination->get('total_pages');
 
         if ($petCount === $totalPets) {
-            $this->output->info("No new pets registered.");
+            $this->spiderOutput->info("No new pets registered.");
 
             return;
         }
@@ -91,7 +91,7 @@ class SpiderPetsManager
 
     private function collectPets(int $page)
     {
-        $this->output->info("Parsing page # $page.");
+        $this->spiderOutput->info("Parsing page # $page.");
 
         $response = $this->spider->getPets($page);
         $pets = collect($response->get('animals'));
@@ -105,28 +105,28 @@ class SpiderPetsManager
         $id = $pet->get('id');
         $species = $pet->get('species');
 
-        $this->output->info("Analizing pet $name");
+        $this->spiderOutput->info("Analizing pet $name");
 
         if ($this->petExists($id)) {
-            $this->output->warn("Pet $id already on DB. Skipping saving the pet.");
+            $this->spiderOutput->warn("Pet $id already on DB. Skipping saving the pet.");
 
             return $this->spiderStopThreshold();
         }
 
         if ($this->checkDuplicateByName($pet) !== false) {
-            $this->output->warn("Pet $name is a dulicate. Skipping saving the pet.");
+            $this->spiderOutput->warn("Pet $name is a dulicate. Skipping saving the pet.");
 
             return true;
         }
 
         if ($this->checkNameCharacters($name) > 80) {
-            $this->output->warn("The name of pet $name is too long. Skipping saving the pet.");
+            $this->spiderOutput->warn("The name of pet $name is too long. Skipping saving the pet.");
 
             return true;
         }
 
         if (!$this->filterSpecies($species)) {
-            $this->output->warn("Pet $species is not a cat or a dog. Skipping saving the pet.");
+            $this->spiderOutput->warn("Pet $species is not a cat or a dog. Skipping saving the pet.");
 
             return true;
         }
@@ -142,14 +142,14 @@ class SpiderPetsManager
         $this->duplicateCount++;
 
         if ($this->duplicateCount >= 100) {
-            $this->output->warn("All new pets already registered. Aborting spider.");
+            $this->spiderOutput->warn("All new pets already registered. Aborting spider.");
             $this->abortSpider = true;
 
             return false;
         }
 
         if ($this->spider->requestCount >= 1000) {
-            $this->output->warn("Reached requests limit for PetFinder. Aborting spider.");
+            $this->spiderOutput->warn("Reached requests limit for PetFinder. Aborting spider.");
             $this->abortSpider = true;
 
             return false;
@@ -251,15 +251,15 @@ class SpiderPetsManager
         $shelterId = $petData->petfinder_shelter_id;
 
         if (!$this->attachToOrganization($petData, $shelterId)) {
-            $this->output->warn("Pet not associated with a valid organization. Skip saving the pet.");
+            $this->spiderOutput->warn("Pet not associated with a valid organization. Skip saving the pet.");
 
             return;
         }
 
-        $this->output->info("Pet $petId was associated to shelter $shelterId.");
+        $this->spiderOutput->info("Pet $petId was associated to shelter $shelterId.");
 
         $petData->save();
-        $this->output->info("Pet $petId saved on database.");
+        $this->spiderOutput->info("Pet $petId saved on database.");
     }
 
     /**

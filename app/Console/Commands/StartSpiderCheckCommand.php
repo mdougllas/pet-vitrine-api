@@ -30,7 +30,7 @@ class StartSpiderCheckCommand extends Command
     {
         $status = $this->argument('status');
 
-        $spider->setOutput($this);
+        $spider->setSpiderCheckOutput($this);
 
         return $status
             ? $spider->startPetCheck('status-check')

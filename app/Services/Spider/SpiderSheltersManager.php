@@ -47,7 +47,7 @@ class SpiderSheltersManager
         $totalPages = $pagination->get('total_pages');
 
         if ($organizationCount === $totalShelters) {
-            $this->output->info("No new organizations registered.");
+            $this->spiderOutput->info("No new organizations registered.");
 
             return;
         }
@@ -74,7 +74,7 @@ class SpiderSheltersManager
      */
     private function collectShelters(int $page): void
     {
-        $this->output->info("Parsing page # $page.");
+        $this->spiderOutput->info("Parsing page # $page.");
 
         $response = $this->spider->getOrganizations($page);
         $shelters = collect($response->get('organizations'));
@@ -87,20 +87,20 @@ class SpiderSheltersManager
         $name = $shelter->get('name');
         $id = $shelter->get('id');
 
-        $this->output->info("Analizing shelter $name");
+        $this->spiderOutput->info("Analizing shelter $name");
 
         if ($shelter->get('address')['country'] !== 'US') {
-            $this->output->info('Outside the US. Skipping saving the shelter.');
+            $this->spiderOutput->info('Outside the US. Skipping saving the shelter.');
         }
 
         if ($this->shelterExists($id)) {
-            $this->output->warn("Shelter $id already on DB. Skipping saving the shelter.");
+            $this->spiderOutput->warn("Shelter $id already on DB. Skipping saving the shelter.");
 
             return true;
         }
 
         if ($this->checkDuplicatedByName($shelter) !== false) {
-            $this->output->warn("This is a duplicate. Skipping saving the shelter.");
+            $this->spiderOutput->warn("This is a duplicate. Skipping saving the shelter.");
 
             return true;
         }
@@ -170,12 +170,12 @@ class SpiderSheltersManager
         $name = $shelter->get('name');
         $id = $shelter->get('id');
 
-        $this->output->info("Saving shelter $name");
+        $this->spiderOutput->info("Saving shelter $name");
 
         $shelterData = $this->manager->getShelterData($shelter);
 
         if (! $shelterData) {
-            $this->output->info("The zipcode for shelter ($name) with id $id is missing or wrong. Skipping saving the shelter.");
+            $this->spiderOutput->info("The zipcode for shelter ($name) with id $id is missing or wrong. Skipping saving the shelter.");
 
             return true;
         }

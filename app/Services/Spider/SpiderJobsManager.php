@@ -45,22 +45,22 @@ class SpiderJobsManager
     public function startJobs()
     {
         // if ($this->getJobRunning()) {
-        //     $this->output->warn("Spider is already running.");
+        //     $this->spiderOutput->warn("Spider is already running.");
 
         //     return 0;
         // }
 
-        $this->output->info("Spider jobs initiated.");
+        $this->spiderOutput->info("Spider jobs initiated.");
 
         $this->setJobRunning(1);
-        $this->spider->setOutput($this->output);
-        $this->shelters->setOutput($this->output);
-        $this->pets->setOutput($this->output);
+        $this->spider->setSpiderOutput($this->spiderOutput);
+        $this->shelters->setSpiderOutput($this->spiderOutput);
+        $this->pets->setSpiderOutput($this->spiderOutput);
 
         $this->shelters->parseShelters();
         $this->pets->parsePets();
 
-        $this->output->info("Spider jobs finished.");
+        $this->spiderOutput->info("Spider jobs finished.");
         $this->setJobRunning(0);
 
         return 0;

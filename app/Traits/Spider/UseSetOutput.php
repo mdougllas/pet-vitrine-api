@@ -3,6 +3,7 @@
 namespace App\Traits\Spider;
 
 use App\Console\Commands\StartSpiderCommand;
+use App\Console\Commands\StartSpiderCheckCommand;
 
 trait UseSetOutput
 {
@@ -11,7 +12,14 @@ trait UseSetOutput
      *
      * @var StartSpiderCommand
      */
-    protected StartSpiderCommand $output;
+    protected StartSpiderCommand $spiderOutput;
+
+    /**
+     * Undocumented variable
+     *
+     * @var StartSpiderCheckCommand
+     */
+    protected StartSpiderCheckCommand $spiderCheckOutput;
 
     /**
      * Undocumented function
@@ -19,8 +27,19 @@ trait UseSetOutput
      * @param StartSpiderCommand $output
      * @return void
      */
-    public function setOutput($output): void
+    public function setSpiderOutput(StartSpiderCommand $spiderOutput): void
     {
-        $this->output = $output;
+        $this->spiderOutput = $spiderOutput;
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @param StartSpiderCommand $output
+     * @return void
+     */
+    public function setSpiderCheckOutput(StartSpiderCheckCommand $spiderCheckOutput): void
+    {
+        $this->spiderCheckOutput = $spiderCheckOutput;
     }
 }
