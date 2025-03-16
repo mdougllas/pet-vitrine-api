@@ -25,8 +25,18 @@ class SpiderPetsManager
      */
     private HttpRequest $spider;
 
+    /**
+     * Undocumented variable
+     *
+     * @var integer
+     */
     private int $duplicateCount;
 
+    /**
+     * Undocumented variable
+     *
+     * @var boolean
+     */
     private bool $abortSpider;
 
     /**
