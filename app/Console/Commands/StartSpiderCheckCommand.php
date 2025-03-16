@@ -26,11 +26,11 @@ class StartSpiderCheckCommand extends Command
      *
      * @return int
      */
-    public function handle()
+    public function handle(SpiderCheck $spider)
     {
         $status = $this->argument('status');
 
-        $spider = new SpiderCheck($this);
+        $spider->setOutput($this);
 
         return $status
             ? $spider->startPetCheck('status-check')
