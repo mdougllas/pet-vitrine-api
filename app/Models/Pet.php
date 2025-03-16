@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
 class Pet extends Model
 {
@@ -15,6 +16,17 @@ class Pet extends Model
         'petfinder_id' => 'integer',
         'photo_urls' => 'array',
     ];
+
+    /**
+     * Cast pets photos to collection.
+     *
+     * @param array $value
+     * @return Collection
+     */
+    public function getPhotoUrlsAttribute(array $value): Collection
+    {
+        return collect($value);
+    }
 
     /**
      * Get the ads associated to the pet through user
