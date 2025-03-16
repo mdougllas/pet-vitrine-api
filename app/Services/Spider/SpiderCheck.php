@@ -4,30 +4,26 @@ namespace App\Services\Spider;
 
 use App\Models\Organization;
 use App\Models\Pet;
+use App\Traits\Spider\UseSetOutput;
 use Illuminate\Support\Collection;
 
 class SpiderCheck
 {
+    use UseSetOutput;
     /**
      * @property \App\Services\Spider\HttpRequest $spider
      */
     private $spider;
 
     /**
-     * @property object $output
-     */
-    private $output;
-
-    /**
      * Blueprint for SpiderCheck.
      *
-     * @param \App\Services\Spider\HttpRequest $spider
+     * @param HttpRequest $spider
      * @return void
      */
-    public function __construct($output)
+    public function __construct(HttpRequest $spider)
     {
-        $this->spider = new HttpRequest;
-        $this->output = $output;
+        $this->spider = $spider;
     }
 
     /**
