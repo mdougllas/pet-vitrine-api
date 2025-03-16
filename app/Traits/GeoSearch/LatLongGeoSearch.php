@@ -28,7 +28,7 @@ trait LatLongGeoSearch
         $apiKey = config('services.geocode.api_key');
         $url = "https://maps.googleapis.com/maps/api/geocode/json?address=$zipCode&key=$apiKey";
 
-        $response = Http::get($url);
+        $response = Http::retry(5, 1000)->get($url);
         $response->onError(fn ($err) => HandleHttpException::throw($err));
 
         $results = collect($response->object())->get('results');
