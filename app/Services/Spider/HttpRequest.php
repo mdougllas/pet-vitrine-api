@@ -2,6 +2,7 @@
 
 namespace App\Services\Spider;
 
+use App\Exceptions\HandlePetFinderRequestException;
 use App\Services\PetFinder\PetFinderConfig;
 use App\Traits\Spider\UseSetOutput;
 use Illuminate\Support\Collection;
@@ -37,6 +38,11 @@ class HttpRequest
      */
     private $rootUrl;
 
+    /**
+     * Undocumented variable
+     *
+     * @var [type]
+     */
     private $url;
 
     /**
@@ -103,6 +109,25 @@ class HttpRequest
     }
 
     /**
+     * Get one pet.
+     *
+     * @param \App\Services\Spider\HttpRequest $spider
+     * @return Collection
+     */
+    public function getPet($id): Collection
+    {
+        $this->url = "$this->rootUrl/organizations";
+
+        $this->queryParameters = [
+            'page' => $id,
+            'limit' => $this->perPage,
+            'sort' => 'name',
+        ];
+
+        return $this->dispatch();
+    }
+
+    /**
      * Dispatch a request to the server.
      *
      * @return Collection
@@ -111,11 +136,13 @@ class HttpRequest
     {
         $this->requestCount++;
 
-        $this->output->info("This is request # $this->requestCount for URL $this->url");
+        $this->spiderOutput->info("This is request # $this->requestCount for URL $this->url");
 
         $response = Http::withToken($this->petFinder->accessToken)
             ->withQueryParameters($this->queryParameters)
             ->get($this->url);
+
+        $response->onError(fn ($err) => HandlePetFinderRequestException::resolve($err));
 
         return collect($response->json());
     }
