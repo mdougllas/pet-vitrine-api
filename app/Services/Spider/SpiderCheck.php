@@ -27,165 +27,87 @@ class SpiderCheck
     }
 
     /**
-     * Starte checking pet for status and URLs
+     * Start checking pet for status and URLs
      *
-     * @return int|null
+     * @return int
      */
-    public function startPetCheck($action): ?int
+    public function startSpiderCheck(): int
     {
         $this->spider->setSpiderCheckOutput($this->spiderCheckOutput);
+        $this->spiderCheckOutput->info('Pets check started.');
+        $this->spiderCheck();
+        $this->spiderCheckOutput->info('Pets check finished.');
 
-        $this->spiderCheckOutput->info('Starting loop from newest registered pet and checking.');
-        $this->loopThroughShelters();
-
-        return $this->loopThroughPets($action);
+        return 0;
     }
 
     /**
-     * Loop through all Pets
+     * Dispatch pet and organization's jobs.
      *
-     * @param string $action
-     * @return int|null
+     * @return void
      */
-    private function loopThroughPets(string $action): ?int
+    private function spiderCheck(): void
     {
-        $range = Collection::range(Pet::max('id'), 1, -1);
+        Pet::chunk(200, fn (Collection $pets) => $this->checkPetsInChunks($pets));
+        Organization::chunk(200, fn (Collection $organizations) => $this->checkOrganizationsInChunks($organizations));
+    }
 
-        $range->takeWhile(function ($id) use ($action) {
-            $pet = Pet::find($id);
+    /**
+     * Undocumented function
+     *
+     * @param Collection $pets
+     * @return void
+     */
+    private function checkPetsInChunks(Collection $pets): void
+    {
+        $pets->each(function (Pet $pet) {
+            if ($pet->created_at->diffInDays(now()) > 60) {
+                $pet->status = 'adopted';
 
-            if (!$pet) {
-                $this->spiderCheckOutput->warn("No available pets yet. Skipping.");
-
-                return true;
+                return;
             }
 
-            $this->spiderCheckOutput->info("Pet ID $id.");
+            $response = $this->spider->getPet($pet->petfinder_id);
+            $fetchedPet = collect($response->get('animal'));
 
-            return $action === 'check-urls'
-                ? $this->checkPetUrls()
-                : $this->checkPetStatus($pet, $id);
+            if ($pet->photos_url->isEmpty()) {
+                $this->checkForPetPhoto($pet, $fetchedPet);
+            }
         });
-
-        return $action === 'check-urls'
-            ? 1
-            : $this->startPetCheck('status-check');
     }
 
     /**
      * Undocumented function
      *
      * @param Pet $pet
-     * @param int $id
-     * @return bool
-     */
-    private function checkPetStatus(Pet $pet, int $id): bool
-    {
-        if ($pet->status === 'adopted') {
-            $this->spiderCheckOutput->warn("Pet $id is adopted. Skipping.");
-
-            return true;
-        }
-
-        $response = $this->spider->getPet($pet->petfinder_id);
-
-        $exists = collect($response->get('animals'))->first();
-
-        if (!$exists) {
-            $this->spiderCheckOutput->warn("Pet $id no longer exists. Saving as adopted.");
-
-            return $this->updatePetStatus($pet);
-        }
-
-        $status = $response->get('animals')
-            ->first()['animal']['adoption_status'];
-
-        $this->spiderCheckOutput->info("Status $status.");
-
-        return $status !== 'adoptable'
-            ? $this->updatePetStatus($pet)
-            : $id != 1;
-    }
-
-    /**
-     * Undocumented function
-     *
-     * @return bool
-     */
-    private function loopThroughShelters(): bool
-    {
-        $range = Collection::range(Organization::max('id'), 1, -1);
-
-        $range->takeWhile(function ($id) {
-            $shelter = Organization::find($id);
-
-            if (!$shelter) {
-                $this->spiderCheckOutput->warn("Shelter not found. Skipping.");
-
-                return true;
-            }
-
-            $this->spiderCheckOutput->info("Checking shelter ID $id.");
-
-            return $this->checkShelterExists($shelter);
-        });
-
-        return true;
-    }
-
-    /**
-     * Undocumented function
-     *
-     * @param [type] $shelter
-     * @return boolean
-     */
-    private function checkShelterExists($shelter): bool
-    {
-        dd($shelter);
-        $response = $this->spider->getOrganization(urlencode($shelter->name));
-        $organizations = collect($response->organizations);
-
-        $organization = $organizations->filter(function ($item) use ($shelter) {
-            return $item->display_id === $shelter->petfinder_id;
-        });
-
-        return $organization->get('display_id')
-            ? true
-            : $this->deleteShelter($shelter);
-    }
-
-    private function deleteShelter($shelter)
-    {
-        $this->spiderCheckOutput->info("Shelter $shelter->id not found. Deleting from database.");
-
-        $test = $shelter->delete();
-
-        $this->spiderCheckOutput->info("Delete action returned $test");
-
-        return $test;
-    }
-
-    /**
-     * Undocumented function
-     *
+     * @param Collection $fetchedPet
      * @return void
      */
-    private function checkPetUrls()
+    private function checkForPetPhoto(Pet $pet, Collection $fetchedPet): void
     {
+        $photo = collect($fetchedPet->get('primary_photo_cropped'));
+
+        if ($photo) {
+            $pet->photo_urls = [$photo->value('medium')];
+        }
     }
 
     /**
-     * Updates the pet status and save.
+     * Undocumented function
      *
-     * @param /App/Models/Pet $pet
-     * @param string $status
-     * @return bool
+     * @param Collection $organizations
+     * @return void
      */
-    private function updatePetStatus(Pet $pet, string $status = 'adopted'): bool
+    private function checkOrganizationsInChunks(Collection $organizations): void
     {
-        $this->spiderCheckOutput->info("Saving pet $pet->id new status: $status");
-        $pet->status = $status;
+        $organizations->each(function (Organization $organization) {
+            $id = $organization->pet_finder_id;
 
-        return $pet->save();
+            $exists = Organization::find($id);
+
+            if (! $exists) {
+                $organization->delete;
+            }
+        });
     }
 }
