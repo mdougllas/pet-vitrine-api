@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Services\PetFinder\PetFinderConfig;
+use App\Services\Spider\HttpRequest;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
@@ -19,6 +20,10 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->singleton(PetFinderConfig::class, function ($app) {
             return new PetFinderConfig();
+        });
+
+        $this->app->singleton(HttpRequest::class, function ($app) {
+            return new HttpRequest(new PetFinderConfig);
         });
     }
 
