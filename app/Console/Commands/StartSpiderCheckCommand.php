@@ -12,7 +12,7 @@ class StartSpiderCheckCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'spider:check {status?}';
+    protected $signature = 'spider:check';
 
     /**
      * The console command description.
@@ -28,12 +28,8 @@ class StartSpiderCheckCommand extends Command
      */
     public function handle(SpiderCheck $spider)
     {
-        $status = $this->argument('status');
-
         $spider->setSpiderCheckOutput($this);
 
-        return $status
-            ? $spider->startPetCheck('status-check')
-            : $spider->startPetCheck('check-urls');
+        return $spider->startSpiderCheck('check-status');
     }
 }
