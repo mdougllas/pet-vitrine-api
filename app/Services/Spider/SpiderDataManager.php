@@ -47,22 +47,22 @@ class SpiderDataManager
      */
     public function getPetData($pet)
     {
-        dd($pet);
         $petModel = new Pet;
-        $petData = $pet->animal;
 
         $petModel->uuid = Str::uuid();
-        $petModel->age = $petData->age;
-        $petModel->breed = $petData->primary_breed->name;
-        $petModel->description = $petData->description ?? 'No description available.';
-        $petModel->name = $petData->name;
-        $petModel->photo_urls = $petData->photo_urls;
-        $petModel->sex = $petData->sex;
-        $petModel->species = $petData->species->name;
-        $petModel->status = $petData->adoption_status;
-        $petModel->petfinder_shelter_id = $pet->organization->display_id;
-        $petModel->petfinder_id = $petData->id;
-        $petModel->url = $petData->social_sharing->email_url;
+        $petModel->age = $pet->get('age');
+        $petModel->breed = $pet->get('breeds')['primary'];
+        $petModel->description = $pet->get('description') ?? 'No description available.';
+        $petModel->name = $pet->get('name');
+        $petModel->sex = $pet->get('gender');
+        $petModel->species = $pet->get('species');
+        $petModel->status = $pet->get('status');
+        $petModel->petfinder_shelter_id = $pet->get('organization_id');
+        $petModel->petfinder_id = $pet->get('id');
+        $petModel->url = Str::before($pet->get('url'), '/?');
+        $petModel->photo_urls = $pet->get('primary_photo_cropped')
+            ? [$pet->get('primary_photo_cropped')['medium']]
+            : [];
 
         return $petModel;
     }
