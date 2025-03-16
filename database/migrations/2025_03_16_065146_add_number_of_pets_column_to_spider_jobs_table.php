@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('spider_jobs', function (Blueprint $table) {
-            $table->json('number_of_pets')->after('number_of_shelters')->nullable();
+            $table->bigInteger('number_of_pets')->after('number_of_shelters')->nullable();
         });
     }
 
