@@ -21,14 +21,13 @@ class SpiderPetsManager
     private SpiderDataManager $manager;
 
     /**
-     * @property integer $cicle
-     */
-    private $loop = 1;
-
-    /**
      * @property \App\Services\Spider\HttpRequest $spider
      */
-    private $spider;
+    private HttpRequest $spider;
+
+    private int $duplicateCount;
+
+    private bool $abortSpider;
 
     /**
      * Undocumented function
@@ -40,6 +39,8 @@ class SpiderPetsManager
     {
         $this->spider = $spider;
         $this->manager = $manager;
+        $this->duplicateCount = 0;
+        $this->abortSpider = false;
     }
 
     /**
@@ -65,6 +66,10 @@ class SpiderPetsManager
         $page = 0;
 
         while ($totalPages > 0) {
+            if ($this->abortSpider) {
+                break;
+            }
+
             $totalPages--;
             $page++;
 
@@ -95,7 +100,7 @@ class SpiderPetsManager
         if ($this->petExists($id)) {
             $this->output->warn("Pet $id already on DB. Skipping saving the pet.");
 
-            return true;
+            return $this->spiderStopThreshold();
         }
 
         if ($this->checkDuplicateByName($pet) !== false) {
@@ -117,6 +122,21 @@ class SpiderPetsManager
         }
 
         $this->savePet($pet);
+        $this->duplicateCount = 0;
+
+        return true;
+    }
+
+    private function spiderStopThreshold()
+    {
+        $this->duplicateCount++;
+
+        if ($this->duplicateCount >= 100) {
+            $this->output->warn("All new pets already registered. Aborting spider.");
+            $this->abortSpider = true;
+
+            return false;
+        }
 
         return true;
     }
@@ -191,13 +211,13 @@ class SpiderPetsManager
     private function attachToOrganization($pet, $organizationId)
     {
         $organization = Organization::where('petfinder_id', $organizationId)
-            ->get();
+            ->first();
 
-        if ($organization->isEmpty()) {
+        if (! $organization) {
             return false;
         }
 
-        $pet->organization()->associate($organization[0]);
+        $pet->organization()->associate($organization);
 
         return true;
     }
