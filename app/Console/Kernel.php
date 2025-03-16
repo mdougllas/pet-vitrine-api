@@ -2,7 +2,7 @@
 
 namespace App\Console;
 
-use App\Console\Commands\StartSpiderCheck;
+use App\Console\Commands\StartSpiderCheckCommand;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use App\Console\Commands\StartSpiderCommand;
@@ -31,7 +31,7 @@ class Kernel extends ConsoleKernel
             ->sendOutputTo($this->getSpiderLogFilePath())
             ->withoutOverlapping();
 
-        $schedule->command(StartSpiderCheck::class, ['status'])
+        $schedule->command(StartSpiderCheckCommand::class, ['status'])
             ->runInBackground()
             ->withoutOverlapping();
     }
