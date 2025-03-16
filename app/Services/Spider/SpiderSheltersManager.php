@@ -79,10 +79,10 @@ class SpiderSheltersManager
         $response = $this->spider->getOrganizations($page);
         $shelters = collect($response->get('organizations'));
 
-        $shelters->each(fn ($shelter) => $this->persistShelter(collect($shelter)));
+        $shelters->each(fn ($shelter) => $this->analizeShelter(collect($shelter)));
     }
 
-    private function persistShelter(Collection $shelter): bool
+    private function analizeShelter(Collection $shelter): bool
     {
         $name = $shelter->get('name');
         $id = $shelter->get('id');

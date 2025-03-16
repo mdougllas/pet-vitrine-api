@@ -96,10 +96,10 @@ class SpiderPetsManager
         $response = $this->spider->getPets($page);
         $pets = collect($response->get('animals'));
 
-        $pets->each(fn ($pet) => $this->persistPet(collect($pet)));
+        $pets->each(fn ($pet) => $this->analizePet(collect($pet)));
     }
 
-    private function persistPet(Collection $pet): bool
+    private function analizePet(Collection $pet): bool
     {
         $name = $pet->get('name');
         $id = $pet->get('id');
