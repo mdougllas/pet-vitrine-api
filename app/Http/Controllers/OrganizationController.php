@@ -19,7 +19,7 @@ class OrganizationController extends Controller
      */
     public function search(OrganizationRequest $request, OrganizationSearch $pets): OrganizationResource
     {
-        $result = Cache::rememberForever('home-search', now()->addHours(24), fn () => $pets->search(collect($request->validated())));
+        $result = Cache::rememberForever('home-search', fn () => $pets->search(collect($request->validated())));
 
         return new OrganizationResource($result);
     }
