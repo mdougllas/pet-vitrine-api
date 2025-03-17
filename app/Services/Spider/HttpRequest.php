@@ -159,7 +159,13 @@ class HttpRequest
             ->withQueryParameters($this->queryParameters)
             ->get($this->url);
 
-        // $response->onError(fn ($err) => HandlePetFinderRequestException::resolve($err));
+        $body = collect($response->json());
+
+        if ($body->get('status') == 429) {
+            $this->httpOutput->info("Petfinder is bad and gives out free samples. When you're hooked up, they want to charge, like drug dealers. Reached requests limit.");
+
+            $this->requestCount = 1001;
+        }
 
         return collect($response->json());
     }
