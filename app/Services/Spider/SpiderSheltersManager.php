@@ -19,6 +19,8 @@ class SpiderSheltersManager
      */
     private $spider;
 
+    private $abortSpider;
+
     /**
      * Blueprint for SpiderShelterManager.
      *
@@ -30,6 +32,7 @@ class SpiderSheltersManager
     {
         $this->spider = $spider;
         $this->manager = $manager;
+        $this->abortSpider = false;
     }
 
     /**
@@ -41,6 +44,13 @@ class SpiderSheltersManager
     {
         $organizations = $this->spider->getOrganizations();
         $organizationCount = $this->getNumberOfShelters();
+
+        if ($this->spider->requestCount >= 1000) {
+            $this->spiderOutput->warn("Reached requests limit for PetFinder. Aborting spider.");
+            $this->abortSpider = true;
+
+            return;
+        }
 
         $pagination = collect($organizations->get('pagination'));
         $totalShelters = $pagination->get('total_count');
