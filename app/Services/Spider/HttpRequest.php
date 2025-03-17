@@ -2,7 +2,6 @@
 
 namespace App\Services\Spider;
 
-use App\Exceptions\HandlePetFinderRequestException;
 use App\Services\PetFinder\PetFinderConfig;
 use App\Traits\Spider\UseSetOutput;
 use Illuminate\Support\Collection;
@@ -94,7 +93,7 @@ class HttpRequest
     /**
      * Get all organizations.
      *
-     * @param \App\Services\Spider\HttpRequest $spider
+     * @param HttpRequest $spider
      * @return Collection
      */
     public function getOrganizations($page = 1): Collection
@@ -113,18 +112,29 @@ class HttpRequest
     /**
      * Get one pet.
      *
-     * @param \App\Services\Spider\HttpRequest $spider
+     * @param HttpRequest $spider
      * @return Collection
      */
     public function getPet($id): Collection
     {
-        $this->url = "$this->rootUrl/organizations";
+        $this->url = "$this->rootUrl/animals/$id";
 
-        $this->queryParameters = [
-            'page' => $id,
-            'limit' => $this->perPage,
-            'sort' => 'name',
-        ];
+        $this->queryParameters = [];
+
+        return $this->dispatch();
+    }
+
+    /**
+     * Get one organization.
+     *
+     * @param HttpRequest $spider
+     * @return Collection
+     */
+    public function getOrganization($id): Collection
+    {
+        $this->url = "$this->rootUrl/organizations/$id";
+
+        $this->queryParameters = [];
 
         return $this->dispatch();
     }
@@ -149,7 +159,7 @@ class HttpRequest
             ->withQueryParameters($this->queryParameters)
             ->get($this->url);
 
-        $response->onError(fn ($err) => HandlePetFinderRequestException::resolve($err));
+        // $response->onError(fn ($err) => HandlePetFinderRequestException::resolve($err));
 
         return collect($response->json());
     }
