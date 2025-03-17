@@ -60,6 +60,13 @@ class SpiderPetsManager
      */
     public function parsePets(): void
     {
+        if ($this->spider->requestCount >= 1000) {
+            $this->spiderOutput->warn("Reached requests limit for PetFinder. Aborting spider.");
+            $this->abortSpider = true;
+
+            return;
+        }
+
         $pets = $this->spider->getPets();
         $petCount = $this->getNumberOfPets();
 
@@ -148,12 +155,7 @@ class SpiderPetsManager
             return false;
         }
 
-        if ($this->spider->requestCount >= 1000) {
-            $this->spiderOutput->warn("Reached requests limit for PetFinder. Aborting spider.");
-            $this->abortSpider = true;
-
-            return false;
-        }
+        $this->checkRequestCount();
 
         return true;
     }
