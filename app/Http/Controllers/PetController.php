@@ -35,7 +35,7 @@ class PetController extends Controller
      */
     public function featured(): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
-        return Cache::remember('featured-pets', now()->addHours(24), function () {
+        return Cache::remember('featured-pets', 1, function () {
             return PetResource::collection(Pet::with('organization')
             ->where('status', 'adoptable')
             ->whereJsonLength('photo_urls', '>', 0)
