@@ -12,9 +12,23 @@ class SpiderCheck
     use UseSetOutput;
 
     /**
-     * @property \App\Services\Spider\HttpRequest $spider
+     * @property HttpRequest $spider
      */
-    private $spider;
+    private HttpRequest $spider;
+
+    /**
+     * Undocumented variable
+     *
+     * @var integer
+     */
+    private int $adoptedPetCount = 0;
+
+    /**
+     * Undocumented variable
+     *
+     * @var integer
+     */
+    private int $shelterExists = 0;
 
     /**
      * Blueprint for SpiderCheck.
@@ -48,8 +62,11 @@ class SpiderCheck
      */
     private function spiderCheck(): void
     {
-        Pet::chunk(200, fn (Collection $pets) => $this->checkPetsInChunks($pets));
-        Organization::chunk(200, fn (Collection $organizations) => $this->checkOrganizationsInChunks($organizations));
+        Pet::latest()
+            ->chunk(200, fn (Collection $pets) => $this->checkPetsInChunks($pets));
+
+        Organization::latest()
+            ->chunk(200, fn (Collection $organizations) => $this->checkOrganizationsInChunks($organizations));
     }
 
     /**
@@ -61,8 +78,36 @@ class SpiderCheck
     private function checkPetsInChunks(Collection $pets): void
     {
         $pets->each(function (Pet $pet) {
+            $name = $pet->name;
+            $status = $pet->status;
+
+            if ($status === 'adopted') {
+                $this->adoptedPetCount++;
+            }
+
+            if ($status === 'adoptable') {
+                $this->adoptedPetCount = 0;
+            }
+
+            if ($this->adoptedPetCount >= 100) {
+                $this->spiderCheckOutput->info("All adoptable pets processed. Aborting spider.");
+
+                return false;
+            }
+
+            if ($this->spider->requestCount >= 1000) {
+                $this->spiderCheckOutput->info("Reached request limit. Aborting spider.");
+
+                return false;
+            }
+
+            $this->spiderCheckOutput->info("Checking pet name $name.");
+
             if ($pet->created_at->diffInDays(now()) > 60) {
+
+                $this->spiderCheckOutput->info("Changing pet name $name status to adopted.");
                 $pet->status = 'adopted';
+                $pet->save();
 
                 return;
             }
@@ -70,7 +115,7 @@ class SpiderCheck
             $response = $this->spider->getPet($pet->petfinder_id);
             $fetchedPet = collect($response->get('animal'));
 
-            if ($pet->photos_url->isEmpty()) {
+            if (collect($pet->photo_urls)->isEmpty()) {
                 $this->checkForPetPhoto($pet, $fetchedPet);
             }
         });
@@ -85,10 +130,15 @@ class SpiderCheck
      */
     private function checkForPetPhoto(Pet $pet, Collection $fetchedPet): void
     {
+        $name = $pet->name;
+
+        $this->spiderCheckOutput->info("Checking for photo to pet $name.");
+
         $photo = collect($fetchedPet->get('primary_photo_cropped'));
 
         if ($photo) {
             $pet->photo_urls = [$photo->value('medium')];
+            $pet->save();
         }
     }
 
@@ -102,10 +152,25 @@ class SpiderCheck
     {
         $organizations->each(function (Organization $organization) {
             $id = $organization->pet_finder_id;
+            $name = $organization->name;
 
-            $exists = Organization::find($id);
+            if ($this->shelterExists >= 100) {
+                $this->spiderCheckOutput->info("All fake shelters processed. Aborting spider.");
+
+                return false;
+            }
+
+            if ($this->spider->requestCount >= 1000) {
+                $this->spiderCheckOutput->info("Reached request limit. Aborting spider.");
+
+                return false;
+            }
+
+            $exists = $this->spider->getOrganization($id);
 
             if (! $exists) {
+                $this->shelterExists = 0;
+                $this->spiderCheckOutput->info("Organization $name does not exist. Deleting.");
                 $organization->delete;
             }
         });
