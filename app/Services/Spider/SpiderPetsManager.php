@@ -267,7 +267,7 @@ class SpiderPetsManager
      *
      * @return void
      */
-    private function setNumberOfPets($qty): void
+    private function setNumberOfPets($qty = 1): void
     {
         $spiderJob = SpiderJob::first();
         $spiderJob->number_of_pets = $qty;

@@ -188,7 +188,7 @@ class SpiderSheltersManager
      *
      * @return void
      */
-    private function setNumberOfShelters($qty): void
+    private function setNumberOfShelters($qty = 1): void
     {
         $spiderJob = SpiderJob::first();
         $spiderJob->number_of_shelters = $qty;
