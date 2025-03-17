@@ -6,6 +6,7 @@ use App\Models\Pet;
 use App\Services\Pet\PetSearch;
 use App\Http\Requests\PetRequest;
 use App\Http\Resources\PetResource;
+use Illuminate\Support\Facades\Cache;
 
 class PetController extends Controller
 {
@@ -32,12 +33,14 @@ class PetController extends Controller
      */
     public function featured(): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
-        return PetResource::collection(Pet::with('organization')
+        return Cache::remember('featured-pets', now()->addHours(24), function () {
+            return PetResource::collection(Pet::with('organization')
             ->where('status', 'adoptable')
             ->whereJsonLength('photo_urls', '>', 0)
             ->inRandomOrder()
             ->take(3)
             ->get());
+        });
     }
 
     /**

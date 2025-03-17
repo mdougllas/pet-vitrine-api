@@ -10,6 +10,7 @@ use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\SearchPostRequest;
 use App\Http\Requests\UpdatePostRequest;
+use Illuminate\Support\Facades\Cache;
 
 class PostController extends Controller
 {
@@ -43,7 +44,7 @@ class PostController extends Controller
      */
     public function index(): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
-        return PostResource::collection(Post::with(['postCategory', 'postSubCategory'])->latest()->paginate(6));
+        return Cache::rememberForever('home-posts', fn () => PostResource::collection(Post::with(['postCategory', 'postSubCategory'])->latest()->paginate(6)));
     }
 
     /**

@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Organization;
 use App\Http\Requests\OrganizationRequest;
 use App\Http\Resources\OrganizationResource;
+use App\Models\Organization;
 use App\Services\Organization\OrganizationSearch;
+use Illuminate\Support\Facades\Cache;
 
 class OrganizationController extends Controller
 {
@@ -18,7 +19,7 @@ class OrganizationController extends Controller
      */
     public function search(OrganizationRequest $request, OrganizationSearch $pets): OrganizationResource
     {
-        $result = $pets->search(collect($request->validated()));
+        $result = Cache::remember('home-search', now()->addHours(24), fn () => $pets->search(collect($request->validated())));
 
         return new OrganizationResource($result);
     }
