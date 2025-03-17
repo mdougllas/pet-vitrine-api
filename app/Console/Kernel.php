@@ -27,7 +27,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command(StartSpiderCommand::class)
-            ->everyMinute()
+            ->dailyAt('23:00')
             ->sendOutputTo($this->getSpiderLogFilePath())
             ->withoutOverlapping();
 
