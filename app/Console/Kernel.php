@@ -31,8 +31,8 @@ class Kernel extends ConsoleKernel
             ->sendOutputTo($this->getSpiderLogFilePath())
             ->withoutOverlapping();
 
-        $schedule->command(StartSpiderCheckCommand::class, ['status'])
-            ->runInBackground()
+        $schedule->command(StartSpiderCheckCommand::class)
+            ->dailyAt('9:00')
             ->withoutOverlapping();
     }
 
