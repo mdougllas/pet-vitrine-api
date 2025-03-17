@@ -18,17 +18,6 @@ class Pet extends Model
     ];
 
     /**
-     * Cast pets photos to collection.
-     *
-     * @param array $value
-     * @return Collection
-     */
-    public function getPhotoUrlsAttribute(array $value): Collection
-    {
-        return collect($value);
-    }
-
-    /**
      * Get the ads associated to the pet through user
      *
      * @return object
