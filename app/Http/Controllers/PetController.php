@@ -19,7 +19,9 @@ class PetController extends Controller
      */
     public function search(PetRequest $request, PetSearch $pets): PetResource
     {
-        $result = $pets->search(collect($request->validated()));
+        $validData = collect($request->validated());
+        $cacheKey ='search_' . md5(json_encode($validData));
+        $result = Cache::rememberForever($cacheKey, fn () => $pets->search($validData));
 
         return new PetResource($result);
     }
