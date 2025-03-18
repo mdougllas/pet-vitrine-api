@@ -4,6 +4,7 @@ namespace App\Services\Spider;
 
 use App\Models\SpiderJob;
 use App\Traits\Spider\UseSetOutput;
+use SpiderCleanLogFiles;
 
 class SpiderJobsManager
 {
@@ -12,17 +13,19 @@ class SpiderJobsManager
     /**
      * @property \App\Services\Spider\HttpRequest $spider
      */
-    private $spider = null;
+    private $spider;
 
     /**
      * @property \App\Services\Spider\SpiderSheltersManager $shelters
      */
-    private $shelters = null;
+    private $shelters;
 
     /**
      * @property \App\Services\Spider\SpiderPetsManager $shelters
      */
-    private $pets = null;
+    private $pets;
+
+    private $logs;
 
     /**
      * Blueprint for SpiderJobsManager.
@@ -30,11 +33,17 @@ class SpiderJobsManager
      * @param \App\Services\Spider\HttpRequest $spider
      * @return void
      */
-    public function __construct(HttpRequest $spider, SpiderSheltersManager $shelters, SpiderPetsManager $pets)
+    public function __construct(
+        HttpRequest $spider,
+        SpiderSheltersManager $shelters,
+        SpiderPetsManager $pets,
+        SpiderCleanLogFiles $logs
+    )
     {
         $this->spider = $spider;
         $this->shelters = $shelters;
         $this->pets = $pets;
+        $this->logs = $logs;
     }
 
     /**
@@ -59,6 +68,7 @@ class SpiderJobsManager
 
         $this->pets->parsePets();
         $this->shelters->parseShelters();
+        $this->logs->cleanLogFiles();
 
         $this->spiderOutput->info("Spider jobs finished.");
         $this->setJobRunning(0);
