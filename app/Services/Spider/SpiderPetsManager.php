@@ -155,7 +155,12 @@ class SpiderPetsManager
             return false;
         }
 
-        $this->checkRequestCount();
+        if ($this->spider->requestCount >= 1000) {
+            $this->spiderOutput->warn("Reached requests limit for PetFinder. Aborting spider.");
+            $this->abortSpider = true;
+
+            return false;
+        }
 
         return true;
     }
