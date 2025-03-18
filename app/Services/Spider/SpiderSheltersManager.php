@@ -92,6 +92,12 @@ class SpiderSheltersManager
         $shelters->each(fn ($shelter) => $this->analizeShelter(collect($shelter)));
     }
 
+    /**
+     * Undocumented function
+     *
+     * @param Collection $shelter
+     * @return boolean
+     */
     private function analizeShelter(Collection $shelter): bool
     {
         $name = $shelter->get('name');
