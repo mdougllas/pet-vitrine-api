@@ -4,7 +4,8 @@ namespace App\Services\Spider;
 
 use App\Traits\Spider\UseSetOutput;
 use Carbon\Carbon;
-use Carbon\CarbonPeriod;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
 class SpiderCleanLogFiles
@@ -25,20 +26,31 @@ class SpiderCleanLogFiles
 
     public function cleanLogFiles()
     {
-        $path = $this->getSpiderLogFilePath();
-        $fileName = Str::after($path, 'spider/');
-        $dateString = Str::before($fileName, '.log');
-        $date = Str::replace('-', '/', Str::replace('_', ' ', $dateString));
-        $epoch = Carbon::parse($date, 'UTC')->timestamp;
+        $this->output->info("Started clening log files.");
+        $files = collect(File::files(storage_path('logs/spider/')));
 
-
-        dd($epoch);
+        $files->each(fn ($file) => $this->checkDiffFromFileName($file));
     }
 
-    private function getSpiderLogFilePath(): string
+    private function checkDiffFromFileName($file)
     {
-        $fileName = now()->format('m-d-Y_H:i:s');
+        $fileName = $file->getFileName();
+        $fileNameDateString = Str::before($fileName, '.log');
+        $fileNameDate = Str::replace('-', '/', Str::replace('_', ' ', $fileNameDateString));
+        $fileEpoch = Carbon::parse($fileNameDate, 'UTC');
+        $now = Carbon::now('UTC');
+        $diff = $now->diffInDays($fileEpoch);
 
-        return storage_path("logs/spider/$fileName.log");
+        if ($diff >= 20) {
+            $this->output->info("Found an old file.");
+            $this->deleteLogFile($file);
+        }
+    }
+
+    private function deleteLogFile($file)
+    {
+        $this->output->info("Deleting old file.");
+
+        File::delete($file);
     }
 }
