@@ -57,8 +57,8 @@ class SpiderJobsManager
         $this->shelters->setSpiderOutput($this->spiderOutput);
         $this->pets->setSpiderOutput($this->spiderOutput);
 
-        $this->shelters->parseShelters();
         $this->pets->parsePets();
+        $this->shelters->parseShelters();
 
         $this->spiderOutput->info("Spider jobs finished.");
         $this->setJobRunning(0);
