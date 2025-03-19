@@ -4,7 +4,6 @@ namespace App\Services\Spider;
 
 use App\Models\SpiderJob;
 use App\Traits\Spider\UseSetOutput;
-use SpiderCleanLogFiles;
 
 class SpiderJobsManager
 {

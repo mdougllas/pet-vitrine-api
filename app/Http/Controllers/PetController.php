@@ -21,7 +21,8 @@ class PetController extends Controller
     {
         $validData = collect($request->validated());
         $cacheKey ='search_' . md5(json_encode($validData));
-        $result = Cache::rememberForever($cacheKey, fn () => $pets->search($validData));
+        $result = $pets->search($validData);
+        // $result = Cache::rememberForever($cacheKey, fn () => $pets->search($validData));
 
         return new PetResource($result);
     }
