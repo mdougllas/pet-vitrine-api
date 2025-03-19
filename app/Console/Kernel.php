@@ -2,10 +2,11 @@
 
 namespace App\Console;
 
+use App\Console\Commands\CleanLogFilesCommand;
 use App\Console\Commands\StartSpiderCheckCommand;
+use App\Console\Commands\StartSpiderCommand;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use App\Console\Commands\StartSpiderCommand;
 
 class Kernel extends ConsoleKernel
 {
@@ -33,6 +34,10 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(StartSpiderCheckCommand::class)
             ->dailyAt('9:00')
+            ->withoutOverlapping();
+
+        $schedule->command(CleanLogFilesCommand::class)
+            ->dailyAt('12:00')
             ->withoutOverlapping();
     }
 
