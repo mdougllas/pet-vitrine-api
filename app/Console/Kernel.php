@@ -33,11 +33,11 @@ class Kernel extends ConsoleKernel
             ->withoutOverlapping();
 
         $schedule->command(StartSpiderCheckCommand::class)
-            ->dailyAt('9:00')
+            ->weekly('9:00')
             ->withoutOverlapping();
 
         $schedule->command(CleanLogFilesCommand::class)
-            ->dailyAt('12:00')
+            ->monthly('12:00')
             ->withoutOverlapping();
     }
 
