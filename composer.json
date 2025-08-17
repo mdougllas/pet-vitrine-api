@@ -9,7 +9,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.1.0",
-        "facebook/php-business-sdk": "^21.0",
+        "facebook/php-business-sdk": "^23.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/fortify": "^1.7",
         "laravel/framework": "^10.0",
