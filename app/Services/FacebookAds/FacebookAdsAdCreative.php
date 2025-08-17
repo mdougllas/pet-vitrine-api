@@ -69,7 +69,7 @@ class FacebookAdsAdCreative
         $fields = ['name'];
         $params = [
             'name' => "Ad Creative for $name",
-            'body' => "Pet Vitrine generated ad creative for $name",
+            // 'body' => "Pet Vitrine generated ad creative for $name",
             'object_story_spec' => $this->createObjectStorySpec($url, $link, $name),
             'degrees_of_freedom_spec' => [
                 'creative_features_spec' => [
@@ -100,6 +100,15 @@ class FacebookAdsAdCreative
             'page_id' => $this->pageId,
             'link_data' => $this->createAdLinkData($url, $link, $name)
         ]);
+
+        // [
+        //     "link_data" => [
+        //         "picture" => "https://dbw3zep4prcju.cloudfront.net/animal/74905f69-9221-4e94-941f-6595c2241cb6/image/1afef9a1-8f3d-496a-8f0b-ed684ef31403.jpg?versionId=xM7I9HMUbBwQ3b6rhfbj0S1FFEfe.IIt&bust=1711898277&width=400",
+        //         "link" => "https://www.petfinder.com/dog/shinzo-58910024/ut/salt-lake-city/community-animal-welfare-society-caws-ut71/",
+        //         "message" => "testing"
+        //     ],
+        //     "page_id" => $pageId
+        // ];
     }
 
     /**
