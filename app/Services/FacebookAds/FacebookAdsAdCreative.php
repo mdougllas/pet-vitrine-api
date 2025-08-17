@@ -98,7 +98,7 @@ class FacebookAdsAdCreative
 
         $creative = Http::post($endpoint, $body);
 
-        return $creative->body();
+        return (int) $creative->body();
     }
 
     /**
