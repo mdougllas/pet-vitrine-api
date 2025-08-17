@@ -66,21 +66,37 @@ class FacebookAdsAdCreative
      */
     public function createAdCreative($url, $link, $name)
     {
-        $fields = ['name'];
-        $params = [
-            'name' => "Ad Creative for $name",
-            // 'body' => "Pet Vitrine generated ad creative for $name",
-            'object_story_spec' => $this->createObjectStorySpec($url, $link, $name),
-            'degrees_of_freedom_spec' => [
-                'creative_features_spec' => [
-                    'standard_enhancements' => [
-                        'enroll_status' => 'OPT_IN'
-                    ]
-                ]
+        // $fields = ['name'];
+        // $params = [
+        //     'name' => "Ad Creative for $name",
+        //     'body' => "Pet Vitrine generated ad creative for $name",
+        //     'object_story_spec' => $this->createObjectStorySpec($url, $link, $name),
+        //     'degrees_of_freedom_spec' => [
+        //         'creative_features_spec' => [
+        //             'standard_enhancements' => [
+        //                 'enroll_status' => 'OPT_IN'
+        //             ]
+        //         ]
+        //     ]
+        // ];
+
+        // $creative = $this->account->createAdCreative($fields, $params);
+
+        $body = [
+            "name" => "Testing Creating Creative",
+            "object_story_spec" => [
+                "link_data" => [
+                    "picture" => $url,
+                    "link" => $link,
+                    "message" => "Hey there! Care for a pet? $name is near you. Adopt a pet instead of buying and experience true animal love."
+                ],
+                "page_id" => config('services.facebook.page_id')
             ]
         ];
 
-        $creative = $this->account->createAdCreative($fields, $params);
+        $endpoint = 'https://graph.facebook.com/v23.0/act_1793082717452005/adcreatives?access_token=EAAC73fSImUcBPHy2kwYaOfrRYZBy11F92QjoZAAL1lJzPecZCbmWvQqxXieZA6jENRosHsIEJElMIxbF8R2rKH1TBMRqfTAVDWywPEoGQHGTQORhQNGRBdc3GH9WkhHgZCUuRviEJSLiPBQc8Dopu27kHD7H07wQeKaUdovhnlBHxyLttBSFBOlJCHT7LwyOv5AZDZD';
+
+        $creative = Http::post($endpoint, $body);
 
         return $creative;
     }
@@ -100,15 +116,18 @@ class FacebookAdsAdCreative
             'page_id' => $this->pageId,
             'link_data' => $this->createAdLinkData($url, $link, $name)
         ]);
+    $body = [
+        "name" => "Testing Creating Creative",
+        "object_story_spec" => [
+            "link_data" => [
+                "picture" => "https://dbw3zep4prcju.cloudfront.net/animal/74905f69-9221-4e94-941f-6595c2241cb6/image/1afef9a1-8f3d-496a-8f0b-ed684ef31403.jpg?versionId=xM7I9HMUbBwQ3b6rhfbj0S1FFEfe.IIt&bust=1711898277&width=400",
+                "link" => "https://www.petfinder.com/dog/shinzo-58910024/ut/salt-lake-city/community-animal-welfare-society-caws-ut71/",
+                "message" => "testing"
+            ],
+            "page_id" => $pageId
+        ]
+    ];
 
-        // [
-        //     "link_data" => [
-        //         "picture" => "https://dbw3zep4prcju.cloudfront.net/animal/74905f69-9221-4e94-941f-6595c2241cb6/image/1afef9a1-8f3d-496a-8f0b-ed684ef31403.jpg?versionId=xM7I9HMUbBwQ3b6rhfbj0S1FFEfe.IIt&bust=1711898277&width=400",
-        //         "link" => "https://www.petfinder.com/dog/shinzo-58910024/ut/salt-lake-city/community-animal-welfare-society-caws-ut71/",
-        //         "message" => "testing"
-        //     ],
-        //     "page_id" => $pageId
-        // ];
     }
 
     /**
