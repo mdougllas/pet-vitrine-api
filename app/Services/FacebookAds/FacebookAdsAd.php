@@ -2,9 +2,10 @@
 
 namespace App\Services\FacebookAds;
 
-use App\Services\FacebookAds\FacebookAdsAdCreative;
 use App\Services\FacebookAds\FacebookAds;
+use App\Services\FacebookAds\FacebookAdsAdCreative;
 use FacebookAds\Object\Ad;
+use Illuminate\Support\Facades\Http;
 
 class FacebookAdsAd
 {
@@ -58,15 +59,19 @@ class FacebookAdsAd
      */
     public function getAdPreview($url, $link, $name)
     {
-        $fields = [];
-        $params = ['ad_format' => 'MOBILE_FEED_STANDARD'];
+        // $fields = [];
+        // $params = ['ad_format' => 'MOBILE_FEED_STANDARD'];
         $adCreative = $this->creative->createAdCreative($url, $link, $name);
 
-        $previews = $adCreative->getPreviews($fields, $params)
-            ->getResponse()
-            ->getContent();
+        // $previews = $adCreative->getPreviews($fields, $params)
+        //     ->getResponse()
+        //     ->getContent();
 
-        return $previews;
+        $endpoint = "https://graph.facebook.com/v23.0/$adCreative/previews?access_token=EAAC73fSImUcBPHy2kwYaOfrRYZBy11F92QjoZAAL1lJzPecZCbmWvQqxXieZA6jENRosHsIEJElMIxbF8R2rKH1TBMRqfTAVDWywPEoGQHGTQORhQNGRBdc3GH9WkhHgZCUuRviEJSLiPBQc8Dopu27kHD7H07wQeKaUdovhnlBHxyLttBSFBOlJCHT7LwyOv5AZDZD&ad_format=DESKTOP_FEED_STANDARD";
+
+        $previews = Http::get($endpoint);
+
+        return $previews->body();
     }
 
     /**
